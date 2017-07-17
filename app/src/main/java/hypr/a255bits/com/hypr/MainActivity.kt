@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 
 class MainActivity : AppCompatActivity(), MainMvp.view{
+    val presenter by lazy{MainPresenter(applicationContext, this)}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -13,6 +14,7 @@ class MainActivity : AppCompatActivity(), MainMvp.view{
     }
 
     fun chooseImageClick(view: View){
+        presenter.displayGallery()
 
     }
 

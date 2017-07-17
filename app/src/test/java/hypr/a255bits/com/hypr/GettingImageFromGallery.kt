@@ -1,5 +1,6 @@
 package hypr.a255bits.com.hypr
 
+import android.content.Context
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import org.junit.Test
@@ -9,8 +10,10 @@ import org.junit.Test
  */
 
 class GettingImageFromGallery{
-    val presenter: MainPresenter = mock()
+    val context: Context = mock()
     val view: MainMvp.view = mock()
+
+    val presenter: MainPresenter = MainPresenter(context, view)
 
     @Test
     fun clickingButtonOpensGallery(){
