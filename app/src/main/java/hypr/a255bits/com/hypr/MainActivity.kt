@@ -2,10 +2,12 @@ package hypr.a255bits.com.hypr
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), MainMvp.view {
 
@@ -34,10 +36,11 @@ class MainActivity : AppCompatActivity(), MainMvp.view {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RESULT_GET_IMAGE && resultCode == Activity.RESULT_OK) {
+            data?.data?.let { presenter.getImageFromImageFileLocation(it) }
         }
     }
 
-    override fun displayFocusedImage() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun displayFocusedImage(imageFromGallery: Bitmap) {
+        focusedImage.setImageBitmap(imageFromGallery)
     }
 }

@@ -3,10 +3,13 @@ package hypr.a255bits.com.hypr
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Test
+
+
 
 /**
  * Created by ted on 7/17/17.
@@ -28,11 +31,13 @@ class GettingImageFromGallery{
     @Test
     fun getImageFromGalleryImageChosen(){
         val imageLocation: Uri = mock()
-        val bitmap: Bitmap = mock()
+        val conf = Bitmap.Config.ARGB_8888
+        val bitmap: Bitmap = any()
+
         presenter.getImageFromImageFileLocation(imageLocation)
 
-        whenever(interactor.uriToBitmap()).thenReturn(bitmap)
-        verify(view).displayFocusedImage()
+        whenever(interactor.uriToBitmap(imageLocation)).thenReturn(bitmap)
+        verify(view).displayFocusedImage(bitmap)
 
 
 

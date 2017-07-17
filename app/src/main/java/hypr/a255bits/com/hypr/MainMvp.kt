@@ -1,5 +1,6 @@
 package hypr.a255bits.com.hypr
 
+import android.graphics.Bitmap
 import android.net.Uri
 
 /**
@@ -8,7 +9,7 @@ import android.net.Uri
 interface MainMvp {
     interface view{
         fun displayGallery()
-        fun displayFocusedImage()
+        fun displayFocusedImage(imageFromGallery: Bitmap)
 
     }
     interface presenter{
@@ -18,7 +19,7 @@ interface MainMvp {
     }
 
     interface interactor {
-        fun  uriToBitmap(): Any
+        fun  uriToBitmap(imageLocation: Uri): Any
 
     }
 

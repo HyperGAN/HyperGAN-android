@@ -1,6 +1,8 @@
 package hypr.a255bits.com.hypr
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.net.Uri
 
 /**
  * Created by ted on 7/17/17.
@@ -12,4 +14,8 @@ class MainPresenter(val applicationContext: Context, val view: MainMvp.view, val
         view.displayGallery()
     }
 
+    override fun getImageFromImageFileLocation(imageLocation: Uri) {
+        val imageFromGallery: Bitmap = interactor.uriToBitmap(imageLocation)
+        view.displayFocusedImage(imageFromGallery)
+    }
 }
