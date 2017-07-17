@@ -6,7 +6,7 @@ import android.content.Context
  * Created by ted on 7/17/17.
  */
 
-class MainPresenter(val applicationContext: Context, val view: MainMvp.view) : MainMvp.presenter{
+class MainPresenter(val applicationContext: Context, val view: MainMvp.view, val interactor: MainInteractor) : MainMvp.presenter{
 
     override fun displayGallery() {
         view.displayGallery()
