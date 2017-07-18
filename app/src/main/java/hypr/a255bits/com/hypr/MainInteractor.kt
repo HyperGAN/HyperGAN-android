@@ -28,19 +28,6 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
         return croppedFaces
     }
 
-    private fun getListOfFaces(faceLocations: SparseArray<Face>?, imageWithFaces: Bitmap): MutableList<Bitmap> {
-        val croppedFaces = mutableListOf<Bitmap>()
-        val numOfFaces: Int = faceLocations?.size()!!
-        repeat(numOfFaces) { index ->
-            println("cropping")
-            val faceLocation = faceLocations[index]
-            val face = cropFaceOutOfBitmap(faceLocation, imageWithFaces)
-            croppedFaces.add(face)
-        }
-        return croppedFaces
-    }
-
-
     private fun getFaceLocations(imageWithFaces: Bitmap, context: Context): SparseArray<Face>? {
         var locationOfFaces = SparseArray<Face>()
 
@@ -51,6 +38,17 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
             context.toast(context.resources.getString(R.string.failed_face_detection))
         }
         return locationOfFaces
+    }
+
+    private fun getListOfFaces(faceLocations: SparseArray<Face>?, imageWithFaces: Bitmap): MutableList<Bitmap> {
+        val croppedFaces = mutableListOf<Bitmap>()
+        val numOfFaces: Int = faceLocations?.size()!!
+        repeat(numOfFaces) { index ->
+            val faceLocation = faceLocations[index]
+            val face = cropFaceOutOfBitmap(faceLocation, imageWithFaces)
+            croppedFaces.add(face)
+        }
+        return croppedFaces
     }
 
     private fun cropFaceOutOfBitmap(face: Face, imageWithFaces: Bitmap): Bitmap {
