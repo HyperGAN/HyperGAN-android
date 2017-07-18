@@ -9,6 +9,9 @@ import android.net.Uri
  */
 
 class MainPresenter(val applicationContext: Context, val view: MainMvp.view, val interactor: MainInteractor) : MainMvp.presenter{
+    override fun findFacesInImage(imageWithFaces: Bitmap, context: Context) {
+        interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)
+    }
 
     override fun displayGallery() {
         view.displayGallery()

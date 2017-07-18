@@ -42,5 +42,6 @@ class MainActivity : AppCompatActivity(), MainMvp.view {
 
     override fun displayFocusedImage(imageFromGallery: Bitmap) {
         focusedImage.setImageBitmap(imageFromGallery)
+        presenter.findFacesInImage(imageFromGallery, applicationContext)
     }
 }
