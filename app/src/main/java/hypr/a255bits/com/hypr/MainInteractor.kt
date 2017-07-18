@@ -49,6 +49,12 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     }
 
     private fun cropFaceOutOfBitmap(landmark: Landmark?, imageWithFaces: Bitmap) {
+        val x = landmark?.position?.x!!.toInt()
+        val y = landmark?.position?.y!!.toInt()
+
+        val resizedbitmap1 = Bitmap.createBitmap(imageWithFaces, x, y, 20, 20)
+        println("search")
+
 
     }
 
