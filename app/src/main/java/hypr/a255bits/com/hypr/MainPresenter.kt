@@ -4,10 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 
-/**
- * Created by ted on 7/17/17.
- */
-
 class MainPresenter(val applicationContext: Context, val view: MainMvp.view, val interactor: MainInteractor) : MainMvp.presenter{
 
     override fun displayGallery() {
