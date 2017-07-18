@@ -8,54 +8,58 @@ import android.util.SparseArray
 import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.face.Face
 import com.google.android.gms.vision.face.FaceDetector
-import com.google.android.gms.vision.face.Landmark
+import org.jetbrains.anko.toast
 
 
 /**
  * Created by ted on 7/17/17.
  */
 class MainInteractor(val context: Context) : MainMvp.interactor {
-    override fun getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context) {
-        val faceLocations: SparseArray<Face>? = getFaceLocationsInImage(imageWithFaces, context)
-
-        (0..faceLocations!!.size() - 1)
-                .map { faceLocations.valueAt(it) }
-                .forEach {
-                    for (landmark in it.landmarks) {
-                        val face = cropFaceOutOfBitmap(landmark, imageWithFaces)
-                    }
-                }
-
-    }
-
-
-    private fun getFaceLocationsInImage(imageWithFaces: Bitmap, context: Context): SparseArray<Face>? {
-        val detector = FaceDetector.Builder(context)
+    val detector: FaceDetector by lazy {
+        FaceDetector.Builder(context)
                 .setTrackingEnabled(false)
                 .setLandmarkType(FaceDetector.ALL_LANDMARKS)
                 .build()
-
-
-        var faces = SparseArray<Face>()
-
-        if (detector.isOperational) {
-            println("face detection operational")
-
-            val frame = Frame.Builder().setBitmap(imageWithFaces).build()
-            faces = detector.detect(frame)
-        }
-        detector.release()
-        return faces
     }
 
-    private fun cropFaceOutOfBitmap(landmark: Landmark?, imageWithFaces: Bitmap) {
-        val x = landmark?.position?.x!!.toInt()
-        val y = landmark?.position?.y!!.toInt()
+    override fun getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context): MutableList<Bitmap> {
+        val faceLocations: SparseArray<Face>? = getFaceLocations(imageWithFaces, context)
+        val croppedFaces = getListOfFaces(faceLocations, imageWithFaces)
+        return croppedFaces
+    }
 
-        val resizedbitmap1 = Bitmap.createBitmap(imageWithFaces, x, y, 20, 20)
-        println("search")
+    private fun getListOfFaces(faceLocations: SparseArray<Face>?, imageWithFaces: Bitmap): MutableList<Bitmap> {
+        val croppedFaces = mutableListOf<Bitmap>()
+        val numOfFaces: Int = faceLocations?.size()!!
+        repeat(numOfFaces) { index ->
+            println("cropping")
+            val faceLocation = faceLocations[index]
+            val face = cropFaceOutOfBitmap(faceLocation, imageWithFaces)
+            croppedFaces.add(face)
+        }
+        return croppedFaces
+    }
 
 
+    private fun getFaceLocations(imageWithFaces: Bitmap, context: Context): SparseArray<Face>? {
+        var locationOfFaces = SparseArray<Face>()
+
+        if (detector.isOperational) {
+            val frame = Frame.Builder().setBitmap(imageWithFaces).build()
+            locationOfFaces = detector.detect(frame)
+        } else {
+            context.toast(context.resources.getString(R.string.failed_face_detection))
+        }
+        return locationOfFaces
+    }
+
+    private fun cropFaceOutOfBitmap(face: Face, imageWithFaces: Bitmap): Bitmap {
+        val centerOfFace = face.position
+        val x = centerOfFace.x.toInt()
+        val y = centerOfFace.y.toInt()
+
+        val croppedFace = Bitmap.createBitmap(imageWithFaces, x, y, face.width.toInt(), face.height.toInt())
+        return croppedFace
     }
 
     override fun uriToBitmap(imageLocation: Uri): Bitmap {

@@ -16,7 +16,7 @@ class FaceDetection{
     val view: MainMvp.view = mock()
     val interactor: MainInteractor = mock()
 
-    val presenter: MainPresenter = MainPresenter(context, view, interactor)
+    val presenter: MainPresenter = MainPresenter(view, interactor, applicationContext)
 
     val testBitmap: Bitmap = any()
 

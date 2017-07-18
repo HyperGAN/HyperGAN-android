@@ -21,8 +21,8 @@ interface MainMvp {
     }
 
     interface interactor {
-        fun  uriToBitmap(imageLocation: Uri): Any
-        fun  getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context)
+        fun  uriToBitmap(imageLocation: Uri): Bitmap
+        fun  getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context): MutableList<Bitmap>
 
     }
 
