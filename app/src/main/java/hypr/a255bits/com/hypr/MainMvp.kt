@@ -8,6 +8,7 @@ interface MainMvp {
     interface view{
         fun displayGallery()
         fun displayFocusedImage(imageFromGallery: Bitmap)
+        fun refreshLayout()
 
     }
     interface presenter{
@@ -15,6 +16,7 @@ interface MainMvp {
         fun displayGallery()
         fun  getImageFromImageFileLocation(imageLocation: Uri)
         fun findFacesInImage(imageWithFaces: Bitmap, context: Context)
+        fun  saveImageToInternalStorage(focusedImageBitmap: Bitmap?)
     }
 
     interface interactor {
