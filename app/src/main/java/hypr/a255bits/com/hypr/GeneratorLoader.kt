@@ -1,14 +1,15 @@
 package hypr.a255bits.com.hypr
-import org.tensorflow.contrib.android.TensorflowInferenceInterface
+import android.content.res.AssetManager
+import org.tensorflow.contrib.android.TensorFlowInferenceInterface
 
 class Generator {}
 
 class GeneratorLoader {
-    fun load(assetPath:String):Generator {
+    fun load(assetPath:String, assetManager:AssetManager):Generator {
         print("Loading" + assetPath)
-        //model : String  = ...
-        //manager:AssetManager=...
-        //inference:TensorflowInferenceInterface = TensorflowInferenceInterface(manager, string)
+        val model:String = "model.pbgraph"
+        val inference = TensorFlowInferenceInterface(assetManager, model)
+        //TODO store
         return Generator()
     }
 

@@ -23,7 +23,7 @@ android {
     }
     sourceSets {
         main {
-            jniLibs.srcDirs += ['../libs']
+            jniLibs.srcDirs += ['libs']
             java.srcDirs = ['src/main/java']
             resources.srcDirs = ['src/main/java']
             aidl.srcDirs = ['src/main/java']
@@ -54,3 +54,4 @@ dependencies {
 
 
 }
+
