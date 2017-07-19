@@ -45,8 +45,10 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
         val numOfFaces: Int = faceLocations?.size()!!
         repeat(numOfFaces) { index ->
             val faceLocation = faceLocations[index]
-            val face = cropFaceOutOfBitmap(faceLocation, imageWithFaces)
-            croppedFaces.add(face)
+            if (faceLocation != null) {
+                val face = cropFaceOutOfBitmap(faceLocation, imageWithFaces)
+                croppedFaces.add(face)
+            }
         }
         return croppedFaces
     }
