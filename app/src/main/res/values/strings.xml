@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">hypr</string>
     <string name="choose_image">Choose Image</string>
+    <string name="failed_face_detection">Face detection not working</string>
 </resources>

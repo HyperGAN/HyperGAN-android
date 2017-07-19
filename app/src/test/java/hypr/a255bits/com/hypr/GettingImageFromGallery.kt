@@ -20,7 +20,7 @@ class GettingImageFromGallery{
     val view: MainMvp.view = mock()
     val interactor: MainInteractor = mock()
 
-    val presenter: MainPresenter = MainPresenter(context, view, interactor)
+    val presenter: MainPresenter = MainPresenter(view, interactor, applicationContext)
 
     @Test
     fun clickingButtonOpensGallery(){

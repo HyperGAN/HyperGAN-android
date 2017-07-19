@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity(), MainMvp.view {
 
     val interactor by lazy { MainInteractor(applicationContext) }
-    val presenter by lazy { MainPresenter(applicationContext, this, interactor) }
+    val presenter by lazy { MainPresenter(this, interactor, applicationContext) }
     val galleryFileLocation: Uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
     private val RESULT_GET_IMAGE: Int = 1
 
@@ -42,5 +42,6 @@ class MainActivity : AppCompatActivity(), MainMvp.view {
 
     override fun displayFocusedImage(imageFromGallery: Bitmap) {
         focusedImage.setImageBitmap(imageFromGallery)
+        println("going to crop")
     }
 }
