@@ -33,10 +33,10 @@ class MainActivity : AppCompatActivity(), MainMvp.view {
         startActivityForResult(intent, RESULT_GET_IMAGE)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
         if (requestCode == RESULT_GET_IMAGE && resultCode == Activity.RESULT_OK) {
-            data?.data?.let { presenter.getImageFromImageFileLocation(it) }
+            intent?.data?.let { presenter.getImageFromImageFileLocation(it) }
         }
     }
 

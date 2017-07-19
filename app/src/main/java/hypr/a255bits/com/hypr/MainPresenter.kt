@@ -4,10 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 
-/**
- * Created by ted on 7/17/17.
- */
-
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter{
     override fun findFacesInImage(imageWithFaces: Bitmap, context: Context) {
         val croppedFaces: MutableList<Bitmap> = interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)

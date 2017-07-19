@@ -10,10 +10,6 @@ import com.google.android.gms.vision.face.Face
 import com.google.android.gms.vision.face.FaceDetector
 import org.jetbrains.anko.toast
 
-
-/**
- * Created by ted on 7/17/17.
- */
 class MainInteractor(val context: Context) : MainMvp.interactor {
     val detector: FaceDetector by lazy {
         FaceDetector.Builder(context)
@@ -30,7 +26,6 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
 
     private fun getFaceLocations(imageWithFaces: Bitmap, context: Context): SparseArray<Face>? {
         var locationOfFaces = SparseArray<Face>()
-
         if (detector.isOperational) {
             val frame = Frame.Builder().setBitmap(imageWithFaces).build()
             locationOfFaces = detector.detect(frame)
