@@ -21,6 +21,18 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        main {
+            jniLibs.srcDirs += ['../libs']
+            java.srcDirs = ['src/main/java']
+            resources.srcDirs = ['src/main/java']
+            aidl.srcDirs = ['src/main/java']
+            renderscript.srcDirs = ['src/main/java']
+            res.srcDirs = ['src/main/res']
+            assets.srcDirs = ['assets']
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+        }
+    }
 }
 
 dependencies {
@@ -33,7 +45,7 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'org.jetbrains.anko:anko-common:0.8.3'
     compile 'com.beardedhen:androidbootstrap:2.3.1'
-
+    compile fileTree(dir: 'libs', include: ['*.jar'])
 
     //Testing
     testImplementation 'junit:junit:4.12'

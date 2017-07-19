@@ -1,12 +1,16 @@
 package hypr.a255bits.com.hypr
 
 
+class Generator {}
+
 class GeneratorLoader {
-    fun load() {
-
+    fun load(assetPath:String):Generator {
+        print("Loading" + assetPath)
+        return Generator()
     }
 
-    fun sample(output:Output, config:Config) {
-
+    fun sample(generator:Generator) {
+        print("Sampling " + generator)
     }
+
 }
