@@ -23,15 +23,12 @@ class ImageSaver {
     fun saveImageToInternalStorage(focusedImageBitmap: Bitmap?, context: Context): Boolean {
         val root = Environment.getExternalStorageDirectory().toString()
         val myDir = File(root)
-        myDir.mkdirs()
         val formatter = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss")
         val now = Date()
         val fileName = formatter.format(now)
 
         val fname = "/Image-$fileName.jpg"
         val file = File(myDir, fname)
-        if (file.exists()) file.delete()
-        Log.i("LOAD", root + fname)
         try {
             val out = FileOutputStream(file)
             focusedImageBitmap?.compress(Bitmap.CompressFormat.JPEG, 90, out)
