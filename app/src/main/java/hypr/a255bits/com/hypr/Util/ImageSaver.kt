@@ -35,7 +35,6 @@ class ImageSaver {
         try {
             val out = FileOutputStream(file)
             focusedImageBitmap?.compress(Bitmap.CompressFormat.JPEG, 90, out)
-            out.flush()
             out.close()
         } catch (e: Exception) {
             e.printStackTrace()
