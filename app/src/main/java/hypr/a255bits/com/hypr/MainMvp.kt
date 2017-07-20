@@ -8,7 +8,6 @@ interface MainMvp {
     interface view{
         fun displayGallery()
         fun displayFocusedImage(imageFromGallery: Bitmap)
-        fun refreshLayout()
 
     }
     interface presenter{
