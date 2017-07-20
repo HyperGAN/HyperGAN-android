@@ -20,12 +20,10 @@ import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main2.*
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, MainMvp.view{
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, MainMvp.view {
 
     val interactor by lazy { MainInteractor(applicationContext) }
     val presenter by lazy { MainPresenter(this, interactor, applicationContext) }
-    val galleryFileLocation: Uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-    private val RESULT_GET_IMAGE: Int = 1
     private var modelSubMenu: SubMenu? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,11 +47,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         modelSubMenu = navMenu?.addSubMenu("Models")
     }
 
-    override fun startModelFragment(modelUrl: String?) {
-        val fragment: Fragment = ModelFragment.newInstance(modelUrl, "")
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.container, fragment)
-                .commit()
+    override fun startModelFragment(modelUrl: String) {
+            val fragment: Fragment = ModelFragment.newInstance(modelUrl, "")
+            supportFragmentManager.beginTransaction()
+                    .replace(R.id.container, fragment)
+                    .disallowAddToBackStack()
+                    .commit()
 
     }
 
@@ -83,26 +82,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    fun chooseImageClick(view: View) {
-        presenter.displayGallery()
-
-    }
 
 
-    override fun displayGallery() {
-        val intent = Intent(Intent.ACTION_PICK, galleryFileLocation)
-        startActivityForResult(intent, RESULT_GET_IMAGE)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        super.onActivityResult(requestCode, resultCode, intent)
-        if (requestCode == RESULT_GET_IMAGE && resultCode == Activity.RESULT_OK) {
-            intent?.data?.let { presenter.getImageFromImageFileLocation(it) }
-        }
-    }
-
-    override fun displayFocusedImage(imageFromGallery: Bitmap) {
-        focusedImage.setImageBitmap(imageFromGallery)
-        println("going to crop")
-    }
 }
