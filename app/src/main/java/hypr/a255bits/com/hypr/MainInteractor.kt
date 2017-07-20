@@ -8,7 +8,11 @@ import android.util.SparseArray
 import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.face.Face
 import com.google.android.gms.vision.face.FaceDetector
+import hypr.a255bits.com.hypr.Network.ModelApi
 import org.jetbrains.anko.toast
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MainInteractor(val context: Context) : MainMvp.interactor {
     val detector: FaceDetector by lazy {
@@ -16,6 +20,24 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
                 .setTrackingEnabled(false)
                 .setLandmarkType(FaceDetector.ALL_LANDMARKS)
                 .build()
+    }
+
+    override fun addModelsToNavBar(param: GeneratorListener) {
+        val modelApi = ModelApi()
+        val listOfModels = modelApi.listOfModels()
+        listOfModels?.enqueue(object: Callback<List<Generator>> {
+            override fun onFailure(call: Call<List<Generator>>?, t: Throwable?) {
+                t?.printStackTrace()
+            }
+
+            override fun onResponse(call: Call<List<Generator>>?, response: Response<List<Generator>>?) {
+                val listOfGenerators = response?.body()
+                listOfGenerators?.forEachIndexed { index, generator ->
+                   param.getGenerator(generator, index)
+                }
+            }
+
+        })
     }
 
     override fun getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context): MutableList<Bitmap> {
@@ -56,6 +78,6 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     }
 
     override fun uriToBitmap(imageLocation: Uri): Bitmap {
-        return MediaStore.Images.Media.getBitmap(context.contentResolver, imageLocation);
+        return MediaStore.Images.Media.getBitmap(context.contentResolver, imageLocation)
     }
 }

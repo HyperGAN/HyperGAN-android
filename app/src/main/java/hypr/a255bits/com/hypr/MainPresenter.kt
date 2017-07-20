@@ -5,6 +5,18 @@ import android.graphics.Bitmap
 import android.net.Uri
 
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter{
+    override fun addModelsToNavBar() {
+        interactor.addModelsToNavBar(object: GeneratorListener{
+            override fun getGenerator(generator: Generator, index: Int) {
+                view.modeToNavBar(generator, index)
+            }
+
+        })
+
+
+
+    }
+
     override fun findFacesInImage(imageWithFaces: Bitmap, context: Context) {
         val croppedFaces: MutableList<Bitmap> = interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)
         view.displayFocusedImage(croppedFaces[0])
