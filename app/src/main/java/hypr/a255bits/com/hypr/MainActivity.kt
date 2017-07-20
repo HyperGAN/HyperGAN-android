@@ -96,7 +96,4 @@ class MainActivity : AppCompatActivity(), MainMvp.view {
         println("going to crop")
     }
 
-    override fun refreshLayout() {
-        focusedImageBitmap = null
-    }
 }

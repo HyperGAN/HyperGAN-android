@@ -8,9 +8,6 @@ import hypr.a255bits.com.hypr.Util.ImageSaver
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter{
     override fun saveImageToInternalStorage(focusedImageBitmap: Bitmap?) {
         val isSavedToInternalStorage = ImageSaver().saveImageToInternalStorage(focusedImageBitmap, context)
-        if(isSavedToInternalStorage){
-           view.refreshLayout()
-        }
     }
 
     override fun findFacesInImage(imageWithFaces: Bitmap, context: Context) {
