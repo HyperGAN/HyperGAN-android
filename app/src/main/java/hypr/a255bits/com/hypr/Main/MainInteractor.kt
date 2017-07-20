@@ -1,4 +1,4 @@
-package hypr.a255bits.com.hypr
+package hypr.a255bits.com.hypr.Main
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -8,7 +8,9 @@ import android.util.SparseArray
 import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.face.Face
 import com.google.android.gms.vision.face.FaceDetector
+import hypr.a255bits.com.hypr.Generator
 import hypr.a255bits.com.hypr.Network.ModelApi
+import hypr.a255bits.com.hypr.R
 import org.jetbrains.anko.toast
 import retrofit2.Call
 import retrofit2.Callback
@@ -21,23 +23,37 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
                 .setLandmarkType(FaceDetector.ALL_LANDMARKS)
                 .build()
     }
+    var listOfGenerators: List<Generator>? = null
+
 
     override fun addModelsToNavBar(param: GeneratorListener) {
+        if (listOfGenerators == null) {
+            getGeneratorFromNetwork(param)
+        } else {
+            callListenerForEachGenerator(param, listOfGenerators)
+        }
+    }
+
+    private fun getGeneratorFromNetwork(param: GeneratorListener) {
         val modelApi = ModelApi()
         val listOfModels = modelApi.listOfModels()
-        listOfModels?.enqueue(object: Callback<List<Generator>> {
+        listOfModels?.enqueue(object : Callback<List<Generator>> {
             override fun onFailure(call: Call<List<Generator>>?, t: Throwable?) {
                 t?.printStackTrace()
             }
 
             override fun onResponse(call: Call<List<Generator>>?, response: Response<List<Generator>>?) {
-                val listOfGenerators = response?.body()
-                listOfGenerators?.forEachIndexed { index, generator ->
-                   param.getGenerator(generator, index)
-                }
+                listOfGenerators = response?.body()
+                callListenerForEachGenerator(param, listOfGenerators)
             }
 
         })
+    }
+
+    private fun callListenerForEachGenerator(param: GeneratorListener, listOfGenerators: List<Generator>?) {
+        listOfGenerators?.forEachIndexed { index, generator ->
+            param.getGenerator(generator, index)
+        }
     }
 
     override fun getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context): MutableList<Bitmap> {
