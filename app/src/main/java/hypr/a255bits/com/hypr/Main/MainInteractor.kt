@@ -11,6 +11,9 @@ import com.google.android.gms.vision.face.FaceDetector
 import hypr.a255bits.com.hypr.Generator
 import hypr.a255bits.com.hypr.Network.ModelApi
 import hypr.a255bits.com.hypr.R
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
+import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.toast
 import retrofit2.Call
 import retrofit2.Callback
@@ -32,17 +35,12 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     private fun getGeneratorFromNetwork(param: GeneratorListener) {
         val modelApi = ModelApi()
         val listOfModels = modelApi.listOfModels()
-        listOfModels?.enqueue(object : Callback<List<Generator>> {
-            override fun onFailure(call: Call<List<Generator>>?, t: Throwable?) {
-                t?.printStackTrace()
+        async(UI) {
+            val listOfGenerators = bg {
+                listOfModels?.execute()?.body()
             }
-
-            override fun onResponse(call: Call<List<Generator>>?, response: Response<List<Generator>>?) {
-                listOfGenerators = response?.body()
-                callListenerForEachGenerator(param, listOfGenerators)
-            }
-
-        })
+            callListenerForEachGenerator(param, listOfGenerators.await())
+        }
     }
 
     private fun callListenerForEachGenerator(param: GeneratorListener, listOfGenerators: List<Generator>?) {
@@ -50,10 +48,6 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
             param.getGenerator(generator, index)
         }
     }
-
-
-
-
 
 
 }
