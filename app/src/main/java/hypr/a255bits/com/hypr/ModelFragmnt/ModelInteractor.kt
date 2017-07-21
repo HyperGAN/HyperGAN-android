@@ -23,8 +23,7 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
     @Throws(IOException::class)
     override fun getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context): MutableList<Bitmap> {
         val faceLocations: SparseArray<Face>? = getFaceLocations(imageWithFaces, context)
-        val croppedFaces = getListOfFaces(faceLocations, imageWithFaces)
-        return croppedFaces
+        return getListOfFaces(faceLocations, imageWithFaces)
     }
 
     @Throws(IOException::class)
@@ -57,8 +56,7 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
         val x: Int = getNonNegativeValueOfFaceCoordicate(centerOfFace.x)
         val y: Int = getNonNegativeValueOfFaceCoordicate(centerOfFace.y)
 
-        val croppedFace = Bitmap.createBitmap(imageWithFaces, x, y, face.width.toInt(), face.height.toInt())
-        return croppedFace
+        return Bitmap.createBitmap(imageWithFaces, x, y, face.width.toInt(), face.height.toInt())
     }
 
     private fun getNonNegativeValueOfFaceCoordicate(coordinate: Float): Int {
