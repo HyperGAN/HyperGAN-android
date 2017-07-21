@@ -48,8 +48,8 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
 
     private fun cropFaceOutOfBitmap(face: Face, imageWithFaces: Bitmap): Bitmap {
         val centerOfFace = face.position
-        val x = centerOfFace.x.toInt()
-        val y = centerOfFace.y.toInt()
+        val x : Int = intArrayOf(centerOfFace.x.toInt(), 0).max()!!
+        val y : Int = intArrayOf(centerOfFace.y.toInt(), 0).max()!!
 
         val croppedFace = Bitmap.createBitmap(imageWithFaces, x, y, face.width.toInt(), face.height.toInt())
         return croppedFace
