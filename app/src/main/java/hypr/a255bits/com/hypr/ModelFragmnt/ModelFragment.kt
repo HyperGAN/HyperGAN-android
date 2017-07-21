@@ -13,6 +13,7 @@ import android.view.ViewGroup
 
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.toast
 
 
 class ModelFragment : Fragment(), ModelFragmentMVP.view {
@@ -52,6 +53,10 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         presenter.disconnectFaceDetector()
     }
 
+    override fun showError(errorMesssage: String) {
+        context.toast(errorMesssage)
+    }
+
     override fun displayGallery() {
         val intent = Intent(Intent.ACTION_PICK, galleryFileLocation)
         startActivityForResult(intent, RESULT_GET_IMAGE)
@@ -66,7 +71,6 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     override fun displayFocusedImage(imageFromGallery: Bitmap) {
         focusedImage.setImageBitmap(imageFromGallery)
-        println("going to crop")
     }
 
 

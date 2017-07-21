@@ -8,6 +8,7 @@ interface ModelFragmentMVP{
     interface view{
         fun displayGallery()
         fun displayFocusedImage(imageFromGallery: Bitmap)
+        fun  showError(errorMesssage: String)
     }
     interface presenter{
         fun displayGallery()
