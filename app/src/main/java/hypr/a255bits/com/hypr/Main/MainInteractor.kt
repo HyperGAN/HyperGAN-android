@@ -38,8 +38,9 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
         async(UI) {
             val listOfGenerators = bg {
                 listOfModels?.execute()?.body()
-            }
-            callListenerForEachGenerator(param, listOfGenerators.await())
+            }.await()
+            callListenerForEachGenerator(param, listOfGenerators)
+            this@MainInteractor.listOfGenerators = listOfGenerators
         }
     }
 
