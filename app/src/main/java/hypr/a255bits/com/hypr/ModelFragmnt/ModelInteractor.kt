@@ -1,4 +1,4 @@
-package hypr.a255bits.com.hypr
+package hypr.a255bits.com.hypr.ModelFragmnt
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -8,14 +8,12 @@ import android.util.SparseArray
 import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.face.Face
 import com.google.android.gms.vision.face.FaceDetector
-import org.jetbrains.anko.toast
-import android.content.ContextWrapper
-import java.io.File
-import java.io.FileOutputStream
+
+import hypr.a255bits.com.hypr.R
+import java.io.IOException
 
 
-class MainInteractor(val context: Context) : MainMvp.interactor {
-
+class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
     val detector: FaceDetector by lazy {
         FaceDetector.Builder(context)
                 .setTrackingEnabled(false)
@@ -23,19 +21,20 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
                 .build()
     }
 
+    @Throws(IOException::class)
     override fun getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context): MutableList<Bitmap> {
         val faceLocations: SparseArray<Face>? = getFaceLocations(imageWithFaces, context)
-        val croppedFaces = getListOfFaces(faceLocations, imageWithFaces)
-        return croppedFaces
+        return getListOfFaces(faceLocations, imageWithFaces)
     }
 
+    @Throws(IOException::class)
     private fun getFaceLocations(imageWithFaces: Bitmap, context: Context): SparseArray<Face>? {
         var locationOfFaces = SparseArray<Face>()
         if (detector.isOperational) {
             val frame = Frame.Builder().setBitmap(imageWithFaces).build()
             locationOfFaces = detector.detect(frame)
         } else {
-            context.toast(context.resources.getString(R.string.failed_face_detection))
+            throw IOException(context.resources.getString(R.string.failed_face_detection))
         }
         return locationOfFaces
     }
@@ -44,7 +43,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
         val croppedFaces = mutableListOf<Bitmap>()
         val numOfFaces: Int = faceLocations?.size()!!
         repeat(numOfFaces) { index ->
-            val faceLocation = faceLocations[index]
+            val faceLocation = faceLocations.valueAt(index)
             if (faceLocation != null) {
                 val face = cropFaceOutOfBitmap(faceLocation, imageWithFaces)
                 croppedFaces.add(face)
@@ -55,11 +54,15 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
 
     private fun cropFaceOutOfBitmap(face: Face, imageWithFaces: Bitmap): Bitmap {
         val centerOfFace = face.position
-        val x : Int = intArrayOf(centerOfFace.x.toInt(), 0).max()!!
-        val y : Int = intArrayOf(centerOfFace.y.toInt(), 0).max()!!
+        val x: Int = getNonNegativeValueOfFaceCoordicate(centerOfFace.x)
+        val y: Int = getNonNegativeValueOfFaceCoordicate(centerOfFace.y)
 
-        val croppedFace = Bitmap.createBitmap(imageWithFaces, x, y, face.width.toInt(), face.height.toInt())
-        return croppedFace
+        return Bitmap.createBitmap(imageWithFaces, x, y, face.width.toInt(), face.height.toInt())
+    }
+
+    private fun getNonNegativeValueOfFaceCoordicate(coordinate: Float): Int {
+        return intArrayOf(coordinate.toInt(), 0).max()!!
+
     }
 
     override fun uriToBitmap(imageLocation: Uri): Bitmap {
