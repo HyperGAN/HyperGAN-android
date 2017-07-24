@@ -15,6 +15,7 @@ interface MainMvp {
         fun displayGallery()
         fun  getImageFromImageFileLocation(imageLocation: Uri)
         fun findFacesInImage(imageWithFaces: Bitmap, context: Context)
+        fun  saveImageToInternalStorage(focusedImageBitmap: Bitmap?)
     }
 
     interface interactor {

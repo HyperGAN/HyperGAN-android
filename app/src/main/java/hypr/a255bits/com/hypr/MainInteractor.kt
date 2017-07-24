@@ -9,8 +9,13 @@ import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.face.Face
 import com.google.android.gms.vision.face.FaceDetector
 import org.jetbrains.anko.toast
+import android.content.ContextWrapper
+import java.io.File
+import java.io.FileOutputStream
+
 
 class MainInteractor(val context: Context) : MainMvp.interactor {
+
     val detector: FaceDetector by lazy {
         FaceDetector.Builder(context)
                 .setTrackingEnabled(false)
@@ -40,8 +45,10 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
         val numOfFaces: Int = faceLocations?.size()!!
         repeat(numOfFaces) { index ->
             val faceLocation = faceLocations[index]
-            val face = cropFaceOutOfBitmap(faceLocation, imageWithFaces)
-            croppedFaces.add(face)
+            if (faceLocation != null) {
+                val face = cropFaceOutOfBitmap(faceLocation, imageWithFaces)
+                croppedFaces.add(face)
+            }
         }
         return croppedFaces
     }
@@ -56,6 +63,6 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     }
 
     override fun uriToBitmap(imageLocation: Uri): Bitmap {
-        return MediaStore.Images.Media.getBitmap(context.contentResolver, imageLocation);
+        return MediaStore.Images.Media.getBitmap(context.contentResolver, imageLocation)
     }
 }
