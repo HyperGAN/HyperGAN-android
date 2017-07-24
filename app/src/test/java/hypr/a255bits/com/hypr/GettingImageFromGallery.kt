@@ -7,6 +7,9 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
+import hypr.a255bits.com.hypr.Main.MainInteractor
+import hypr.a255bits.com.hypr.Main.MainMvp
+import hypr.a255bits.com.hypr.Main.MainPresenter
 import org.junit.Test
 
 

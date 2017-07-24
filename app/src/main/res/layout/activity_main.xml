@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="hypr.a255bits.com.hypr.MainActivity">
+    >
 
     <com.beardedhen.androidbootstrap.BootstrapButton
         app:bootstrapBrand="primary"
@@ -16,9 +16,8 @@
         android:layout_marginEnd="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:onClick="chooseImageClick"
         android:layout_marginStart="0dp"
-        android:id="@+id/bootstrapButton" />
+        android:id="@+id/chooseImageFromGalleryButton" />
 
     <ImageView
         android:id="@+id/focusedImage"
@@ -28,7 +27,7 @@
         android:layout_marginEnd="0dp"
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/bootstrapButton"
+        app:layout_constraintBottom_toTopOf="@+id/chooseImageFromGalleryButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
