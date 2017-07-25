@@ -3,6 +3,8 @@ package hypr.a255bits.com.hypr.Main
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -15,10 +17,9 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
+import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator
-import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment
 import hypr.a255bits.com.hypr.R
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main2.*
 import kotlinx.android.synthetic.main.app_bar_main2.*
 
@@ -35,7 +36,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setupDrawer(toolbar)
 
         presenter.addModelsToNavBar()
-        startModelFragment("")
     }
 
     fun setupDrawer(toolbar: Toolbar) {
@@ -49,11 +49,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun startModelFragment(modelUrl: String) {
-            val fragment: Fragment = ModelFragment.newInstance(modelUrl, "")
-            supportFragmentManager.beginTransaction()
-                    .replace(R.id.container, fragment)
-                    .disallowAddToBackStack()
-                    .commit()
+        val intent = Intent(this, CameraActivity::class.java)
+        intent.putExtra("modelUrl", modelUrl)
+        startActivity(intent)
+//        val fragment: Fragment = CameraFragment.newInstance(modelUrl, "")
+//        supportFragmentManager.beginTransaction()
+//                .replace(R.id.container, fragment)
+//                .commit()
 
     }
 
@@ -72,15 +74,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         if (item.itemId in 0..100) {
             presenter.startModel(item.itemId)
+
         }
         drawer.closeDrawer(GravityCompat.START)
         return true
     }
-
 
 
 }
