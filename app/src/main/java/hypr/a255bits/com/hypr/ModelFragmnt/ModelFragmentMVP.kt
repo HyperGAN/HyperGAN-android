@@ -16,6 +16,7 @@ interface ModelFragmentMVP{
         fun findFacesInImage(imageWithFaces: Bitmap, context: Context)
         fun disconnectFaceDetector()
         fun saveImageDisplayedToPhone()
+        fun transformImage(image: Bitmap?)
     }
     interface interactor{
         fun  uriToBitmap(imageLocation: Uri): Bitmap

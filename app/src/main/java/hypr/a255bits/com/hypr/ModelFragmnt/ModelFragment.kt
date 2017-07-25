@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -17,8 +18,8 @@ import org.jetbrains.anko.toast
 class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     // TODO: Rename and change types of parameters
-    private var mParam1: String? = null
-    private var mParam2: String? = null
+    private var modelUrl: String? = null
+    private var image: ByteArray? = null
     val galleryFileLocation: Uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
     private val RESULT_GET_IMAGE: Int = 1
     val interactor by lazy { ModelInteractor(context) }
@@ -27,8 +28,8 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            mParam1 = arguments.getString(MODEL_URL)
-            mParam2 = arguments.getString(ARG_PARAM2)
+            modelUrl = arguments.getString(MODEL_URL)
+            image = arguments.getByteArray(ARG_PARAM2)
         }
     }
 
@@ -41,7 +42,10 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        chooseImageFromGalleryButton.setOnClickListener { presenter.displayGallery() }
+//        chooseImageFromGalleryButton.setOnClickListener { presenter.displayGallery() }
+
+        val imageBitmap = image?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
+        presenter.transformImage(imageBitmap)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -90,11 +94,11 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         private val MODEL_URL = "param1"
         private val ARG_PARAM2 = "param2"
 
-        fun newInstance(param1: String, param2: String): ModelFragment {
+        fun newInstance(modelUrl: String, image: ByteArray?): ModelFragment {
             val fragment = ModelFragment()
             val args = Bundle()
-            args.putString(MODEL_URL, param1)
-            args.putString(ARG_PARAM2, param2)
+            args.putString(MODEL_URL, modelUrl)
+            args.putByteArray(ARG_PARAM2, image)
             fragment.arguments = args
             return fragment
         }
