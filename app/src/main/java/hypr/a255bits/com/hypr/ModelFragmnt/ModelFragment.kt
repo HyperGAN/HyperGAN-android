@@ -52,6 +52,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.saveImage -> presenter.saveImageDisplayedToPhone()
+            R.id.shareIamge -> presenter.shareImageToOtherApps()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -85,6 +86,9 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         focusedImage.setImageBitmap(imageFromGallery)
     }
 
+    override fun shareImageToOtherApps(shareIntent: Intent) {
+       startActivity(Intent.createChooser(shareIntent, getString(R.string.share_image)))
+    }
 
     companion object {
         private val MODEL_URL = "param1"
