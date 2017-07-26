@@ -33,6 +33,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     }
     override fun transformImage(image: Bitmap?){
         if(image != null){
+            this.imageFromGallery = image
             view.displayFocusedImage(image)
             findFacesInImage(image, context)
         }
