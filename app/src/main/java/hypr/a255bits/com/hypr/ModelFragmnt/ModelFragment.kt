@@ -20,8 +20,6 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     // TODO: Rename and change types of parameters
     private var modelUrl: String? = null
     private var image: ByteArray? = null
-    val galleryFileLocation: Uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-    private val RESULT_GET_IMAGE: Int = 1
     val interactor by lazy { ModelInteractor(context) }
     val presenter by lazy { ModelFragmentPresenter(this, interactor, context) }
 
@@ -42,8 +40,6 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        chooseImageFromGalleryButton.setOnClickListener { presenter.displayGallery() }
-
         val imageBitmap = image?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
         presenter.transformImage(imageBitmap)
     }
@@ -73,22 +69,9 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         context.toast(errorMesssage)
     }
 
-    override fun displayGallery() {
-        val intent = Intent(Intent.ACTION_PICK, galleryFileLocation)
-        startActivityForResult(intent, RESULT_GET_IMAGE)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        super.onActivityResult(requestCode, resultCode, intent)
-        if (requestCode == RESULT_GET_IMAGE && resultCode == Activity.RESULT_OK) {
-            intent?.data?.let { presenter.getImageFromImageFileLocation(it) }
-        }
-    }
-
     override fun displayFocusedImage(imageFromGallery: Bitmap) {
         focusedImage.setImageBitmap(imageFromGallery)
     }
-
 
     companion object {
         private val MODEL_URL = "param1"

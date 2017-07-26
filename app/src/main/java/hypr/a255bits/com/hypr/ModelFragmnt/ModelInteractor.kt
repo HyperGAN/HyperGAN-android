@@ -65,7 +65,4 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
 
     }
 
-    override fun uriToBitmap(imageLocation: Uri): Bitmap {
-        return MediaStore.Images.Media.getBitmap(context.contentResolver, imageLocation)
-    }
 }

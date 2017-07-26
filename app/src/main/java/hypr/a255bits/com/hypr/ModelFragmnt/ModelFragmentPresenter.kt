@@ -27,10 +27,6 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         }
     }
 
-    override fun displayGallery() {
-        view.displayGallery()
-    }
-
     override fun saveImageDisplayedToPhone() {
         val saver = ImageSaver()
         saver.saveImageToInternalStorage(imageFromGallery, context)
@@ -40,11 +36,5 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
             view.displayFocusedImage(image)
             findFacesInImage(image, context)
         }
-    }
-    override fun getImageFromImageFileLocation(imageLocation: Uri) {
-        val imageFromGallery: Bitmap = interactor.uriToBitmap(imageLocation)
-        this.imageFromGallery = imageFromGallery
-        view.displayFocusedImage(imageFromGallery)
-        findFacesInImage(imageFromGallery, context)
     }
 }
