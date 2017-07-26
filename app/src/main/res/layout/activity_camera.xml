@@ -7,6 +7,18 @@
     android:background="#000000"
     tools:context="hypr.a255bits.com.hypr.CameraFragment.CameraActivity">
 
+
+    <com.flurgle.camerakit.CameraView
+        android:id="@+id/cameraView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="0dp"
@@ -22,17 +34,6 @@
         app:popupTheme="@style/AppTheme.PopupOverlay"
         app:subtitleTextColor="#ffffff"
         app:titleTextColor="#ffffff" />
-
-    <com.flurgle.camerakit.CameraView
-        android:id="@+id/cameraView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/takePicture"
@@ -50,9 +51,9 @@
         android:id="@+id/imageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="8dp"
         android:layout_marginRight="8dp"
         android:background="@null"
+        android:padding="8dp"
         android:src="@drawable/ic_photo_library_white_30px"
         app:layout_constraintBottom_toBottomOf="@+id/takePicture"
         app:layout_constraintRight_toRightOf="parent"
