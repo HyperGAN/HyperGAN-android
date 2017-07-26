@@ -1,6 +1,13 @@
 package hypr.a255bits.com.hypr
 
+import com.google.gson.annotations.SerializedName
+
 class Generator {
+    var name: String = ""
+    @SerializedName("file_size_in_bytes")
+    var fileSize: Long = 0
+    @SerializedName("model_url")
+    var modelUrl: String = ""
     var viewer: Viewer = Viewer()
     var input: Input = Input()
     var output: Output = Output()
