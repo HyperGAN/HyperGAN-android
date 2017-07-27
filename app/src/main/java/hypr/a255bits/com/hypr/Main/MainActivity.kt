@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun startModelFragment(modelUrl: String) {
             val fragment: ModelFragment = ModelFragment.newInstance(modelUrl, "")
-            //fragment.displayFocusedImage(generatorLoader.sample())
+            fragment.displayFocusedImage(generatorLoader.sample())
             supportFragmentManager.beginTransaction()
                     .replace(R.id.container, fragment)
                     .disallowAddToBackStack()

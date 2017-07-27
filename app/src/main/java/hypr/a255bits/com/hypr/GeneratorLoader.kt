@@ -19,11 +19,8 @@ class GeneratorLoader() {
         System.loadLibrary("tensorflow_inference")
 
         var pbfile:String = "file:///android_asset/generators/optimized_weight_conv.pb"
-        try {
-            this.inference = TensorFlowInferenceInterface(assets, pbfile)
-        } catch(e:Exception) {
-            Log.d("generator", "ARGH" + e.message)
-        }
+        this.inference = TensorFlowInferenceInterface(assets, pbfile)
+
 
     }
     fun sample():Bitmap {
