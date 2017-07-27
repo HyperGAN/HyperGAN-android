@@ -14,6 +14,10 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         interactor.detector.release()
     }
 
+    fun shareImageToOtherApps(){
+       val shareIntent = interactor.getIntentForSharingImagesWithOtherApps(imageFromGallery)
+        view.shareImageToOtherApps(shareIntent)
+    }
     override fun findFacesInImage(imageWithFaces: Bitmap, context: Context) {
         try {
             val croppedFaces: MutableList<Bitmap> = interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)

@@ -1,8 +1,10 @@
 package hypr.a255bits.com.hypr.ModelFragmnt
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.SparseArray
 import com.google.android.gms.vision.Frame
@@ -10,6 +12,9 @@ import com.google.android.gms.vision.face.Face
 import com.google.android.gms.vision.face.FaceDetector
 
 import hypr.a255bits.com.hypr.R
+import hypr.a255bits.com.hypr.Util.BitmapManipulator
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 
 
@@ -19,6 +24,30 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
                 .setTrackingEnabled(false)
                 .setLandmarkType(FaceDetector.ALL_LANDMARKS)
                 .build()
+    }
+
+    override fun getIntentForSharingImagesWithOtherApps(imageFromGallery: Bitmap?): Intent {
+        val imageInBytes = imageFromGallery?.let { BitmapManipulator().compressBitmapToByteArray(Bitmap.CompressFormat.PNG, it) }
+
+        val tempStorageFileLocation = Environment.getExternalStorageDirectory().absolutePath + File.separator + "temporary_file.jpg"
+        writeByteArrayToFile(tempStorageFileLocation, imageInBytes)
+
+        return createImageShareIntent(Uri.parse("file:///sdcard/temporary_file.jpg"))
+    }
+
+
+    private fun writeByteArrayToFile(fileLocation: String, imageInBytes: ByteArray?){
+        val file = File(fileLocation)
+        file.createNewFile()
+        val fileOutput = FileOutputStream(file)
+        fileOutput.write(imageInBytes)
+    }
+
+    private fun createImageShareIntent(parse: Uri?): Intent {
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.type = "image/jpeg"
+        shareIntent.putExtra(Intent.EXTRA_STREAM, parse)
+        return shareIntent
     }
 
     @Throws(IOException::class)
