@@ -4,6 +4,10 @@
     <item
         android:id="@+id/saveImage"
         android:title="Save"
-        app:showAsAction="ifRoom"/>
+        />
+    <item
+        android:id="@+id/shareIamge"
+        android:title="Share"
+        />
 
 </menu>
