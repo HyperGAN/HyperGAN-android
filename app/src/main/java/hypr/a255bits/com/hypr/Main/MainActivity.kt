@@ -1,26 +1,21 @@
 package hypr.a255bits.com.hypr.Main
 
-import android.app.Activity
-import android.content.Intent
-import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
-import android.view.View
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
+import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator
 import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment
 import hypr.a255bits.com.hypr.R
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main2.*
 import kotlinx.android.synthetic.main.app_bar_main2.*
+import org.jetbrains.anko.intentFor
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, MainMvp.view {
 
@@ -33,9 +28,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.activity_main2)
         setSupportActionBar(toolbar)
         setupDrawer(toolbar)
-
         presenter.addModelsToNavBar()
-        startModelFragment("")
+
+    }
+
+    override fun startModelOnImage() {
+        if (intent.hasExtra("indexInJson")) {
+            val indexInJson = intent.extras.getInt("indexInJson")
+            val image = intent.extras.getByteArray("image")
+            presenter.startModel(indexInJson, image)
+        }
     }
 
     fun setupDrawer(toolbar: Toolbar) {
@@ -48,12 +50,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         modelSubMenu = navMenu?.addSubMenu("Models")
     }
 
-    override fun startModelFragment(modelUrl: String) {
-            val fragment: Fragment = ModelFragment.newInstance(modelUrl, "")
-            supportFragmentManager.beginTransaction()
-                    .replace(R.id.container, fragment)
-                    .disallowAddToBackStack()
-                    .commit()
+    override fun startModelFragment(indexInJson: Int) {
+        startActivity(intentFor<CameraActivity>("indexInJson" to indexInJson))
+    }
+
+    override fun applyModelToImage(modelUrl: String, image: ByteArray?) {
+        val fragment: Fragment = ModelFragment.newInstance(modelUrl, image)
+        supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
 
     }
 
@@ -72,15 +75,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         if (item.itemId in 0..100) {
             presenter.startModel(item.itemId)
+
         }
         drawer.closeDrawer(GravityCompat.START)
         return true
     }
-
 
 
 }
