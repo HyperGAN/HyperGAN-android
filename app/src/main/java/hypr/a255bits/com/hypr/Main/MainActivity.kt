@@ -16,6 +16,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
 import hypr.a255bits.com.hypr.Generator
+import hypr.a255bits.com.hypr.GeneratorLoader
 import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.activity_main.*
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     val interactor by lazy { MainInteractor(applicationContext) }
     val presenter by lazy { MainPresenter(this, interactor, applicationContext) }
     private var modelSubMenu: SubMenu? = null
+    private var generatorLoader: GeneratorLoader = GeneratorLoader()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +37,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setupDrawer(toolbar)
 
         presenter.addModelsToNavBar()
+        generatorLoader.load(assets)
         startModelFragment("")
     }
 
@@ -49,7 +52,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun startModelFragment(modelUrl: String) {
-            val fragment: Fragment = ModelFragment.newInstance(modelUrl, "")
+            val fragment: ModelFragment = ModelFragment.newInstance(modelUrl, "")
+            //fragment.displayFocusedImage(generatorLoader.sample())
             supportFragmentManager.beginTransaction()
                     .replace(R.id.container, fragment)
                     .disallowAddToBackStack()
