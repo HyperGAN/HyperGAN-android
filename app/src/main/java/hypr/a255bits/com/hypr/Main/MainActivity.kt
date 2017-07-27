@@ -1,6 +1,7 @@
 package hypr.a255bits.com.hypr.Main
 
 import android.os.Bundle
+import android.provider.MediaStore
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
@@ -9,6 +10,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.SubMenu
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import hypr.a255bits.com.hypr.Generator
 import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment
@@ -19,6 +21,7 @@ import kotlinx.android.synthetic.main.app_bar_main2.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.coroutines.experimental.bg
+import org.jetbrains.anko.doAsyncResult
 import java.io.File
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, MainMvp.view {
@@ -35,18 +38,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
         val modelDownloader = ModelDownloader(FirebaseStorage.getInstance().reference)
-        async(UI) {
-            val file = File.createTempFile("optimized_weight_conv", "pb")
-            val fileData = bg {
-                modelDownloader.getFile(file)
-            }.await()
+        val file = File.createTempFile("optimized_weight_conv", "pb")
+
+        modelDownloader.getFile(file, "optimized_weight_conv.pb").addOnCompleteListener { task ->
+            println("isSuccessful: ${task.isSuccessful}")
             val listOfLines = file.readLines()
             listOfLines.forEach { line ->
-                println("line: $line" )
+                println("line: $line")
             }
 
         }
-
         presenter.addModelsToNavBar()
         startModelFragment("")
     }
