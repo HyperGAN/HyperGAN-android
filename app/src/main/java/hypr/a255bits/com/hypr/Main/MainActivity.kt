@@ -51,8 +51,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun startModelFragment(indexInJson: Int) {
-        startActivity(intentFor<CameraActivity>
-        ("indexInJson" to indexInJson))
+        startActivity(intentFor<CameraActivity>("indexInJson" to indexInJson))
     }
 
     override fun applyModelToImage(modelUrl: String, image: ByteArray?) {

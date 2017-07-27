@@ -1,11 +1,9 @@
 package hypr.a255bits.com.hypr.ModelFragmnt
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.*
@@ -26,8 +24,8 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            modelUrl = arguments.getString(MODEL_URL)
-            image = arguments.getByteArray(ARG_PARAM2)
+            modelUrl = arguments.getString(MODEL_URL_PARAM)
+            image = arguments.getByteArray(IMAGE_PARAM)
         }
     }
 
@@ -79,14 +77,14 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     companion object {
-        private val MODEL_URL = "param1"
-        private val ARG_PARAM2 = "param2"
+        private val MODEL_URL_PARAM = "param1"
+        private val IMAGE_PARAM = "param2"
 
         fun newInstance(modelUrl: String, image: ByteArray?): ModelFragment {
             val fragment = ModelFragment()
             val args = Bundle()
-            args.putString(MODEL_URL, modelUrl)
-            args.putByteArray(ARG_PARAM2, image)
+            args.putString(MODEL_URL_PARAM, modelUrl)
+            args.putByteArray(IMAGE_PARAM, image)
             fragment.arguments = args
             return fragment
         }
