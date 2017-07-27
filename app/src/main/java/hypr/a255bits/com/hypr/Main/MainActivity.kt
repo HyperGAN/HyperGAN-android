@@ -52,12 +52,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun startModelFragment(modelUrl: String) {
-            val fragment: ModelFragment = ModelFragment.newInstance(modelUrl, "")
-            fragment.displayFocusedImage(generatorLoader.sample())
+            val fragment: ModelFragment = ModelFragment.newInstance(modelUrl, "", generatorLoader)
             supportFragmentManager.beginTransaction()
                     .replace(R.id.container, fragment)
                     .disallowAddToBackStack()
                     .commit()
+
 
     }
 

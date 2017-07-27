@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.*
+import hypr.a255bits.com.hypr.GeneratorLoader
 
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.activity_main.*
@@ -19,6 +20,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     // TODO: Rename and change types of parameters
     private var mParam1: String? = null
     private var mParam2: String? = null
+    public var generatorLoader: GeneratorLoader? = null
     val galleryFileLocation: Uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
     private val RESULT_GET_IMAGE: Int = 1
     val interactor by lazy { ModelInteractor(context) }
@@ -82,7 +84,9 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     override fun displayFocusedImage(imageFromGallery: Bitmap) {
-        focusedImage.setImageBitmap(imageFromGallery)
+
+        focusedImage.setImageBitmap(generatorLoader!!.sample())
+
     }
 
 
@@ -90,12 +94,13 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         private val MODEL_URL = "param1"
         private val ARG_PARAM2 = "param2"
 
-        fun newInstance(param1: String, param2: String): ModelFragment {
+        fun newInstance(param1: String, param2: String, generatorLoader: GeneratorLoader): ModelFragment {
             val fragment = ModelFragment()
             val args = Bundle()
             args.putString(MODEL_URL, param1)
             args.putString(ARG_PARAM2, param2)
             fragment.arguments = args
+            fragment.generatorLoader = generatorLoader
             return fragment
         }
     }

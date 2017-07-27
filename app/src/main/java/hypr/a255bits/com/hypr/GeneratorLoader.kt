@@ -25,19 +25,22 @@ class GeneratorLoader() {
     }
     fun sample():Bitmap {
         print("Sampling ")
-        val bitmap = this.bitmap
 
-        this.inference!!.run(arrayOf<String>("Tanh_2"))
+        this.inference!!.run(arrayOf<String>("Tanh_1"))
 
-        val intValues = intArrayOf(width * height)
+        val intValues = IntArray(width * height)
 
         //inference.readNodeFloat(OUTPUT_NODE, resu)
 
         //inference.run(..)
-        this.inference!!.fetch("Tanh_2", this.raw)
+        this.inference!!.fetch("Tanh_1", this.raw)
 
         for (i in 0..intValues.size - 1) {
-            intValues[i] = 0xFF000000.toInt() or ((raw[i * 3] * 255) as Int shl 16) or ((raw[i * 3 + 1] * 255) as Int shl 8) or (raw[i * 3 + 2] * 255) as Int
+
+            val raw_one:Int = (((raw[i * 3]+1)/2.0 * 255).toInt()) shl 16
+            val raw_two:Int = (((raw[i * 3 + 1]+1)/2.0 * 255).toInt()) shl 8
+            val raw_three:Int = ((raw[i * 3 + 2]+1)/2.0 * 255).toInt()
+            intValues[i] = 0xFF000000.toInt() or raw_one or raw_two or raw_three
         }
         bitmap!!.setPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
         return bitmap
