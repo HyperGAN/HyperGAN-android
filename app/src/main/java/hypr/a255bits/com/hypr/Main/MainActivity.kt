@@ -1,5 +1,6 @@
 package hypr.a255bits.com.hypr.Main
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.design.widget.NavigationView
@@ -20,8 +21,11 @@ import kotlinx.android.synthetic.main.activity_main2.*
 import kotlinx.android.synthetic.main.app_bar_main2.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.doAsyncResult
+import org.jetbrains.anko.progressDialog
 import java.io.File
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, MainMvp.view {
@@ -29,6 +33,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     val interactor by lazy { MainInteractor(applicationContext) }
     val presenter by lazy { MainPresenter(this, interactor, applicationContext) }
     private var modelSubMenu: SubMenu? = null
+    var progressDownloadingModel: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,17 +42,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setupDrawer(toolbar)
 
 
-        val modelDownloader = ModelDownloader(FirebaseStorage.getInstance().reference)
         val file = File.createTempFile("optimized_weight_conv", "pb")
-
-        modelDownloader.getFile(file, "optimized_weight_conv.pb").addOnCompleteListener { task ->
-            println("isSuccessful: ${task.isSuccessful}")
-            val listOfLines = file.readLines()
-            listOfLines.forEach { line ->
-                println("line: $line")
-            }
-
-        }
+//        modelDownloader.getFile(file, "op").addOnProgressListener { taskSnapshot ->
+//        }
+//
+//        modelDownloader.getFile(file, "optimized_weight_conv.pb").addOnCompleteListener { task ->
+//            println("isSuccessful: ${task.isSuccessful}")
+//            val listOfLines = file.readLines()
+//            listOfLines.forEach { line ->
+//                println("line: $line")
+//            }
+//
+//        }
         presenter.addModelsToNavBar()
         startModelFragment("")
     }
@@ -77,6 +83,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
+    override fun displayModelDownloadProgress() {
+        progressDownloadingModel = progressDialog("Downloading Model") {
+            setMessage("It's downloading..")
+            setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
+            max = 100
+        }
+        progressDownloadingModel?.show()
+
+    }
+
     override fun onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
@@ -94,5 +110,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
+    @Subscribe
+    fun showModelDownloadProgress(progressPercent: Float) {
+        progressDownloadingModel?.progress =  progressPercent.toInt()
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
 }
