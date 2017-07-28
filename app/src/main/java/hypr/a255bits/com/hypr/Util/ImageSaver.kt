@@ -1,19 +1,12 @@
 package hypr.a255bits.com.hypr.Util
 
 import android.content.Context
-import android.content.ContextWrapper
-import android.graphics.Bitmap
-import android.provider.MediaStore
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import android.provider.MediaStore.Images
-import android.content.ContentValues
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Environment
-import android.os.Environment.getExternalStorageDirectory
-import android.util.Log
+import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
