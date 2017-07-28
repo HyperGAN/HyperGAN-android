@@ -23,6 +23,7 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.doAsyncResult
 import org.jetbrains.anko.progressDialog
@@ -43,7 +44,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setupDrawer(toolbar)
 
 
-        val file = File.createTempFile("optimized_weight_conv", "pb")
+//        val file = File.createTempFile("optimized_weight_conv", "pb")
 //        modelDownloader.getFile(file, "op").addOnProgressListener { taskSnapshot ->
 //        }
 //
@@ -110,9 +111,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    @Subscribe
-    fun showModelDownloadProgress(progressPercent: Float) {
-        progressDownloadingModel?.progress =  progressPercent.toInt()
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun showModelDownloadProgress(progressPercent: java.lang.Float) {
+        progressDownloadingModel?.progress = progressPercent.toInt()
 
     }
 

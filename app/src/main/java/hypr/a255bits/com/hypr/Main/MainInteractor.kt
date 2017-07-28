@@ -5,6 +5,8 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.SparseArray
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.face.Face
 import com.google.android.gms.vision.face.FaceDetector
@@ -35,9 +37,6 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
 
     }
     override fun showProgressOfFirebaseDownload(firebaseDownloader: FileDownloadTask){
-       firebaseDownloader.addOnCompleteListener { task ->
-
-       }
         firebaseDownloader.addOnProgressListener { taskSnapshot ->
            showDownloadProgress(taskSnapshot.bytesTransferred, taskSnapshot.totalByteCount)
         }
