@@ -98,10 +98,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun showModelDownloadProgress(progressPercent: java.lang.Float) {
-        progressDownloadingModel?.progress = progressPercent.toInt()
+        if (presenter.isDownloadComplete(progressPercent.toFloat())) {
+            presenter.downloadingModelFinished()
+        } else {
+            progressDownloadingModel?.progress = progressPercent.toInt()
 
+        }
+
+    }
+    override fun closeDownloadingModelDialog() {
+        progressDownloadingModel?.dismiss()
     }
 
     override fun onStart() {

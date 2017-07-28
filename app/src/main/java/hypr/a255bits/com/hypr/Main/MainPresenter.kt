@@ -7,6 +7,8 @@ import hypr.a255bits.com.hypr.Generator
 import java.io.File
 
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter {
+
+    private val  DOWNLOAD_COMPLETE: Float = 100.0f
     override fun startModel(itemId: Int) {
         val generator = interactor.listOfGenerators?.get(itemId)
         if (generator != null) {
@@ -17,7 +19,13 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             view.startModelFragment(generator.modelUrl)
         }
     }
+    override fun downloadingModelFinished() {
+        view.closeDownloadingModelDialog()
+    }
 
+    override fun isDownloadComplete(progressPercent: Float): Boolean {
+        return progressPercent >= DOWNLOAD_COMPLETE
+    }
     override fun addModelsToNavBar() {
         interactor.addModelsToNavBar(object: GeneratorListener {
             override fun getGenerator(generator: Generator, index: Int) {

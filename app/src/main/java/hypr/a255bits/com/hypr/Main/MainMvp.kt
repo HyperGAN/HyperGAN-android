@@ -12,12 +12,15 @@ interface MainMvp {
         fun  modeToNavBar(generator: Generator, index: Int)
         fun  startModelFragment(modelUrl: String)
         fun displayModelDownloadProgress()
+        fun closeDownloadingModelDialog()
 
     }
     interface presenter{
 
         fun addModelsToNavBar()
         fun  startModel(itemId: Int)
+        fun  isDownloadComplete(progressPercent: Float): Boolean
+        fun downloadingModelFinished()
     }
 
     interface interactor {
