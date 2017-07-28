@@ -43,19 +43,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(toolbar)
         setupDrawer(toolbar)
 
-
-//        val file = File.createTempFile("optimized_weight_conv", "pb")
-//        modelDownloader.getFile(file, "op").addOnProgressListener { taskSnapshot ->
-//        }
-//
-//        modelDownloader.getFile(file, "optimized_weight_conv.pb").addOnCompleteListener { task ->
-//            println("isSuccessful: ${task.isSuccessful}")
-//            val listOfLines = file.readLines()
-//            listOfLines.forEach { line ->
-//                println("line: $line")
-//            }
-//
-//        }
         startModelFragment("")
     }
 

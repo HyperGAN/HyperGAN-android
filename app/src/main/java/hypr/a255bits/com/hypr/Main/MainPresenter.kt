@@ -10,6 +10,10 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun startModel(itemId: Int) {
         val generator = interactor.listOfGenerators?.get(itemId)
         if (generator != null) {
+//            view.displayModelDownloadProgress()
+//            val file = File.createTempFile("optimized_weight_conv", "pb")
+//            val filePointer = interactor.getModelFromFirebase(file, "optimized_weight_conv.pb")
+//            interactor.showProgressOfFirebaseDownload(filePointer)
             view.startModelFragment(generator.modelUrl)
         }
     }
