@@ -2,9 +2,11 @@ package hypr.a255bits.com.hypr.ModelFragmnt
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.view.*
 
@@ -74,6 +76,19 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     override fun shareImageToOtherApps(shareIntent: Intent) {
        startActivity(Intent.createChooser(shareIntent, getString(R.string.share_image)))
+    }
+    override fun requestPermissionFromUser(permissions: Array<String>, REQUEST_CODE: Int) {
+        requestPermissions(permissions, REQUEST_CODE)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        grantResults.filter { item -> item == PackageManager.PERMISSION_GRANTED }.forEach {item ->
+            if(requestCode == presenter.SHARE_IMAGE_PERMISSION_REQUEST){
+                presenter.shareImageToOtherApps()
+            }
+        }
+
     }
 
     companion object {
