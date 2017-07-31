@@ -1,27 +1,27 @@
 package hypr.a255bits.com.hypr.Main
 
-import android.app.Activity
-import android.content.Intent
-import android.graphics.Bitmap
-import android.net.Uri
+import android.app.ProgressDialog
 import android.os.Bundle
-import android.view.View
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
+import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator
 import hypr.a255bits.com.hypr.GeneratorLoader
 import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment
 import hypr.a255bits.com.hypr.R
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main2.*
 import kotlinx.android.synthetic.main.app_bar_main2.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
+import org.jetbrains.anko.progressDialog
+import org.jetbrains.anko.intentFor
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, MainMvp.view {
 
@@ -29,16 +29,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     val presenter by lazy { MainPresenter(this, interactor, applicationContext) }
     private var modelSubMenu: SubMenu? = null
     private var generatorLoader: GeneratorLoader = GeneratorLoader()
+    var progressDownloadingModel: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
+        presenter.addModelsToNavBar()
         setSupportActionBar(toolbar)
         setupDrawer(toolbar)
 
-        presenter.addModelsToNavBar()
         generatorLoader.load(assets)
-        startModelFragment("")
+    }
+
+    override fun startModelOnImage() {
+        if (intent.hasExtra("indexInJson")) {
+            val indexInJson = intent.extras.getInt("indexInJson")
+            val image = intent.extras.getByteArray("image")
+            presenter.startModel(indexInJson, image)
+        }
     }
 
     fun setupDrawer(toolbar: Toolbar) {
@@ -51,19 +59,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         modelSubMenu = navMenu?.addSubMenu("Models")
     }
 
-    override fun startModelFragment(modelUrl: String) {
-            val fragment: ModelFragment = ModelFragment.newInstance(modelUrl, "", generatorLoader)
-            supportFragmentManager.beginTransaction()
-                    .replace(R.id.container, fragment)
-                    .disallowAddToBackStack()
-                    .commit()
+    override fun startModelFragment(indexInJson: Int) {
+        startActivity(intentFor<CameraActivity>("indexInJson" to indexInJson))
+    }
 
-
+    override fun applyModelToImage(modelUrl: String, image: ByteArray?) {
+        val fragment: Fragment = ModelFragment.newInstance(modelUrl, image, generatorLoader)
+        supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
     }
 
     override fun modeToNavBar(generator: Generator, index: Int) {
         modelSubMenu?.add(R.id.group1, index, index, generator.name)
         modelSubMenu?.getItem(index)?.setIcon(R.drawable.ic_lock)
+
+    }
+
+    override fun displayModelDownloadProgress() {
+        progressDownloadingModel = progressDialog("Downloading Model") {
+            setMessage("It's downloading..")
+            setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
+            max = 100
+        }
+        progressDownloadingModel?.show()
 
     }
 
@@ -76,15 +93,37 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         if (item.itemId in 0..100) {
             presenter.startModel(item.itemId)
+
         }
         drawer.closeDrawer(GravityCompat.START)
         return true
     }
 
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun showModelDownloadProgress(progressPercent: java.lang.Float) {
+        if (presenter.isDownloadComplete(progressPercent.toFloat())) {
+            presenter.downloadingModelFinished()
+        } else {
+            progressDownloadingModel?.progress = progressPercent.toInt()
 
+        }
+
+    }
+    override fun closeDownloadingModelDialog() {
+        progressDownloadingModel?.dismiss()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
 }
