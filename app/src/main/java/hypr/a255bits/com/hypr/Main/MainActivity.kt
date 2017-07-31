@@ -1,5 +1,6 @@
 package hypr.a255bits.com.hypr.Main
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
@@ -15,6 +16,10 @@ import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.activity_main2.*
 import kotlinx.android.synthetic.main.app_bar_main2.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
+import org.jetbrains.anko.progressDialog
 import org.jetbrains.anko.intentFor
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, MainMvp.view {
@@ -22,13 +27,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     val interactor by lazy { MainInteractor(applicationContext) }
     val presenter by lazy { MainPresenter(this, interactor, applicationContext) }
     private var modelSubMenu: SubMenu? = null
+    var progressDownloadingModel: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
+        presenter.addModelsToNavBar()
         setSupportActionBar(toolbar)
         setupDrawer(toolbar)
-        presenter.addModelsToNavBar()
 
     }
 
@@ -57,12 +63,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun applyModelToImage(modelUrl: String, image: ByteArray?) {
         val fragment: Fragment = ModelFragment.newInstance(modelUrl, image)
         supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
-
     }
 
     override fun modeToNavBar(generator: Generator, index: Int) {
         modelSubMenu?.add(R.id.group1, index, index, generator.name)
         modelSubMenu?.getItem(index)?.setIcon(R.drawable.ic_lock)
+
+    }
+
+    override fun displayModelDownloadProgress() {
+        progressDownloadingModel = progressDialog("Downloading Model") {
+            setMessage("It's downloading..")
+            setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
+            max = 100
+        }
+        progressDownloadingModel?.show()
 
     }
 
@@ -85,4 +100,27 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun showModelDownloadProgress(progressPercent: java.lang.Float) {
+        if (presenter.isDownloadComplete(progressPercent.toFloat())) {
+            presenter.downloadingModelFinished()
+        } else {
+            progressDownloadingModel?.progress = progressPercent.toInt()
+
+        }
+
+    }
+    override fun closeDownloadingModelDialog() {
+        progressDownloadingModel?.dismiss()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
 }
