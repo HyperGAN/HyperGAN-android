@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.SubMenu
+import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator
 import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment
 import hypr.a255bits.com.hypr.R
@@ -19,6 +20,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.progressDialog
+import org.jetbrains.anko.intentFor
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, MainMvp.view {
 
@@ -34,7 +36,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(toolbar)
         setupDrawer(toolbar)
 
-        startModelFragment("")
+    }
+
+    override fun startModelOnImage() {
+        if (intent.hasExtra("indexInJson")) {
+            val indexInJson = intent.extras.getInt("indexInJson")
+            val image = intent.extras.getByteArray("image")
+            presenter.startModel(indexInJson, image)
+        }
     }
 
     fun setupDrawer(toolbar: Toolbar) {
@@ -47,13 +56,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         modelSubMenu = navMenu?.addSubMenu("Models")
     }
 
-    override fun startModelFragment(modelUrl: String) {
-        val fragment: Fragment = ModelFragment.newInstance(modelUrl, "")
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.container, fragment)
-                .disallowAddToBackStack()
-                .commit()
+    override fun startModelFragment(indexInJson: Int) {
+        startActivity(intentFor<CameraActivity>("indexInJson" to indexInJson))
+    }
 
+    override fun applyModelToImage(modelUrl: String, image: ByteArray?) {
+        val fragment: Fragment = ModelFragment.newInstance(modelUrl, image)
+        supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
     }
 
     override fun modeToNavBar(generator: Generator, index: Int) {
@@ -84,6 +93,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         if (item.itemId in 0..100) {
             presenter.startModel(item.itemId)
+
         }
         drawer.closeDrawer(GravityCompat.START)
         return true

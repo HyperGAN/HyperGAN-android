@@ -1,23 +1,27 @@
 package hypr.a255bits.com.hypr.Main
 
-import com.google.firebase.storage.FileDownloadTask
 import hypr.a255bits.com.hypr.Generator
+
+import com.google.firebase.storage.FileDownloadTask
 import java.io.File
 
 interface MainMvp {
-    interface view{
-        fun  modeToNavBar(generator: Generator, index: Int)
-        fun  startModelFragment(modelUrl: String)
+    interface view {
+        fun modeToNavBar(generator: Generator, index: Int)
         fun displayModelDownloadProgress()
         fun closeDownloadingModelDialog()
+        fun startModelFragment(indexInJson: Int)
+        fun applyModelToImage(modelUrl: String, image: ByteArray?)
+        fun startModelOnImage()
 
     }
-    interface presenter{
 
+    interface presenter {
         fun addModelsToNavBar()
-        fun  startModel(itemId: Int)
-        fun  isDownloadComplete(progressPercent: Float): Boolean
+        fun isDownloadComplete(progressPercent: Float): Boolean
         fun downloadingModelFinished()
+        fun startModel(itemId: Int)
+        fun startModel(itemId: Int, image: ByteArray?)
     }
 
     interface interactor {
