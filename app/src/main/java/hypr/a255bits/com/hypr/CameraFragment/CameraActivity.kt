@@ -49,8 +49,8 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
         cameraView.start()
     }
 
