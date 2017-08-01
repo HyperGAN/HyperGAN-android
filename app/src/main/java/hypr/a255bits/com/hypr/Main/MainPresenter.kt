@@ -13,6 +13,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun createGeneratorLoader(){
         val pbFilePointer = interactor.getModelFromFirebase(file, "optimized_weight_conv.pb")
         pbFilePointer.addOnSuccessListener { taskSnapshot ->
+            println("successs")
         }
 
     }

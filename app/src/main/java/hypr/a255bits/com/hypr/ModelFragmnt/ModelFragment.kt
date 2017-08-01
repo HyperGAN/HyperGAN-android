@@ -74,7 +74,9 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     override fun displayFocusedImage(imageFromGallery: Bitmap) {
 
-        focusedImage.setImageBitmap(generatorLoader.sample())
+        val scaled = Bitmap.createScaledBitmap(imageFromGallery, 128, 128, false)
+        val encoded = generatorLoader.encode(scaled)
+        focusedImage.setImageBitmap(generatorLoader.sample(encoded))
 
     }
 
