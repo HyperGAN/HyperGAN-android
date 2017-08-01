@@ -3,9 +3,11 @@ package hypr.a255bits.com.hypr
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface
+import java.io.File
 
 class GeneratorLoader {
     lateinit var inference: TensorFlowInferenceInterface
+    val PB_FILE_PATH: String = "file:///android_asset/generators/optimized_weight_conv.pb"
 
     var channels = 3
     var width = 128
@@ -15,10 +17,12 @@ class GeneratorLoader {
 
     fun load(assets: AssetManager) {
         System.loadLibrary("tensorflow_inference")
+        this.inference = TensorFlowInferenceInterface(assets, PB_FILE_PATH)
+    }
 
-        val pbfile: String = "file:///android_asset/generators/optimized_weight_conv.pb"
-        this.inference = TensorFlowInferenceInterface(assets, pbfile)
-
+    fun load(assets: AssetManager, file: File){
+        System.loadLibrary("tensorflow_inference")
+        this.inference = TensorFlowInferenceInterface(assets, file.absolutePath)
 
     }
 

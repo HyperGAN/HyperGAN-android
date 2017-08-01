@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.*
@@ -13,15 +12,17 @@ import hypr.a255bits.com.hypr.GeneratorLoader
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.toast
+import java.io.File
 
 
 class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
-    var generatorLoader: GeneratorLoader? = null
+    var pbFile: File? = null
     private var modelUrl: String? = null
     private var image: ByteArray? = null
     val interactor by lazy { ModelInteractor(context) }
     val presenter by lazy { ModelFragmentPresenter(this, interactor, context) }
+    val generatorLoader = GeneratorLoader()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +41,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        pbFile?.let { generatorLoader.load(context.assets, it) }
         val imageBitmap = image?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
         presenter.transformImage(imageBitmap)
     }
@@ -72,7 +74,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     override fun displayFocusedImage(imageFromGallery: Bitmap) {
 
-        focusedImage.setImageBitmap(generatorLoader!!.sample())
+        focusedImage.setImageBitmap(generatorLoader.sample())
 
     }
 
@@ -84,13 +86,13 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         private val MODEL_URL_PARAM = "param1"
         private val IMAGE_PARAM = "param2"
 
-        fun newInstance(modelUrl: String, image: ByteArray?, generatorLoader: GeneratorLoader): ModelFragment {
+        fun newInstance(modelUrl: String, image: ByteArray?, pbFile: File): ModelFragment {
             val fragment = ModelFragment()
             val args = Bundle()
             args.putString(MODEL_URL_PARAM, modelUrl)
             args.putByteArray(IMAGE_PARAM, image)
             fragment.arguments = args
-            fragment.generatorLoader = generatorLoader
+            fragment.pbFile = pbFile
             return fragment
         }
     }

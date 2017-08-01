@@ -12,7 +12,6 @@ import android.view.MenuItem
 import android.view.SubMenu
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator
-import hypr.a255bits.com.hypr.GeneratorLoader
 import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.activity_main2.*
@@ -28,17 +27,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     val interactor by lazy { MainInteractor(applicationContext) }
     val presenter by lazy { MainPresenter(this, interactor, applicationContext) }
     private var modelSubMenu: SubMenu? = null
-    private var generatorLoader: GeneratorLoader = GeneratorLoader()
     var progressDownloadingModel: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
         presenter.addModelsToNavBar()
+        presenter.createGeneratorLoader()
         setSupportActionBar(toolbar)
         setupDrawer(toolbar)
 
-        generatorLoader.load(assets)
     }
 
     override fun startModelOnImage() {
@@ -64,7 +62,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun applyModelToImage(modelUrl: String, image: ByteArray?) {
-        val fragment: Fragment = ModelFragment.newInstance(modelUrl, image, generatorLoader)
+        val fragment: Fragment = ModelFragment.newInstance(modelUrl, image, presenter.file)
         supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
     }
 
