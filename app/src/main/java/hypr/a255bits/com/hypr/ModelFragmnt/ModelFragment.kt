@@ -9,19 +9,22 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.view.*
+import hypr.a255bits.com.hypr.GeneratorLoader
 
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.toast
+import java.io.File
 
 
 class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
-    // TODO: Rename and change types of parameters
+    var pbFile: File? = null
     private var modelUrl: String? = null
     private var image: ByteArray? = null
     val interactor by lazy { ModelInteractor(context) }
     val presenter by lazy { ModelFragmentPresenter(this, interactor, context) }
+    val generatorLoader = GeneratorLoader()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +43,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        pbFile?.let { generatorLoader.load(context.assets, it) }
         val imageBitmap = image?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
         presenter.transformImage(imageBitmap)
     }
@@ -71,7 +75,11 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     override fun displayFocusedImage(imageFromGallery: Bitmap) {
-        focusedImage.setImageBitmap(imageFromGallery)
+
+        val scaled = Bitmap.createScaledBitmap(imageFromGallery, 128, 128, false)
+        val encoded = generatorLoader.encode(scaled)
+        focusedImage.setImageBitmap(generatorLoader.sample(encoded))
+
     }
 
     override fun shareImageToOtherApps(shareIntent: Intent) {
@@ -95,12 +103,13 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         private val MODEL_URL_PARAM = "param1"
         private val IMAGE_PARAM = "param2"
 
-        fun newInstance(modelUrl: String, image: ByteArray?): ModelFragment {
+        fun newInstance(modelUrl: String, image: ByteArray?, pbFile: File): ModelFragment {
             val fragment = ModelFragment()
             val args = Bundle()
             args.putString(MODEL_URL_PARAM, modelUrl)
             args.putByteArray(IMAGE_PARAM, image)
             fragment.arguments = args
+            fragment.pbFile = pbFile
             return fragment
         }
     }

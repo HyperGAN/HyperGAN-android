@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
         presenter.addModelsToNavBar()
+        presenter.createGeneratorLoader()
         setSupportActionBar(toolbar)
         setupDrawer(toolbar)
 
@@ -61,7 +62,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun applyModelToImage(modelUrl: String, image: ByteArray?) {
-        val fragment: Fragment = ModelFragment.newInstance(modelUrl, image)
+        val fragment: Fragment = ModelFragment.newInstance(modelUrl, image, presenter.file)
         supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
     }
 

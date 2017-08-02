@@ -3,6 +3,7 @@ package hypr.a255bits.com.hypr.Main
 import hypr.a255bits.com.hypr.Generator
 
 import com.google.firebase.storage.FileDownloadTask
+import hypr.a255bits.com.hypr.GeneratorLoader
 import java.io.File
 
 interface MainMvp {
@@ -22,6 +23,7 @@ interface MainMvp {
         fun downloadingModelFinished()
         fun startModel(itemId: Int)
         fun startModel(itemId: Int, image: ByteArray?)
+        fun createGeneratorLoader()
     }
 
     interface interactor {
