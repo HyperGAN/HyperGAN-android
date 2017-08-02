@@ -10,12 +10,13 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     val file = File(context.filesDir, "optimized_weight_conv.pb")
     private val DOWNLOAD_COMPLETE: Float = 100.0f
 
-    override fun createGeneratorLoader(){
-        val pbFilePointer = interactor.getModelFromFirebase(file, "optimized_weight_conv.pb")
-        pbFilePointer.addOnSuccessListener { taskSnapshot ->
-            println("successs")
+    override fun createGeneratorLoader() {
+        if (!file.exists()) {
+            val pbFilePointer = interactor.getModelFromFirebase(file, "optimized_weight_conv.pb")
+            pbFilePointer.addOnSuccessListener { taskSnapshot ->
+                println("successs")
+            }
         }
-
     }
 
     override fun startModel(itemId: Int) {
