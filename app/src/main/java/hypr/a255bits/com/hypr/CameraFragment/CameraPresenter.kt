@@ -7,6 +7,7 @@ import android.net.Uri
 
 class CameraPresenter(val view: CameraMVP.view, val context: Context) : CameraMVP.presenter {
     val interactor: CameraInteractor by lazy{CameraInteractor(context)}
+    var shouldLoadCamera = true
     override fun sendPictureToModel(jpeg: ByteArray?) {
         view.sendImageToModel(jpeg)
     }
