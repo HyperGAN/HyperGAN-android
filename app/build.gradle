@@ -48,6 +48,7 @@ dependencies {
     compile 'com.google.firebase:firebase-auth:9.4.0'
     compile 'com.google.firebase:firebase-crash:9.4.0'
     compile 'org.greenrobot:eventbus:3.0.0'
+    compile 'com.pawegio.kandroid:kandroid:0.8.3@aar'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.8.9'

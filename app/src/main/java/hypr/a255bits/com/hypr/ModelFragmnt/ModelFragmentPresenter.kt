@@ -2,7 +2,6 @@ package hypr.a255bits.com.hypr.ModelFragmnt
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.net.Uri
 import hypr.a255bits.com.hypr.Util.ImageSaver
 import java.io.IOException
 
@@ -10,14 +9,21 @@ import java.io.IOException
 class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: ModelInteractor, val context: Context) : ModelFragmentMVP.presenter {
 
     private var  imageFromGallery: Bitmap? = null
+    val SHARE_IMAGE_PERMISSION_REQUEST = 10
     override fun disconnectFaceDetector() {
         interactor.detector.release()
     }
 
     fun shareImageToOtherApps(){
-       val shareIntent = interactor.getIntentForSharingImagesWithOtherApps(imageFromGallery)
-        view.shareImageToOtherApps(shareIntent)
+        if(interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+            val shareIntent = interactor.getIntentForSharingImagesWithOtherApps(imageFromGallery)
+            view.shareImageToOtherApps(shareIntent)
+        }else{
+            view.requestPermissionFromUser(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), SHARE_IMAGE_PERMISSION_REQUEST)
+        }
     }
+
+
     override fun findFacesInImage(imageWithFaces: Bitmap, context: Context) {
         try {
             val croppedFaces: MutableList<Bitmap> = interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)
