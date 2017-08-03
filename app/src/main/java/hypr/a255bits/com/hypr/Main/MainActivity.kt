@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
         presenter.addModelsToNavBar()
-        presenter.createGeneratorLoader()
         setSupportActionBar(toolbar)
         setupDrawer(toolbar)
 
@@ -111,14 +110,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun showModelDownloadProgress(progressPercent: java.lang.Float) {
+        println("percent: $progressPercent")
         if (presenter.isDownloadComplete(progressPercent.toFloat())) {
             presenter.downloadingModelFinished()
+        } else if (progressPercent.toFloat() == -0.0f) {
+//            displayModelDownloadProgress()
         } else {
             progressDownloadingModel?.progress = progressPercent.toInt()
-
         }
-
     }
+
+
     override fun closeDownloadingModelDialog() {
         progressDownloadingModel?.dismiss()
     }

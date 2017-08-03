@@ -9,22 +9,27 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     val file = File(context.filesDir, "optimized_weight_conv.pb")
     private val DOWNLOAD_COMPLETE: Float = 100.0f
 
-    override fun createGeneratorLoader() {
-        val pbFilePointer = interactor.getModelFromFirebase(file, "optimized_weight_conv.pb")
-        pbFilePointer.addOnSuccessListener { taskSnapshot ->
-            println("successs")
+    override fun createGeneratorLoader(itemId: Int) {
+        if (!file.exists()) {
+            val pbFilePointer = interactor.getModelFromFirebase(file, "optimized_weight_conv.pb")
+            interactor.showProgressOfFirebaseDownload(pbFilePointer)
+            pbFilePointer.addOnSuccessListener { taskSnapshot ->
+                println("successs")
+                view.startModelFragment(itemId)
+            }
+        }else{
+            view.startModelFragment(itemId)
         }
-
     }
 
     override fun startModel(itemId: Int) {
         val generator = interactor.listOfGenerators?.get(itemId)
         if (generator != null) {
+            createGeneratorLoader(itemId)
 //            view.displayModelDownloadProgress()
 //            val file = File.createTempFile("optimized_weight_conv", "pb")
 //            val filePointer = interactor.getModelFromFirebase(file, "optimized_weight_conv.pb")
 //            interactor.showProgressOfFirebaseDownload(filePointer)
-            view.startModelFragment(itemId)
         }
     }
 

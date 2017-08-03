@@ -24,7 +24,7 @@ interface MainMvp {
         fun downloadingModelFinished()
         fun startModel(itemId: Int)
         fun startModel(itemId: Int, image: ByteArray?)
-        fun createGeneratorLoader()
+        fun createGeneratorLoader(itemId: Int)
     }
 
     interface interactor {
