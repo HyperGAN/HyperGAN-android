@@ -2,6 +2,7 @@ package hypr.a255bits.com.hypr
 
 import android.content.res.AssetManager
 import android.graphics.Bitmap
+import android.util.Log
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface
 import java.io.File
 
@@ -23,17 +24,20 @@ class GeneratorLoader {
 
     fun load(assets: AssetManager, file: File){
         System.loadLibrary("tensorflow_inference")
-        this.inference = TensorFlowInferenceInterface(assets, file.absolutePath)
+        this.inference = TensorFlowInferenceInterface(assets, PB_FILE_PATH)
+        //this.inference = TensorFlowInferenceInterface(assets, file.absolutePath)
 
     }
 
-    fun sample(z:FloatArray): Bitmap {
+    fun sample(z:FloatArray, slider:Float): Bitmap {
         print("Sampling ")
 
 
         var dims = longArrayOf(1.toLong(), 16.toLong(), 16.toLong(), 96.toLong())
         this.inference.feed("concat", z, *dims)
-
+        this.inference.feed("direction", z, *dims)
+        dims = longArrayOf(1.toLong(),1.toLong())
+        this.inference.feed("slider", floatArrayOf(slider), *dims)
         this.inference.run(arrayOf("Tanh_1"))
         //inference.readNodeFloat(OUTPUT_NODE, resu)
 

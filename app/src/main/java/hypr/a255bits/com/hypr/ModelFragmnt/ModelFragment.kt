@@ -78,7 +78,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
         val scaled = Bitmap.createScaledBitmap(imageFromGallery, 128, 128, false)
         val encoded = generatorLoader.encode(scaled)
-        focusedImage.setImageBitmap(generatorLoader.sample(encoded))
+        focusedImage.setImageBitmap(generatorLoader.sample(encoded, (Math.random()*2-1).toFloat()))
 
     }
 
