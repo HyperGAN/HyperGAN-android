@@ -9,6 +9,8 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.view.*
+import android.widget.SeekBar
+import com.pawegio.kandroid.onProgressChanged
 import hypr.a255bits.com.hypr.GeneratorLoader
 
 import hypr.a255bits.com.hypr.R
@@ -43,6 +45,12 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        imageTransitionSeekBar.onProgressChanged { progress, boolean ->
+            val actualValue: Double = ((progress - 100) / 100.00)
+            println("oldValue: $progress")
+            println("actualyValue: $actualValue")
+
+        }
         pbFile?.let { generatorLoader.load(context.assets, it) }
         val imageBitmap = image?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
         presenter.transformImage(imageBitmap)
