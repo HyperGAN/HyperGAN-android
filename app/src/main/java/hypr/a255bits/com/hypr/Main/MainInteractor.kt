@@ -55,9 +55,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     }
 
     private fun callListenerForEachGenerator(param: GeneratorListener, listOfGenerators: List<Generator>?) {
-        listOfGenerators?.forEachIndexed { index, generator ->
-            param.getGenerator(generator, index)
-        }
+        listOfGenerators?.let { param.getGenerators(it, 0) }
     }
 
 
