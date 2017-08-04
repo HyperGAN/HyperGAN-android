@@ -18,6 +18,7 @@ interface ModelFragmentMVP{
         fun disconnectFaceDetector()
         fun saveImageDisplayedToPhone()
         fun transformImage(normalImage: Bitmap?, pbFile: File?, generatorLoader: GeneratorLoader)
+        fun  convertToNegative1To1(progress: Int): Double
     }
     interface interactor{
         fun  getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context): MutableList<Bitmap>

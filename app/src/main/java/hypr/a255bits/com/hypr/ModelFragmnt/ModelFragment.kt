@@ -50,10 +50,10 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     private fun displayImageTransitionSeekbarProgress() {
-        imageTransitionSeekBar.onProgressChanged { progress, boolean ->
-            val actualValue: Double = ((progress - 100) / 100.00)
+        imageTransitionSeekBar.onProgressChanged { progress, _ ->
+            val ganValue: Double = presenter.convertToNegative1To1(progress)
             println("oldValue: $progress")
-            println("actualyValue: $actualValue")
+            println("actualyValue: $ganValue")
         }
     }
 

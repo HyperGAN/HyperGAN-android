@@ -24,6 +24,9 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
             view.requestPermissionFromUser(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), SHARE_IMAGE_PERMISSION_REQUEST)
         }
     }
+    override fun convertToNegative1To1(progress: Int): Double {
+        return ((progress - 100) / 100.00)
+    }
 
 
     override fun findFacesInImage(imageWithFaces: Bitmap, context: Context) {
