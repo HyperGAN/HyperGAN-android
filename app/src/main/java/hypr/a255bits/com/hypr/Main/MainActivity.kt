@@ -102,6 +102,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (item.itemId in 0..100) {
             presenter.startModel(item.itemId)
 
+        }else if(item.itemId == R.id.homeButton){
+            displayGeneratorsOnHomePage(presenter.buyGenerators)
         }
         drawer.closeDrawer(GravityCompat.START)
         return true
