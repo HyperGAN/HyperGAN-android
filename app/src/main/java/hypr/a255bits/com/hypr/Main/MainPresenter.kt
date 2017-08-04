@@ -1,12 +1,14 @@
 package hypr.a255bits.com.hypr.Main
 
 import android.content.Context
+import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.Generator
 import java.io.File
 
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter {
     val file = File(context.filesDir, "optimized_weight_conv.pb")
     private val DOWNLOAD_COMPLETE: Float = 100.0f
+    var  buyGenerators: MutableList<BuyGenerator> = mutableListOf()
 
     override fun createGeneratorLoader(itemId: Int) {
         if (!file.exists()) {
@@ -47,14 +49,18 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         return progressPercent >= DOWNLOAD_COMPLETE
     }
 
+
     override fun addModelsToNavBar() {
         interactor.addModelsToNavBar(object : GeneratorListener {
-            override fun getGenerator(generator: Generator, index: Int) {
-                view.modeToNavBar(generator, index)
-                view.startModelOnImage()
+            override fun getGenerators(generators: List<Generator>, index: Int) {
+                buyGenerators = mutableListOf<BuyGenerator>()
+                generators.forEachIndexed { index, generator ->
+                    view.modeToNavBar(generator, index)
+                    val buyGenerator = BuyGenerator(generator.name)
+                    buyGenerators.add(buyGenerator)
+                }
+                view.startModelOnImage(buyGenerators)
             }
         })
     }
-
-
 }

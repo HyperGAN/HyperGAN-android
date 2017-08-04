@@ -4,5 +4,5 @@ import hypr.a255bits.com.hypr.Generator
 
 
 interface GeneratorListener {
-    fun getGenerator(generator: Generator, index: Int)
+    fun getGenerators(generators: List<Generator>, index: Int)
 }
