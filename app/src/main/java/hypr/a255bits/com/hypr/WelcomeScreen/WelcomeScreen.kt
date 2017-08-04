@@ -13,8 +13,6 @@ import kotlinx.android.synthetic.main.fragment_welcome_screen.*
 
 
 class WelcomeScreen : Fragment() {
-
-    // TODO: Rename and change types of parameters
     private var buyGenerators: Array<BuyGenerator>? = arrayOf()
     private var mParam2: String? = null
 
@@ -37,7 +35,6 @@ class WelcomeScreen : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(activity)
         val adapter = buyGenerators?.let { WelcomeScreenAdapter(it) }
         recyclerView.adapter = adapter
-
     }
 
     override fun onAttach(context: Context?) {
@@ -47,6 +44,7 @@ class WelcomeScreen : Fragment() {
     override fun onDetach() {
         super.onDetach()
     }
+
     companion object {
         private val ARG_PARAM1 = "param1"
         private val ARG_PARAM2 = "param2"
@@ -60,4 +58,4 @@ class WelcomeScreen : Fragment() {
             return fragment
         }
     }
-}// Required empty public constructor
+}
