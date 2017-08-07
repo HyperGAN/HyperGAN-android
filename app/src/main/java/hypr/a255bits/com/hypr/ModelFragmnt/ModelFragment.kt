@@ -53,13 +53,17 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     private fun displayImageTransitionSeekbarProgress() {
         imageTransitionSeekBar.onProgressChanged { progress, _ ->
             val ganValue: Double = presenter.convertToNegative1To1(progress)
-            encoded?.let {
-                val ganImage = generatorLoader.sample(it, ganValue.toFloat())
-                focusedImage.setImageBitmap(ganImage)
-
-            }
+            changeGanImageFromSlider(ganValue)
             println("oldValue: $progress")
             println("actualyValue: $ganValue")
+        }
+    }
+
+    private fun changeGanImageFromSlider(ganValue: Double) {
+        encoded?.let {
+            val ganImage = generatorLoader.sample(it, ganValue.toFloat())
+            focusedImage.setImageBitmap(ganImage)
+
         }
     }
 
@@ -92,7 +96,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun displayFocusedImage(imageFromGallery: Bitmap) {
         val scaled = Bitmap.createScaledBitmap(imageFromGallery, 128, 128, false)
         encoded = generatorLoader.encode(scaled)
-        focusedImage.setImageBitmap(generatorLoader.sample(encoded!!, (Math.random()*2-1).toFloat()))
+        focusedImage.setImageBitmap(generatorLoader.sample(encoded!!, (Math.random() * 2 - 1).toFloat()))
 
     }
 
