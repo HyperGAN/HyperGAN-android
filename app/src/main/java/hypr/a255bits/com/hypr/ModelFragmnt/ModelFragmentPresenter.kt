@@ -2,7 +2,9 @@ package hypr.a255bits.com.hypr.ModelFragmnt
 
 import android.content.Context
 import android.graphics.Bitmap
+import hypr.a255bits.com.hypr.GeneratorLoader
 import hypr.a255bits.com.hypr.Util.ImageSaver
+import java.io.File
 import java.io.IOException
 
 
@@ -21,6 +23,9 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         }else{
             view.requestPermissionFromUser(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), SHARE_IMAGE_PERMISSION_REQUEST)
         }
+    }
+    override fun convertToNegative1To1(progress: Int): Double {
+        return ((progress - 100) / 100.00)
     }
 
 
@@ -41,11 +46,14 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         val saver = ImageSaver()
         saver.saveImageToInternalStorage(imageFromGallery, context)
     }
-    override fun transformImage(image: Bitmap?){
-        if(image != null){
-            this.imageFromGallery = image
-            view.displayFocusedImage(image)
-            findFacesInImage(image, context)
+    override fun transformImage(normalImage: Bitmap?, pbFile: File?, generatorLoader: GeneratorLoader){
+        if(normalImage != null){
+            this.imageFromGallery = normalImage
+            view.displayFocusedImage(normalImage)
+            findFacesInImage(normalImage, context)
         }
+    }
+    fun loadGenerator(generatorLoader: GeneratorLoader, pbFile: File?){
+        pbFile?.let { generatorLoader.load(context.assets, it) }
     }
 }

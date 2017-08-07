@@ -3,7 +3,7 @@ package hypr.a255bits.com.hypr.Main
 import hypr.a255bits.com.hypr.Generator
 
 import com.google.firebase.storage.FileDownloadTask
-import hypr.a255bits.com.hypr.GeneratorLoader
+import hypr.a255bits.com.hypr.BuyGenerator
 import java.io.File
 
 interface MainMvp {
@@ -11,9 +11,10 @@ interface MainMvp {
         fun modeToNavBar(generator: Generator, index: Int)
         fun displayModelDownloadProgress()
         fun closeDownloadingModelDialog()
-        fun startModelFragment(indexInJson: Int)
+        fun startCameraActivity(indexInJson: Int)
         fun applyModelToImage(modelUrl: String, image: ByteArray?)
-        fun startModelOnImage()
+        fun startModelOnImage(buyGenerators: MutableList<BuyGenerator>)
+        fun  displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>)
 
     }
 
@@ -23,7 +24,7 @@ interface MainMvp {
         fun downloadingModelFinished()
         fun startModel(itemId: Int)
         fun startModel(itemId: Int, image: ByteArray?)
-        fun createGeneratorLoader()
+        fun createGeneratorLoader(itemId: File, itemId1: Int)
     }
 
     interface interactor {
