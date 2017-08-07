@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         modelSubMenu = navMenu?.addSubMenu("Models")
     }
 
-    override fun startModelFragment(indexInJson: Int) {
+    override fun startCameraActivity(indexInJson: Int) {
         startActivity(intentFor<CameraActivity>("indexInJson" to indexInJson))
     }
 
