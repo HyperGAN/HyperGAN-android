@@ -25,6 +25,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     val interactor by lazy { ModelInteractor(context) }
     val presenter by lazy { ModelFragmentPresenter(this, interactor, context) }
     val generatorLoader = GeneratorLoader()
+    var encoded: FloatArray? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +53,11 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     private fun displayImageTransitionSeekbarProgress() {
         imageTransitionSeekBar.onProgressChanged { progress, _ ->
             val ganValue: Double = presenter.convertToNegative1To1(progress)
+            encoded?.let {
+                val ganImage = generatorLoader.sample(it, ganValue.toFloat())
+                focusedImage.setImageBitmap(ganImage)
+
+            }
             println("oldValue: $progress")
             println("actualyValue: $ganValue")
         }
@@ -85,8 +91,8 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     override fun displayFocusedImage(imageFromGallery: Bitmap) {
         val scaled = Bitmap.createScaledBitmap(imageFromGallery, 128, 128, false)
-        val encoded = generatorLoader.encode(scaled)
-        focusedImage.setImageBitmap(generatorLoader.sample(encoded, (Math.random()*2-1).toFloat()))
+        encoded = generatorLoader.encode(scaled)
+        focusedImage.setImageBitmap(generatorLoader.sample(encoded!!, (Math.random()*2-1).toFloat()))
 
     }
 
