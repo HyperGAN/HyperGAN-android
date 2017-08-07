@@ -10,10 +10,12 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.SubMenu
+import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator
 import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment
 import hypr.a255bits.com.hypr.R
+import hypr.a255bits.com.hypr.WelcomeScreen.WelcomeScreen
 import kotlinx.android.synthetic.main.activity_main2.*
 import kotlinx.android.synthetic.main.app_bar_main2.*
 import org.greenrobot.eventbus.EventBus
@@ -33,18 +35,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
         presenter.addModelsToNavBar()
-        presenter.createGeneratorLoader()
         setSupportActionBar(toolbar)
         setupDrawer(toolbar)
 
     }
 
-    override fun startModelOnImage() {
+    override fun startModelOnImage(buyGenerators: MutableList<BuyGenerator>) {
         if (intent.hasExtra("indexInJson")) {
             val indexInJson = intent.extras.getInt("indexInJson")
             val image = intent.extras.getByteArray("image")
             presenter.startModel(indexInJson, image)
+        }else{
+            displayGeneratorsOnHomePage(buyGenerators)
         }
+    }
+    override fun displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>) {
+        val fragment: Fragment = WelcomeScreen.newInstance(generators, "")
+        supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
     }
 
     fun setupDrawer(toolbar: Toolbar) {
@@ -95,6 +102,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (item.itemId in 0..100) {
             presenter.startModel(item.itemId)
 
+        }else if(item.itemId == R.id.homeButton){
+            displayGeneratorsOnHomePage(presenter.buyGenerators)
         }
         drawer.closeDrawer(GravityCompat.START)
         return true
@@ -103,14 +112,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun showModelDownloadProgress(progressPercent: java.lang.Float) {
+        println("percent: $progressPercent")
         if (presenter.isDownloadComplete(progressPercent.toFloat())) {
             presenter.downloadingModelFinished()
+        } else if (progressPercent.toFloat() == -0.0f) {
+//            displayModelDownloadProgress()
         } else {
             progressDownloadingModel?.progress = progressPercent.toInt()
-
         }
-
     }
+
+
     override fun closeDownloadingModelDialog() {
         progressDownloadingModel?.dismiss()
     }
