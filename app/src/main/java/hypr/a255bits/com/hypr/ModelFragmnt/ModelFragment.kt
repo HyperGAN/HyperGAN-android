@@ -6,9 +6,9 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.view.*
+import com.pawegio.kandroid.onProgressChanged
 import hypr.a255bits.com.hypr.GeneratorLoader
 
 import hypr.a255bits.com.hypr.R
@@ -25,6 +25,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     val interactor by lazy { ModelInteractor(context) }
     val presenter by lazy { ModelFragmentPresenter(this, interactor, context) }
     val generatorLoader = GeneratorLoader()
+    var encoded: FloatArray? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,9 +44,27 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        pbFile?.let { generatorLoader.load(context.assets, it) }
+        displayImageTransitionSeekbarProgress()
+        presenter.loadGenerator(generatorLoader, pbFile)
         val imageBitmap = image?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
-        presenter.transformImage(imageBitmap)
+        presenter.transformImage(imageBitmap, pbFile, generatorLoader)
+    }
+
+    private fun displayImageTransitionSeekbarProgress() {
+        imageTransitionSeekBar.onProgressChanged { progress, _ ->
+            val ganValue: Double = presenter.convertToNegative1To1(progress)
+            changeGanImageFromSlider(ganValue)
+            println("oldValue: $progress")
+            println("actualyValue: $ganValue")
+        }
+    }
+
+    private fun changeGanImageFromSlider(ganValue: Double) {
+        encoded?.let {
+            val ganImage = generatorLoader.sample(it, ganValue.toFloat())
+            focusedImage.setImageBitmap(ganImage)
+
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -54,7 +73,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             R.id.saveImage -> presenter.saveImageDisplayedToPhone()
             R.id.shareIamge -> presenter.shareImageToOtherApps()
         }
@@ -75,24 +94,24 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     override fun displayFocusedImage(imageFromGallery: Bitmap) {
-
         val scaled = Bitmap.createScaledBitmap(imageFromGallery, 128, 128, false)
-        val encoded = generatorLoader.encode(scaled)
-        focusedImage.setImageBitmap(generatorLoader.sample(encoded, (Math.random()*2-1).toFloat()))
+        encoded = generatorLoader.encode(scaled)
+        focusedImage.setImageBitmap(generatorLoader.sample(encoded!!, (Math.random() * 2 - 1).toFloat()))
 
     }
 
     override fun shareImageToOtherApps(shareIntent: Intent) {
-       startActivity(Intent.createChooser(shareIntent, getString(R.string.share_image)))
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.share_image)))
     }
+
     override fun requestPermissionFromUser(permissions: Array<String>, REQUEST_CODE: Int) {
         requestPermissions(permissions, REQUEST_CODE)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        grantResults.filter { item -> item == PackageManager.PERMISSION_GRANTED }.forEach {item ->
-            if(requestCode == presenter.SHARE_IMAGE_PERMISSION_REQUEST){
+        grantResults.filter { item -> item == PackageManager.PERMISSION_GRANTED }.forEach { item ->
+            if (requestCode == presenter.SHARE_IMAGE_PERMISSION_REQUEST) {
                 presenter.shareImageToOtherApps()
             }
         }
