@@ -10,23 +10,23 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     private val DOWNLOAD_COMPLETE: Float = 100.0f
     var  buyGenerators: MutableList<BuyGenerator> = mutableListOf()
 
-    override fun createGeneratorLoader(itemId: Int) {
+    override fun createGeneratorLoader(file: File, itemId: Int) {
         if (!file.exists()) {
             val pbFilePointer = interactor.getModelFromFirebase(file, "optimized_weight_conv.pb")
             interactor.showProgressOfFirebaseDownload(pbFilePointer)
             pbFilePointer.addOnSuccessListener { taskSnapshot ->
                 println("successs")
-                view.startModelFragment(itemId)
+                view.startCameraActivity(itemId)
             }
         }else{
-            view.startModelFragment(itemId)
+            view.startCameraActivity(itemId)
         }
     }
 
     override fun startModel(itemId: Int) {
         val generator = interactor.listOfGenerators?.get(itemId)
         if (generator != null) {
-            createGeneratorLoader(itemId)
+            createGeneratorLoader(file, itemId)
 //            view.displayModelDownloadProgress()
 //            val file = File.createTempFile("optimized_weight_conv", "pb")
 //            val filePointer = interactor.getModelFromFirebase(file, "optimized_weight_conv.pb")
