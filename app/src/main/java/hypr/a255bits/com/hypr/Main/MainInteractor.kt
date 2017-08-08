@@ -1,11 +1,15 @@
 package hypr.a255bits.com.hypr.Main
 
 import android.content.Context
+import android.util.Log
 import com.google.firebase.storage.FileDownloadTask
 import com.google.firebase.storage.FirebaseStorage
 import hypr.a255bits.com.hypr.Generator
 import hypr.a255bits.com.hypr.Network.ModelApi
 import hypr.a255bits.com.hypr.Network.ModelDownloader
+import hypr.a255bits.com.hypr.R
+import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
+import hypr.a255bits.com.hypr.Util.InAppBilling.IabResult
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import org.greenrobot.eventbus.EventBus
@@ -14,9 +18,24 @@ import java.io.File
 
 class MainInteractor(val context: Context) : MainMvp.interactor {
 
+    var billingHelper: IabHelper? = IabHelper(context, context.getString(R.string.API_KEY))
+
     var listOfGenerators: List<Generator>? = null
     var modelDownloader = ModelDownloader(FirebaseStorage.getInstance().reference)
 
+    init{
+        billingHelper?.startSetup { result: IabResult? ->
+            if(result!!.isFailure){
+                Log.d("MainInteractor", "Problem setting up In-app Billing: $result")
+            }
+
+        }
+    }
+
+    override fun stopInAppBilling() {
+        billingHelper?.dispose()
+        billingHelper = null
+    }
 
     override fun getModelFromFirebase(saveLocation: File, filenameInFirebase: String): FileDownloadTask {
         return modelDownloader.getFile(saveLocation, filenameInFirebase)

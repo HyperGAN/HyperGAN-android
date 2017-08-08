@@ -6,6 +6,7 @@ import hypr.a255bits.com.hypr.Generator
 import java.io.File
 
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter {
+
     val file = File(context.filesDir, "optimized_weight_conv.pb")
     private val DOWNLOAD_COMPLETE: Float = 100.0f
     var  buyGenerators: MutableList<BuyGenerator> = mutableListOf()
@@ -23,6 +24,9 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         }
     }
 
+    override fun stopInAppBilling() {
+        interactor.stopInAppBilling()
+    }
     override fun startModel(itemId: Int) {
         val generator = interactor.listOfGenerators?.get(itemId)
         if (generator != null) {

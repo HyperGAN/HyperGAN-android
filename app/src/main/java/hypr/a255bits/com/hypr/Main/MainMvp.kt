@@ -25,6 +25,7 @@ interface MainMvp {
         fun startModel(itemId: Int)
         fun startModel(itemId: Int, image: ByteArray?)
         fun createGeneratorLoader(itemId: File, itemId1: Int)
+        fun stopInAppBilling()
     }
 
     interface interactor {
@@ -32,6 +33,7 @@ interface MainMvp {
 
         fun getModelFromFirebase(saveLocation: File, filenameInFirebase: String): FileDownloadTask
         fun showProgressOfFirebaseDownload(firebaseDownloader: FileDownloadTask)
+        fun stopInAppBilling()
     }
 
 }

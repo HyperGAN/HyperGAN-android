@@ -28,7 +28,7 @@ android {
             jniLibs.srcDirs += ['libs']
             java.srcDirs = ['src/main/java']
             resources.srcDirs = ['src/main/java']
-            aidl.srcDirs = ['src/main/java']
+            aidl.srcDirs = ['src/main/java', 'src/main/aidl', 'src/main/aidl/']
             renderscript.srcDirs = ['src/main/java']
             res.srcDirs = ['src/main/res']
             assets.srcDirs = ['src/main/assets']
