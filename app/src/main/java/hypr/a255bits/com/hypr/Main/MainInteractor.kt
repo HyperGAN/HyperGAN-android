@@ -23,12 +23,15 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     var listOfGenerators: List<Generator>? = null
     var modelDownloader = ModelDownloader(FirebaseStorage.getInstance().reference)
 
-    init{
+    init {
+        startInAppBilling()
+    }
+
+    private fun startInAppBilling() {
         billingHelper?.startSetup { result: IabResult? ->
-            if(result!!.isFailure){
+            if (result!!.isFailure) {
                 Log.d("MainInteractor", "Problem setting up In-app Billing: $result")
             }
-
         }
     }
 
@@ -41,9 +44,10 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
         return modelDownloader.getFile(saveLocation, filenameInFirebase)
 
     }
-    override fun showProgressOfFirebaseDownload(firebaseDownloader: FileDownloadTask){
+
+    override fun showProgressOfFirebaseDownload(firebaseDownloader: FileDownloadTask) {
         firebaseDownloader.addOnProgressListener { taskSnapshot ->
-           showDownloadProgress(taskSnapshot.bytesTransferred, taskSnapshot.totalByteCount)
+            showDownloadProgress(taskSnapshot.bytesTransferred, taskSnapshot.totalByteCount)
         }
     }
 
