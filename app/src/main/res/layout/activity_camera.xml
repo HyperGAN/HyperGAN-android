@@ -43,6 +43,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
+        android:onClick="takePictureButtonClick"
         android:text="@string/take_picture"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -56,6 +57,7 @@
         android:background="@null"
         android:padding="8dp"
         android:src="@drawable/ic_photo_library_white_30px"
+        android:onClick="galleryButtonClick"
         app:layout_constraintBottom_toBottomOf="@+id/takePicture"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/takePicture" />
