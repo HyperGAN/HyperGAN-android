@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.*
@@ -43,9 +45,21 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(R.layout.fragment_model, container, false)
-
+        displayTitleSpinner()
         setHasOptionsMenu(true)
         return view
+    }
+
+    fun displayTitleSpinner() {
+        activity.toolbar.title = ""
+        val actions = listOf("Smile", "Frown")
+        val adapter: SpinnerAdapter = ArrayAdapter<String>(activity, R.layout.spinner_dropdown_item, actions)
+        val spinner = Spinner(activity)
+        spinner.background.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+
+        spinner.adapter = adapter
+        activity.toolbar.addView(spinner, 0)
+
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -55,13 +69,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         val imageBitmap = image?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
         presenter.transformImage(imageBitmap, pbFile, generatorLoader)
 
-        activity.toolbar.title = ""
-        val actions = listOf("Smile", "Frown")
-        val adapter: SpinnerAdapter = ArrayAdapter<String>(activity, R.layout.spinner_dropdown_item, actions)
-        val spinner = Spinner(activity)
-        spinner.setSize(20, 20)
-        spinner.adapter = adapter
-        activity.toolbar.addView(spinner, 0)
+
     }
 
     private fun displayImageTransitionSeekbarProgress() {
