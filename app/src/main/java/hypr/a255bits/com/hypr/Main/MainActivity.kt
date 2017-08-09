@@ -34,8 +34,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
-        presenter.addModelsToNavBar()
         setSupportActionBar(toolbar)
+        presenter.addModelsToNavBar()
         setupDrawer(toolbar)
 
     }

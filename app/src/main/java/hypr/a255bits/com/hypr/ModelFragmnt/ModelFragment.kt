@@ -1,5 +1,6 @@
 package hypr.a255bits.com.hypr.ModelFragmnt
 
+import android.app.ActionBar
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -8,11 +9,16 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.*
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import android.widget.SpinnerAdapter
 import com.pawegio.kandroid.onProgressChanged
+import com.pawegio.kandroid.setSize
 import hypr.a255bits.com.hypr.GeneratorLoader
 
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.app_bar_main2.*
 import org.jetbrains.anko.toast
 import java.io.File
 
@@ -37,6 +43,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(R.layout.fragment_model, container, false)
+
         setHasOptionsMenu(true)
         return view
     }
@@ -47,6 +54,14 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         presenter.loadGenerator(generatorLoader, pbFile)
         val imageBitmap = image?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
         presenter.transformImage(imageBitmap, pbFile, generatorLoader)
+
+        activity.toolbar.title = ""
+        val actions = listOf("Smile", "Frown")
+        val adapter: SpinnerAdapter = ArrayAdapter<String>(activity, R.layout.spinner_dropdown_item, actions)
+        val spinner = Spinner(activity)
+        spinner.setSize(20, 20)
+        spinner.adapter = adapter
+        activity.toolbar.addView(spinner, 0)
     }
 
     private fun displayImageTransitionSeekbarProgress() {
