@@ -16,7 +16,7 @@ class Generator {
 class Viewer {
     var type: String = ""
     var operation: String = ""
-    var controls: MutableList<String> = mutableListOf()
+    var controls: MutableList<Control> = mutableListOf()
 }
 
 class Input {

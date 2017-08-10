@@ -2,6 +2,7 @@ package hypr.a255bits.com.hypr.Main
 
 import android.content.Context
 import hypr.a255bits.com.hypr.BuyGenerator
+import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.Generator.Generator
 import java.io.File
 
@@ -37,7 +38,8 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun startModel(itemId: Int, image: ByteArray?) {
         val generator = interactor.listOfGenerators?.get(itemId)
         if (generator != null) {
-            view.applyModelToImage(generator.modelUrl, image)
+            val controlArray: Array<Control> = generator.viewer.controls.toTypedArray()
+            view.applyModelToImage(controlArray, image)
         }
     }
 
