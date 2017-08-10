@@ -1,6 +1,6 @@
 package hypr.a255bits.com.hypr.Network
 
-import hypr.a255bits.com.hypr.Generator
+import hypr.a255bits.com.hypr.Generator.Generator
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

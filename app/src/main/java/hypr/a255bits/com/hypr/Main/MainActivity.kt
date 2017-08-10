@@ -12,7 +12,7 @@ import android.view.MenuItem
 import android.view.SubMenu
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
-import hypr.a255bits.com.hypr.Generator
+import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.WelcomeScreen.WelcomeScreen

@@ -2,7 +2,7 @@ package hypr.a255bits.com.hypr.Main
 
 import android.content.Context
 import hypr.a255bits.com.hypr.BuyGenerator
-import hypr.a255bits.com.hypr.Generator
+import hypr.a255bits.com.hypr.Generator.Generator
 import java.io.File
 
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter {

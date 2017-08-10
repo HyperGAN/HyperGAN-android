@@ -1,6 +1,6 @@
 package hypr.a255bits.com.hypr.Main
 
-import hypr.a255bits.com.hypr.Generator
+import hypr.a255bits.com.hypr.Generator.Generator
 
 import com.google.firebase.storage.FileDownloadTask
 import hypr.a255bits.com.hypr.BuyGenerator

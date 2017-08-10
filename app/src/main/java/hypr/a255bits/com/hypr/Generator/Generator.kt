@@ -1,4 +1,4 @@
-package hypr.a255bits.com.hypr
+package hypr.a255bits.com.hypr.Generator
 
 import com.google.gson.annotations.SerializedName
 
@@ -12,7 +12,6 @@ class Generator {
     var input: Input = Input()
     var output: Output = Output()
 }
-
 
 class Viewer {
     var type: String = ""
