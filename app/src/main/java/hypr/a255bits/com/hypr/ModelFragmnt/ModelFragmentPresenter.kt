@@ -32,7 +32,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     override fun findFacesInImage(imageWithFaces: Bitmap, context: Context) {
         try {
             val croppedFaces: MutableList<Bitmap> = interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)
-            if(!croppedFaces.isEmpty()){
+            if(isFacesDetected(croppedFaces)){
                 view.displayFocusedImage(croppedFaces[0])
             }else{
                 view.displayFocusedImage(imageWithFaces)
@@ -40,6 +40,9 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         } catch(exception: IOException) {
             view.showError(exception.localizedMessage)
         }
+    }
+    fun isFacesDetected(listOfFaces: MutableList<Bitmap>): Boolean {
+        return !listOfFaces.isEmpty()
     }
 
     override fun saveImageDisplayedToPhone() {
