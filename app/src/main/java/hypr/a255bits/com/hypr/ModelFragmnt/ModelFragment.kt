@@ -16,6 +16,7 @@ import android.widget.Spinner
 import android.widget.SpinnerAdapter
 import com.pawegio.kandroid.onProgressChanged
 import com.pawegio.kandroid.setSize
+import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.GeneratorLoader
 
 import hypr.a255bits.com.hypr.R
@@ -23,12 +24,13 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main2.*
 import org.jetbrains.anko.toast
 import java.io.File
+import java.util.*
 
 
 class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     var pbFile: File? = null
-    private var modelUrl: String? = null
+    private var modelUrl: Array<Control>? = null
     private var image: ByteArray? = null
     val interactor by lazy { ModelInteractor(context) }
     val presenter by lazy { ModelFragmentPresenter(this, interactor, context) }
@@ -37,7 +39,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            modelUrl = arguments.getString(MODEL_URL_PARAM)
+            modelUrl = arguments.getParcelableArray(MODEL_CONTROLS) as Array<Control>?
             image = arguments.getByteArray(IMAGE_PARAM)
         }
     }
@@ -110,7 +112,6 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         val scaled = Bitmap.createScaledBitmap(imageFromGallery, 128, 128, false)
         val encoded = generatorLoader.encode(scaled)
         focusedImage.setImageBitmap(generatorLoader.sample(encoded))
-
     }
 
     override fun shareImageToOtherApps(shareIntent: Intent) {
@@ -132,14 +133,15 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     companion object {
-        private val MODEL_URL_PARAM = "param1"
         private val IMAGE_PARAM = "param2"
 
-        fun newInstance(modelUrl: String, image: ByteArray?, pbFile: File): ModelFragment {
+        private val  MODEL_CONTROLS = "modelControls"
+
+        fun newInstance(modelControls: Array<Control>?, image: ByteArray?, pbFile: File): ModelFragment {
             val fragment = ModelFragment()
             val args = Bundle()
-            args.putString(MODEL_URL_PARAM, modelUrl)
             args.putByteArray(IMAGE_PARAM, image)
+            args.putParcelableArray(MODEL_CONTROLS, modelControls)
             fragment.arguments = args
             fragment.pbFile = pbFile
             return fragment

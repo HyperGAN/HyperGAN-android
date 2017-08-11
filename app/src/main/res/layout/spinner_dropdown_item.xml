@@ -5,6 +5,8 @@
     android:background="@color/colorPrimary"
     android:textColor="#ffffff"
     android:textSize="21sp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
     android:gravity="center_vertical"
     android:minHeight="?android:attr/listPreferredItemHeightSmall"
     android:textAppearance="?android:attr/textAppearanceListItemSmall"

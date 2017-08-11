@@ -1,4 +1,4 @@
-package hypr.a255bits.com.hypr
+package hypr.a255bits.com.hypr.Generator
 
 import com.google.gson.annotations.SerializedName
 
@@ -13,11 +13,10 @@ class Generator {
     var output: Output = Output()
 }
 
-
 class Viewer {
     var type: String = ""
     var operation: String = ""
-    var controls: MutableList<String> = mutableListOf()
+    var controls: MutableList<Control> = mutableListOf()
 }
 
 class Input {
