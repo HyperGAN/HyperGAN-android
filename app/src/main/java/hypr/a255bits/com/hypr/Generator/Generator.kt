@@ -1,23 +1,18 @@
 package hypr.a255bits.com.hypr.Generator
 
-import com.google.gson.annotations.SerializedName
+import android.view.View
+import com.squareup.moshi.Json
 
-class Generator {
+
+class Generator(val viewer: Viewer, val input: Input) {
     var name: String = ""
-    @SerializedName("file_size_in_bytes")
-    var fileSize: Long = 0
-    @SerializedName("model_url")
-    var modelUrl: String = ""
-    var viewer: Viewer = Viewer()
-    var input: Input = Input()
-    var output: Output = Output()
+    @Json(name = "file_size_in_bytes")var fileSize: Long = 0
+    @Json(name = "model_url")var modelUrl: String = ""
+    var output: Output? = null
 }
 
-class Viewer {
-    var type: String = ""
-    var operation: String = ""
-    var controls: MutableList<Control> = mutableListOf()
-}
+class Viewer(val type: String, val operation: String, val controls: List<Control>)
+
 
 class Input {
     var type: String = "image"

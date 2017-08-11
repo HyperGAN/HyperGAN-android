@@ -51,6 +51,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
             }.await()
             this@MainInteractor.listOfGenerators = listOfGenerators
             callListenerForEachGenerator(param, listOfGenerators)
+
         }
     }
 
