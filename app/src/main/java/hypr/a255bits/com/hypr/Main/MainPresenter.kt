@@ -9,7 +9,7 @@ import java.io.File
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter {
     val file = File(context.filesDir, "optimized_weight_conv.pb")
     private val DOWNLOAD_COMPLETE: Float = 100.0f
-    var  buyGenerators: MutableList<BuyGenerator> = mutableListOf()
+    var buyGenerators: MutableList<BuyGenerator> = mutableListOf()
 
     override fun createGeneratorLoader(file: File, itemId: Int) {
         if (!file.exists()) {
@@ -19,7 +19,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
                 println("successs")
                 view.startCameraActivity(itemId)
             }
-        }else{
+        } else {
             view.startCameraActivity(itemId)
         }
     }
@@ -38,8 +38,8 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun startModel(itemId: Int, image: ByteArray?) {
         val generator = interactor.listOfGenerators?.get(itemId)
         if (generator != null) {
-//            val controlArray: Array<Control> = generator.viewer.controls.toTypedArray()
-//            view.applyModelToImage(controlArray, image)
+            val controlArray: Array<Control>? = generator.generator?.viewer?.controls?.toTypedArray()
+            controlArray?.let { view.applyModelToImage(it, image) }
         }
     }
 
@@ -58,8 +58,11 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
                 buyGenerators = mutableListOf<BuyGenerator>()
                 generators.forEachIndexed { index, generator ->
                     view.modeToNavBar(generator, index)
-                    val buyGenerator = BuyGenerator(generator.name)
-                    buyGenerators.add(buyGenerator)
+                    if (generator.name != null) {
+
+                        val buyGenerator = BuyGenerator(generator.name!!)
+                        buyGenerators.add(buyGenerator)
+                    }
                 }
                 view.startModelOnImage(buyGenerators)
             }
