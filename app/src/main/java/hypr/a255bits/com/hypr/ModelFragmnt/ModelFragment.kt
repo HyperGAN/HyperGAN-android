@@ -54,7 +54,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     fun displayTitleSpinner() {
         activity.toolbar.title = ""
-        val actions = listOf("Smile", "Frown")
+        val actions: List<String?>? = modelUrl?.toList()?.map { it.name }
         val adapter: SpinnerAdapter = ArrayAdapter<String>(activity, R.layout.spinner_dropdown_item, actions)
         val spinner = Spinner(activity)
         spinner.background.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);

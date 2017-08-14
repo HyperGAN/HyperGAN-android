@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.firebase.storage.FileDownloadTask
 import com.google.firebase.storage.FirebaseStorage
 import hypr.a255bits.com.hypr.Generator.Generator
+import hypr.a255bits.com.hypr.Generator.Generator_
 import hypr.a255bits.com.hypr.Network.ModelApi
 import hypr.a255bits.com.hypr.Network.ModelDownloader
 import kotlinx.coroutines.experimental.android.UI

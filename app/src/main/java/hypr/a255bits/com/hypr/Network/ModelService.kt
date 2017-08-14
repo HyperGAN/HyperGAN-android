@@ -1,6 +1,7 @@
 package hypr.a255bits.com.hypr.Network
 
 import hypr.a255bits.com.hypr.Generator.Generator
+import hypr.a255bits.com.hypr.Generator.Generator_
 import retrofit2.Call
 import retrofit2.http.GET
 

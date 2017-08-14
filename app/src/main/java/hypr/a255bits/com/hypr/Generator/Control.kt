@@ -2,14 +2,17 @@ package hypr.a255bits.com.hypr.Generator
 
 import android.os.Parcel
 import android.os.Parcelable
-
+import com.squareup.moshi.Json
 
 class Control() : Parcelable {
-    val type: String = ""
+    @Json(name = "type")
+    var type: String? = null
 
-    val direction: List<Double> = listOf()
+    @Json(name = "direction")
+    var direction: List<Double>? = null
 
-    val name: String = ""
+    @Json(name = "name")
+    var name: String? = null
 
     companion object {
         @JvmField val CREATOR: Parcelable.Creator<Control> = object : Parcelable.Creator<Control> {
@@ -18,8 +21,7 @@ class Control() : Parcelable {
         }
     }
 
-    constructor(source: Parcel) : this(
-    )
+    constructor(source: Parcel) : this()
 
     override fun describeContents() = 0
 
