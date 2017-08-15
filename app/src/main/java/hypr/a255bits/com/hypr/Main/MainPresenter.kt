@@ -4,20 +4,22 @@ import android.content.Context
 import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.Generator
+import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import java.io.File
 
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter {
+
+    val file = File(context.filesDir, "optimized_weight_conv.pb")
+    private val DOWNLOAD_COMPLETE: Float = 100.0f
+    var  buyGenerators: MutableList<BuyGenerator> = mutableListOf()
+    var isLoggedIntoGoogle: Boolean = false
 
     init{
         interactor.presenter = this
     }
 
-    val file = File(context.filesDir, "optimized_weight_conv.pb")
-    private val DOWNLOAD_COMPLETE: Float = 100.0f
-    var  buyGenerators: MutableList<BuyGenerator> = mutableListOf()
-
     override fun signInToGoogle(googleSignInClient: GoogleApiClient) {
-        view.signIntoGoogle(googleSignInClient)
+        view.popupSigninGoogle(googleSignInClient)
     }
     override fun createGeneratorLoader(file: File, itemId: Int) {
         if (!file.exists()) {
@@ -29,6 +31,14 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             }
         }else{
             view.startCameraActivity(itemId)
+        }
+    }
+
+    override fun buyModel(skus: String, billingHelper: IabHelper?) {
+        if(isLoggedIntoGoogle){
+            view.buyModelPopup(skus, billingHelper)
+        }else{
+            signInToGoogle(interactor.googleSignInClient)
         }
     }
 
@@ -75,4 +85,5 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             }
         })
     }
+
 }

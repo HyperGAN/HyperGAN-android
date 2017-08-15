@@ -5,6 +5,7 @@ import hypr.a255bits.com.hypr.Generator
 
 import com.google.firebase.storage.FileDownloadTask
 import hypr.a255bits.com.hypr.BuyGenerator
+import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import java.io.File
 
 interface MainMvp {
@@ -16,7 +17,8 @@ interface MainMvp {
         fun applyModelToImage(modelUrl: String, image: ByteArray?)
         fun startModelOnImage(buyGenerators: MutableList<BuyGenerator>)
         fun  displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>)
-        fun  signIntoGoogle(googleSignInClient: GoogleApiClient)
+        fun popupSigninGoogle(googleSignInClient: GoogleApiClient)
+        fun  buyModelPopup(skus: String, billingHelper: IabHelper?)
 
     }
 
@@ -29,6 +31,7 @@ interface MainMvp {
         fun createGeneratorLoader(itemId: File, itemId1: Int)
         fun stopInAppBilling()
         fun  signInToGoogle(googleSignInClient: GoogleApiClient)
+        fun  buyModel(skus: String, billingHelper: IabHelper?)
     }
 
     interface interactor {

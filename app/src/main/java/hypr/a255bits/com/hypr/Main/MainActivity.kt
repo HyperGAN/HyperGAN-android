@@ -1,6 +1,8 @@
 package hypr.a255bits.com.hypr.Main
 
+import android.app.Activity
 import android.app.ProgressDialog
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
@@ -22,11 +24,9 @@ import kotlinx.android.synthetic.main.app_bar_main2.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import org.jetbrains.anko.progressDialog
-import org.jetbrains.anko.intentFor
 import com.google.android.gms.auth.api.Auth
-import android.content.Intent
-
+import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
+import org.jetbrains.anko.*
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, MainMvp.view {
@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     val presenter by lazy { MainPresenter(this, interactor, applicationContext) }
     private var modelSubMenu: SubMenu? = null
     var progressDownloadingModel: ProgressDialog? = null
+    private val SIGN_INTO_GOOGLE_RESULT: Int = 12
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,21 +47,51 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
-    override fun signIntoGoogle(googleSignInClient: GoogleApiClient) {
-        val signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleSignInClient)
-        startActivityForResult(signInIntent, 1)
-
-
+    override fun buyModelPopup(skus: String, billingHelper: IabHelper?) {
+        billingHelper?.launchPurchaseFlow(this, skus, 1001, { result, info ->
+            if (result.isSuccess) {
+                println("success")
+            }else{
+                println("buy error: $result")
+            }
+        }, "")
     }
+
+    override fun popupSigninGoogle(googleSignInClient: GoogleApiClient) {
+        alert {
+            message = "Would you like to sign into Google?"
+            title = "Sign in to Google"
+            okButton {
+                signinToGoogle(googleSignInClient)
+            }
+            cancelButton { dialog ->
+                dialog.dismiss()
+            }
+        }.show()
+    }
+
+
+    fun signinToGoogle(googleSignInClient: GoogleApiClient) {
+        val signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleSignInClient)
+        startActivityForResult(signInIntent, SIGN_INTO_GOOGLE_RESULT)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == SIGN_INTO_GOOGLE_RESULT && resultCode == Activity.RESULT_OK) {
+            presenter.isLoggedIntoGoogle = true
+        }
+    }
+
     override fun startModelOnImage(buyGenerators: MutableList<BuyGenerator>) {
         if (intent.hasExtra("indexInJson")) {
             val indexInJson = intent.extras.getInt("indexInJson")
             val image = intent.extras.getByteArray("image")
             presenter.startModel(indexInJson, image)
-        }else{
+        } else {
             displayGeneratorsOnHomePage(buyGenerators)
         }
     }
+
     override fun displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>) {
         val fragment: Fragment = WelcomeScreen.newInstance(generators, "")
         supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
@@ -114,13 +145,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (item.itemId in 0..100) {
             presenter.startModel(item.itemId)
 
-        }else if(item.itemId == R.id.homeButton){
+        } else if (item.itemId == R.id.homeButton) {
             displayGeneratorsOnHomePage(presenter.buyGenerators)
         }
         drawer.closeDrawer(GravityCompat.START)
         return true
     }
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun showModelDownloadProgress(progressPercent: java.lang.Float) {
@@ -133,7 +163,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             progressDownloadingModel?.progress = progressPercent.toInt()
         }
     }
-
 
     override fun closeDownloadingModelDialog() {
         progressDownloadingModel?.dismiss()
