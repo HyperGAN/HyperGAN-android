@@ -1,7 +1,10 @@
 package hypr.a255bits.com.hypr.Main
 
+import android.app.Activity
 import android.content.Context
 import android.util.Log
+import com.google.android.gms.auth.api.Auth
+import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.storage.FileDownloadTask
 import com.google.firebase.storage.FirebaseStorage
 import hypr.a255bits.com.hypr.Generator
@@ -10,15 +13,30 @@ import hypr.a255bits.com.hypr.Network.ModelDownloader
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabResult
+import hypr.a255bits.com.hypr.Util.InAppBilling.Inventory
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.coroutines.experimental.bg
 import java.io.File
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import android.support.v4.app.ActivityCompat.startActivityForResult
+import android.content.Intent
+
+
+
+
 
 class MainInteractor(val context: Context) : MainMvp.interactor {
+    var presenter: MainPresenter? = null
 
     var billingHelper: IabHelper? = IabHelper(context, context.getString(R.string.API_KEY))
+    val gso: GoogleSignInOptions by lazy{ GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .build()}
+    val googleSignInClient: GoogleApiClient by lazy{GoogleApiClient.Builder(context)
+            .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+            .build()}
 
     var listOfGenerators: List<Generator>? = null
     var modelDownloader = ModelDownloader(FirebaseStorage.getInstance().reference)
@@ -28,9 +46,16 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     }
 
     private fun startInAppBilling() {
-        billingHelper?.startSetup { result: IabResult? ->
-            if (result!!.isFailure) {
+        billingHelper?.startSetup { result ->
+            if (!result.isSuccess) {
                 Log.d("MainInteractor", "Problem setting up In-app Billing: $result")
+                presenter?.signInToGoogle(googleSignInClient)
+
+            }else{
+               val skus = mutableListOf("expression")
+                billingHelper!!.queryInventoryAsync(true, skus, null, IabHelper.QueryInventoryFinishedListener { result, inv ->
+                    println("found query $result")
+                })
             }
         }
     }

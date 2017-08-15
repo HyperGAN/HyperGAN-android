@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.SubMenu
+import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator
@@ -23,6 +24,10 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.progressDialog
 import org.jetbrains.anko.intentFor
+import com.google.android.gms.auth.api.Auth
+import android.content.Intent
+
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, MainMvp.view {
 
@@ -41,6 +46,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
+    override fun signIntoGoogle(googleSignInClient: GoogleApiClient) {
+        val signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleSignInClient)
+        startActivityForResult(signInIntent, 1)
+
+
+    }
     override fun startModelOnImage(buyGenerators: MutableList<BuyGenerator>) {
         if (intent.hasExtra("indexInJson")) {
             val indexInJson = intent.extras.getInt("indexInJson")

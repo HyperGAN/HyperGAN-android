@@ -1,5 +1,6 @@
 package hypr.a255bits.com.hypr.Main
 
+import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.Generator
 
 import com.google.firebase.storage.FileDownloadTask
@@ -15,6 +16,7 @@ interface MainMvp {
         fun applyModelToImage(modelUrl: String, image: ByteArray?)
         fun startModelOnImage(buyGenerators: MutableList<BuyGenerator>)
         fun  displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>)
+        fun  signIntoGoogle(googleSignInClient: GoogleApiClient)
 
     }
 
@@ -26,6 +28,7 @@ interface MainMvp {
         fun startModel(itemId: Int, image: ByteArray?)
         fun createGeneratorLoader(itemId: File, itemId1: Int)
         fun stopInAppBilling()
+        fun  signInToGoogle(googleSignInClient: GoogleApiClient)
     }
 
     interface interactor {

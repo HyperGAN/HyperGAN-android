@@ -1,16 +1,24 @@
 package hypr.a255bits.com.hypr.Main
 
 import android.content.Context
+import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.Generator
 import java.io.File
 
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter {
 
+    init{
+        interactor.presenter = this
+    }
+
     val file = File(context.filesDir, "optimized_weight_conv.pb")
     private val DOWNLOAD_COMPLETE: Float = 100.0f
     var  buyGenerators: MutableList<BuyGenerator> = mutableListOf()
 
+    override fun signInToGoogle(googleSignInClient: GoogleApiClient) {
+        view.signIntoGoogle(googleSignInClient)
+    }
     override fun createGeneratorLoader(file: File, itemId: Int) {
         if (!file.exists()) {
             val pbFilePointer = interactor.getModelFromFirebase(file, "optimized_weight_conv.pb")
