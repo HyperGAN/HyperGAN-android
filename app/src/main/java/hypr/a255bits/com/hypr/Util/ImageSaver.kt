@@ -20,7 +20,7 @@ class ImageSaver {
         val now = Date()
         val fileName = formatter.format(now)
 
-        val fname = "/Image-$fileName.jpg"
+        val fname = "/Image_$fileName.jpg"
         val file = File(myDir, fname)
         try {
             val out = FileOutputStream(file)
