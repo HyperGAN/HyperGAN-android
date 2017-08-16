@@ -19,7 +19,7 @@ class ImageSaver {
         if(!myDir.exists()){
             myDir.mkdir()
         }
-        val formatter = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss")
+        val formatter = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SSSSS")
         val now = Date()
         val fileName = formatter.format(now)
 

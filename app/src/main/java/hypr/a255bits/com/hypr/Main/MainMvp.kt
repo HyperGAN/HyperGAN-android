@@ -1,9 +1,9 @@
 package hypr.a255bits.com.hypr.Main
 
-import hypr.a255bits.com.hypr.Generator
-
 import com.google.firebase.storage.FileDownloadTask
 import hypr.a255bits.com.hypr.BuyGenerator
+import hypr.a255bits.com.hypr.Generator.Control
+import hypr.a255bits.com.hypr.Generator.Generator
 import java.io.File
 
 interface MainMvp {
@@ -12,7 +12,7 @@ interface MainMvp {
         fun displayModelDownloadProgress()
         fun closeDownloadingModelDialog()
         fun startCameraActivity(indexInJson: Int)
-        fun applyModelToImage(modelUrl: String, image: ByteArray?)
+        fun applyModelToImage(controlArray: Array<Control>, image: ByteArray?)
         fun startModelOnImage(buyGenerators: MutableList<BuyGenerator>)
         fun  displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>)
 
