@@ -41,7 +41,7 @@ open class GeneratorTest {
     }
 
     private fun writeBitmapToFile(encodedBitmap: Bitmap, context: Context) {
-        ImageSaver().saveImageToInternalStorage(encodedBitmap, context)
+        ImageSaver().saveImageToInternalStorage(encodedBitmap, context, "after")
         Thread.sleep(1000)
     }
 

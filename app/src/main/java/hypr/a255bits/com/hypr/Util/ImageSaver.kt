@@ -13,9 +13,12 @@ import java.util.*
 
 class ImageSaver {
 
-    fun saveImageToInternalStorage(focusedImageBitmap: Bitmap?, context: Context): Boolean {
-        val root = Environment.getExternalStorageDirectory().toString()
+    fun saveImageToInternalStorage(focusedImageBitmap: Bitmap?, context: Context, folderName: String = "hyprimages"): Boolean {
+        val root = Environment.getExternalStoragePublicDirectory(folderName).toString()
         val myDir = File(root)
+        if(!myDir.exists()){
+            myDir.mkdir()
+        }
         val formatter = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss")
         val now = Date()
         val fileName = formatter.format(now)
