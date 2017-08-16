@@ -48,13 +48,17 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
                 presenter?.signInToGoogle(googleSignInClient)
             } else {
                 presenter?.isLoggedIntoGoogle = true
-                val skus = mutableListOf("expression")
-                billingHelper!!.queryInventoryAsync(true, skus, null, { result, inv ->
-                    presenter?.buyModel("expression", billingHelper)
-                    println("found query $result")
-                })
             }
         }
+    }
+
+    fun buyProduct(productId: String) {
+        val skus = mutableListOf(productId)
+        billingHelper!!.queryInventoryAsync(true, skus, null, { result, inv ->
+            presenter?.buyModel("expression", billingHelper)
+            println("found query $result")
+        })
+
     }
 
     override fun stopInAppBilling() {
