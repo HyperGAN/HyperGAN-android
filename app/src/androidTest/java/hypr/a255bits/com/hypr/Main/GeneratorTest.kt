@@ -2,7 +2,6 @@ package hypr.a255bits.com.hypr.Main
 
 
 import android.content.Context
-import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.support.test.rule.ActivityTestRule
@@ -36,7 +35,7 @@ open class GeneratorTest {
         listOfImages?.forEach { filename ->
             val imageFile = openFile("$IMAGES_TO_TRANSFER_FOLDERNAME/$filename")
             val image = getBitmapFromFile(imageFile)
-            val encodedBitmap = encodeImage(mActivityTestRule.activity.assets, image)
+            val encodedBitmap = encodeImage(image)
             writeImageToFileOnAndroidDeviceGallery(encodedBitmap, mActivityTestRule.activity.applicationContext)
         }
     }
@@ -51,7 +50,7 @@ open class GeneratorTest {
         return BitmapFactory.decodeStream(imageReaderFromFile)
     }
 
-    private fun encodeImage(assets: AssetManager?, image: Bitmap?): Bitmap {
+    private fun encodeImage(image: Bitmap?): Bitmap {
         generator.load(mActivityTestRule.activity.assets)
         val scaled = Bitmap.createScaledBitmap(image, 128, 128, false)
         val encoded = generator.encode(scaled)
