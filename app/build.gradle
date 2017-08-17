@@ -9,6 +9,12 @@ apply plugin: "kotlin-kapt"
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+
     defaultConfig {
         applicationId "hypr.a255bits.com.hypr"
         minSdkVersion 17
@@ -70,6 +76,9 @@ dependencies {
     testCompile 'org.mockito:mockito-core:2.8.9'
     compile 'com.android.support.test.espresso:espresso-core:2.2.2'
     compile 'com.android.support:multidex:1.0.1'
+    testCompile "org.robolectric:robolectric:3.4.2"
+
+
 
 }
 
