@@ -32,6 +32,10 @@ class WelcomeScreen : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        displayListOfModels()
+    }
+
+    private fun displayListOfModels() {
         recyclerView.layoutManager = LinearLayoutManager(activity)
         val adapter = buyGenerators?.let { WelcomeScreenAdapter(it) }
         recyclerView.adapter = adapter
