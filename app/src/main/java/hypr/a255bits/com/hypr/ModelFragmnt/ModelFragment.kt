@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.*
 import com.pawegio.kandroid.onProgressChanged
 import hypr.a255bits.com.hypr.GeneratorLoader
@@ -26,6 +27,8 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     val presenter by lazy { ModelFragmentPresenter(this, interactor, context) }
     val generatorLoader = GeneratorLoader()
     var encoded: FloatArray? = null
+    var mask: FloatArray? = null
+    var baseImage: Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,10 +64,15 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     private fun changeGanImageFromSlider(ganValue: Double) {
         encoded?.let {
-            val ganImage = generatorLoader.sample(it, ganValue.toFloat())
+            val direction = generatorLoader.random_z()
+            val ganImage = generatorLoader.sample(it, ganValue.toFloat(), mask, direction, baseImage!!)
+            val z_slider = generatorLoader.get_z(it, ganValue.toFloat(), it)
+
+            Log.d("z_slider", z_slider[0].toString())
             focusedImage.setImageBitmap(ganImage)
 
         }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -94,9 +102,14 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     override fun displayFocusedImage(imageFromGallery: Bitmap) {
-        val scaled = Bitmap.createScaledBitmap(imageFromGallery, 128, 128, false)
+        val scaled = Bitmap.createScaledBitmap(imageFromGallery, 256, 256, false)
+        baseImage = scaled
+
         encoded = generatorLoader.encode(scaled)
-        focusedImage.setImageBitmap(generatorLoader.sample(encoded!!, 0.0f))
+
+        mask = generatorLoader.mask(scaled)
+        val direction = generatorLoader.random_z()
+        focusedImage.setImageBitmap(generatorLoader.sample(encoded!!, 0.0f, mask, direction, baseImage!!))
 
     }
 
