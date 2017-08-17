@@ -4,7 +4,6 @@ import android.content.Context
 import com.google.firebase.storage.FileDownloadTask
 import com.google.firebase.storage.FirebaseStorage
 import hypr.a255bits.com.hypr.Generator.Generator
-import hypr.a255bits.com.hypr.Generator.Generator_
 import hypr.a255bits.com.hypr.Network.ModelApi
 import hypr.a255bits.com.hypr.Network.ModelDownloader
 import kotlinx.coroutines.experimental.android.UI
@@ -19,8 +18,9 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     var modelDownloader = ModelDownloader(FirebaseStorage.getInstance().reference)
 
 
-    override fun getModelFromFirebase(saveLocation: File, filenameInFirebase: String): FileDownloadTask {
-        return modelDownloader.getFile(saveLocation, filenameInFirebase)
+    override fun getModelFromFirebase(saveLocation: File, filenameInFirebase: String): FileDownloadTask? {
+        val firebaseGeneratorPath = listOfGenerators?.get(0)?.model_url
+        return firebaseGeneratorPath?.let { modelDownloader.getFile(saveLocation, it) }
 
     }
     override fun showProgressOfFirebaseDownload(firebaseDownloader: FileDownloadTask){
