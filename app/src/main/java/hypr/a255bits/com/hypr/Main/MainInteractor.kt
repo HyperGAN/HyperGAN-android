@@ -3,10 +3,11 @@ package hypr.a255bits.com.hypr.Main
 import android.content.Context
 import android.util.Log
 import com.google.android.gms.auth.api.Auth
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.storage.FileDownloadTask
 import com.google.firebase.storage.FirebaseStorage
-import hypr.a255bits.com.hypr.Generator
+import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.Network.ModelApi
 import hypr.a255bits.com.hypr.Network.ModelDownloader
 import hypr.a255bits.com.hypr.R
@@ -16,7 +17,6 @@ import kotlinx.coroutines.experimental.async
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.coroutines.experimental.bg
 import java.io.File
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 class MainInteractor(val context: Context) : MainMvp.interactor {
     var presenter: MainPresenter? = null
@@ -100,6 +100,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
             }.await()
             this@MainInteractor.listOfGenerators = listOfGenerators
             callListenerForEachGenerator(param, listOfGenerators)
+
         }
     }
 

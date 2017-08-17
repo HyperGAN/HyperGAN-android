@@ -3,16 +3,17 @@ package hypr.a255bits.com.hypr.Main
 import android.content.Context
 import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
-import hypr.a255bits.com.hypr.Generator
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
+import hypr.a255bits.com.hypr.Generator.Control
+import hypr.a255bits.com.hypr.Generator.Generator
 import java.io.File
 
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter {
 
     val file = File(context.filesDir, "optimized_weight_conv.pb")
     private val DOWNLOAD_COMPLETE: Float = 100.0f
-    var  buyGenerators: MutableList<BuyGenerator> = mutableListOf()
     var isLoggedIntoGoogle: Boolean = false
+    var buyGenerators: MutableList<BuyGenerator> = mutableListOf()
 
     init{
         interactor.presenter = this
@@ -29,7 +30,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
                 println("successs")
                 view.startCameraActivity(itemId)
             }
-        }else{
+        } else {
             view.startCameraActivity(itemId)
         }
     }
@@ -48,7 +49,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun startModel(itemId: Int) {
         val generator = interactor.listOfGenerators?.get(itemId)
         if (generator != null) {
-            interactor.buyProduct("com.expression")
+            generator.google_play_id?.let { interactor.buyProduct(it) }
             createGeneratorLoader(file, itemId)
 //            view.displayModelDownloadProgress()
 //            val file = File.createTempFile("optimized_weight_conv", "pb")
@@ -60,7 +61,8 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun startModel(itemId: Int, image: ByteArray?) {
         val generator = interactor.listOfGenerators?.get(itemId)
         if (generator != null) {
-            view.applyModelToImage(generator.modelUrl, image)
+            val controlArray: Array<Control>? = generator.generator?.viewer?.controls?.toTypedArray()
+            controlArray?.let { view.applyModelToImage(it, image) }
         }
     }
 
@@ -79,8 +81,11 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
                 buyGenerators = mutableListOf<BuyGenerator>()
                 generators.forEachIndexed { index, generator ->
                     view.modeToNavBar(generator, index)
-                    val buyGenerator = BuyGenerator(generator.name)
-                    buyGenerators.add(buyGenerator)
+                    if (generator.name != null) {
+
+                        val buyGenerator = BuyGenerator(generator.name!!)
+                        buyGenerators.add(buyGenerator)
+                    }
                 }
                 view.startModelOnImage(buyGenerators)
             }
