@@ -135,7 +135,6 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         mask = generatorLoader.mask(scaled)
         val direction = generatorLoader.random_z()
         focusedImage.setImageBitmap(generatorLoader.sample(encoded!!, 0.0f, mask, direction, baseImage!!))
-
     }
 
     override fun shareImageToOtherApps(shareIntent: Intent) {
