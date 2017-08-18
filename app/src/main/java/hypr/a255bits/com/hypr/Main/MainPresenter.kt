@@ -3,9 +3,9 @@ package hypr.a255bits.com.hypr.Main
 import android.content.Context
 import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
-import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.Generator.Generator
+import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import java.io.File
 
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter {
@@ -49,7 +49,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun startModel(itemId: Int) {
         val generator = interactor.listOfGenerators?.get(itemId)
         if (generator != null) {
-            generator.google_play_id?.let { interactor.buyProduct(it) }
+//            generator.google_play_id?.let { interactor.buyProduct(it) }
             createGeneratorLoader(file, itemId)
 //            view.displayModelDownloadProgress()
 //            val file = File.createTempFile("optimized_weight_conv", "pb")

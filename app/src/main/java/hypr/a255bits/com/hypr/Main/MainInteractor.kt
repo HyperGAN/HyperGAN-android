@@ -12,8 +12,11 @@ import hypr.a255bits.com.hypr.Network.ModelApi
 import hypr.a255bits.com.hypr.Network.ModelDownloader
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
+import hypr.a255bits.com.hypr.Util.InAppBilling.Inventory
+import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.coroutines.experimental.bg
 import java.io.File
@@ -21,7 +24,7 @@ import java.io.File
 class MainInteractor(val context: Context) : MainMvp.interactor {
     var presenter: MainPresenter? = null
 
-    var billingHelper: IabHelper? = IabHelper(context, context.getString(R.string.API_KEY))
+    var billingHelper: IabHelper = IabHelper(context, context.getString(R.string.API_KEY))
     val gso: GoogleSignInOptions by lazy {
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -41,7 +44,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     }
 
     private fun startInAppBilling() {
-        billingHelper?.startSetup { result ->
+        billingHelper.startSetup { result ->
             if (!result.isSuccess) {
                 Log.d("MainInteractor", "Problem setting up In-app Billing: $result")
                 presenter?.isLoggedIntoGoogle = false
@@ -53,17 +56,23 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     }
 
     fun buyProduct(productId: String) {
-        val skus = mutableListOf(productId)
-        billingHelper!!.queryInventoryAsync(true, skus, null, { result, inv ->
-            presenter?.buyModel(productId, billingHelper)
-            println("found query $result")
-        })
+        launch(UI) {
+            val skus = mutableListOf(productId)
+            val inventory = billingHelper.query(true, skus, null).await()
+            if (!inventory.hasPurchase(productId)) {
+                presenter?.buyModel(productId, billingHelper)
+            }
+        }
+    }
 
+    fun IabHelper.query(query: Boolean, skus: MutableList<String>, moreSubsSkus: List<String>?): Deferred<Inventory> {
+        return async(UI) {
+            billingHelper.queryInventory(true, skus, null)
+        }
     }
 
     override fun stopInAppBilling() {
-        billingHelper?.dispose()
-        billingHelper = null
+        billingHelper.dispose()
     }
 
     override fun getModelFromFirebase(saveLocation: File, filenameInFirebase: String): FileDownloadTask {
