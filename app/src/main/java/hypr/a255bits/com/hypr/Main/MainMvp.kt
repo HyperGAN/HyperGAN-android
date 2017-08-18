@@ -38,7 +38,7 @@ interface MainMvp {
     interface interactor {
         fun addModelsToNavBar(param: GeneratorListener)
 
-        fun getModelFromFirebase(saveLocation: File, filenameInFirebase: String): FileDownloadTask
+        fun getModelFromFirebase(saveLocation: File, filenameInFirebase: String): FileDownloadTask?
         fun showProgressOfFirebaseDownload(firebaseDownloader: FileDownloadTask)
         fun stopInAppBilling()
     }

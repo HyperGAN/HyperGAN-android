@@ -25,8 +25,8 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun createGeneratorLoader(file: File, itemId: Int) {
         if (!file.exists()) {
             val pbFilePointer = interactor.getModelFromFirebase(file, "optimized_weight_conv.pb")
-            interactor.showProgressOfFirebaseDownload(pbFilePointer)
-            pbFilePointer.addOnSuccessListener { taskSnapshot ->
+            pbFilePointer?.let { interactor.showProgressOfFirebaseDownload(it) }
+            pbFilePointer?.addOnSuccessListener { taskSnapshot ->
                 println("successs")
                 view.startCameraActivity(itemId)
             }

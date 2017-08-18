@@ -17,7 +17,7 @@ interface ModelFragmentMVP{
     interface presenter{
         fun findFacesInImage(imageWithFaces: Bitmap, context: Context)
         fun disconnectFaceDetector()
-        fun saveImageDisplayedToPhone(context: Context): Deferred<Boolean>
+        fun saveImageDisplayedToPhone(context: Context): Deferred<Boolean>?
         fun transformImage(normalImage: Bitmap?, pbFile: File?, generatorLoader: GeneratorLoader)
         fun  convertToNegative1To1(progress: Int): Double
     }

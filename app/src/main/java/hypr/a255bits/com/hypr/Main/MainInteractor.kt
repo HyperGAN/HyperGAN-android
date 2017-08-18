@@ -75,8 +75,9 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
         billingHelper.dispose()
     }
 
-    override fun getModelFromFirebase(saveLocation: File, filenameInFirebase: String): FileDownloadTask {
-        return modelDownloader.getFile(saveLocation, filenameInFirebase)
+    override fun getModelFromFirebase(saveLocation: File, filenameInFirebase: String): FileDownloadTask? {
+        val firebaseGeneratorPath = listOfGenerators?.get(0)?.model_url
+        return firebaseGeneratorPath?.let { modelDownloader.getFile(saveLocation, it) }
 
     }
 

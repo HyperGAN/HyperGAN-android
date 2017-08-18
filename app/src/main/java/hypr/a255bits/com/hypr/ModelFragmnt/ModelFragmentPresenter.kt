@@ -2,6 +2,7 @@ package hypr.a255bits.com.hypr.ModelFragmnt
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.media.Image
 import hypr.a255bits.com.hypr.GeneratorLoader
 import hypr.a255bits.com.hypr.Util.ImageSaver
 import kotlinx.coroutines.experimental.Deferred
@@ -13,8 +14,9 @@ import java.io.IOException
 
 class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: ModelInteractor, val context: Context) : ModelFragmentMVP.presenter {
 
-    private var imageFromGallery: Bitmap? = null
+    var imageFromGallery: Bitmap? = null
     val SHARE_IMAGE_PERMISSION_REQUEST = 10
+    val SAVE_IMAGE_PERMISSION_REQUEST: Int = 10
     override fun disconnectFaceDetector() {
         interactor.detector.release()
     }
@@ -50,11 +52,20 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         return !listOfFaces.isEmpty()
     }
 
-    override fun saveImageDisplayedToPhone(context: Context): Deferred<Boolean> {
-        return async(UI) {
-            val saver = ImageSaver()
-            saver.saveImageToInternalStorage(imageFromGallery, context)
+//    override fun saveImageDisplayedToPhone(context: Context): Deferred<Boolean> {
+//    }
+//        return async(UI) {
+//            val saver = ImageSaver()
+//            saver.saveImageToInternalStorage(imageFromGallery, context)
+//        }
+    override fun saveImageDisplayedToPhone(context: Context): Deferred<Boolean>? {
+    var saver: Deferred<Boolean>? = null
+        if(interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+            saver = ImageSaver().saveImageToInternalStorage(imageFromGallery, context)
+        }else{
+            view.requestPermissionFromUser(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), SAVE_IMAGE_PERMISSION_REQUEST)
         }
+    return saver
     }
 
     override fun transformImage(normalImage: Bitmap?, pbFile: File?, generatorLoader: GeneratorLoader) {
