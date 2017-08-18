@@ -55,7 +55,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     fun buyProduct(productId: String) {
         val skus = mutableListOf(productId)
         billingHelper!!.queryInventoryAsync(true, skus, null, { result, inv ->
-            presenter?.buyModel("expression", billingHelper)
+            presenter?.buyModel(productId, billingHelper)
             println("found query $result")
         })
 
