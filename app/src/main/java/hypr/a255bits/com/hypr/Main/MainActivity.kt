@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.SubMenu
+import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
@@ -19,14 +20,13 @@ import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment
 import hypr.a255bits.com.hypr.R
+import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import hypr.a255bits.com.hypr.WelcomeScreen.WelcomeScreen
 import kotlinx.android.synthetic.main.activity_main2.*
 import kotlinx.android.synthetic.main.app_bar_main2.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import com.google.android.gms.auth.api.Auth
-import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import org.jetbrains.anko.*
 
 
@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         billingHelper?.launchPurchaseFlow(this, skus, 1001, { result, info ->
             if (result.isSuccess) {
                 println("success")
-            }else{
+            } else {
                 println("buy error: $result")
             }
         }, "")
@@ -144,7 +144,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         if (item.itemId in 0..100) {
-            presenter.startModel(item.itemId)
+           presenter.attemptToStartModel(item.itemId)
 
         } else if (item.itemId == R.id.homeButton) {
             displayGeneratorsOnHomePage(presenter.buyGenerators)

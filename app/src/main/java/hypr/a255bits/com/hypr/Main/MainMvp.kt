@@ -1,12 +1,12 @@
 package hypr.a255bits.com.hypr.Main
 
 import com.google.android.gms.common.api.GoogleApiClient
-
 import com.google.firebase.storage.FileDownloadTask
 import hypr.a255bits.com.hypr.BuyGenerator
-import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.Generator.Generator
+import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
+import kotlinx.coroutines.experimental.Deferred
 import java.io.File
 
 interface MainMvp {
@@ -33,6 +33,7 @@ interface MainMvp {
         fun stopInAppBilling()
         fun  signInToGoogle(googleSignInClient: GoogleApiClient)
         fun  buyModel(skus: String, billingHelper: IabHelper?)
+        fun attemptToStartModel(itemId: Int)
     }
 
     interface interactor {
@@ -41,6 +42,8 @@ interface MainMvp {
         fun getModelFromFirebase(saveLocation: File, filenameInFirebase: String): FileDownloadTask?
         fun showProgressOfFirebaseDownload(firebaseDownloader: FileDownloadTask)
         fun stopInAppBilling()
+        fun hasBoughtItem(itemId: String): Deferred<Boolean>
+        fun attemptToStartModel(itemId: Int)
     }
 
 }

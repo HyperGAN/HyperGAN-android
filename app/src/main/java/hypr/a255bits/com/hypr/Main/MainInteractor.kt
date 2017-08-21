@@ -22,6 +22,7 @@ import org.jetbrains.anko.coroutines.experimental.bg
 import java.io.File
 
 class MainInteractor(val context: Context) : MainMvp.interactor {
+
     var presenter: MainPresenter? = null
 
     var billingHelper: IabHelper = IabHelper(context, context.getString(R.string.API_KEY))
@@ -55,14 +56,38 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
         }
     }
 
-    fun buyProduct(productId: String) {
+    override fun hasBoughtItem(itemId: String): Deferred<Boolean> {
+        return async(UI) {
+
+            var hasPurchased = false
+            val inventory = billingHelper.query(true, mutableListOf(itemId), null).await()
+            if (inventory.hasPurchase(itemId)) {
+                hasPurchased = true
+            }
+            hasPurchased
+        }
+    }
+
+    override fun attemptToStartModel(itemId: Int) {
         launch(UI) {
+            val productId = listOfGenerators?.get(itemId)?.google_play_id
+            productId?.let {
+                val hasBoughtItem = hasBoughtItem(it).await()
+                if (hasBoughtItem) {
+                    presenter?.startModel(itemId)
+                } else {
+                    buyProduct(it)
+                }
+            }
+        }
+    }
+
+    suspend fun buyProduct(productId: String) {
             val skus = mutableListOf(productId)
             val inventory = billingHelper.query(true, skus, null).await()
             if (!inventory.hasPurchase(productId)) {
                 presenter?.buyModel(productId, billingHelper)
             }
-        }
     }
 
     fun IabHelper.query(query: Boolean, skus: MutableList<String>, moreSubsSkus: List<String>?): Deferred<Inventory> {
