@@ -12,6 +12,7 @@ import android.util.SparseArray
 import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.face.Face
 import com.google.android.gms.vision.face.FaceDetector
+import com.google.android.gms.vision.face.Landmark
 import com.pawegio.kandroid.fromApi
 
 import hypr.a255bits.com.hypr.R
@@ -97,12 +98,27 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
     private fun cropFaceOutOfBitmap(face: Face, imageWithFaces: Bitmap): Bitmap {
 
         val centerOfFace = face.position
-        val offsetX = 80
-        val offsetY = 120
-        val x: Int = getNonNegativeValueOfFaceCoordicate(centerOfFace.x - offsetX)
-        val y: Int = getNonNegativeValueOfFaceCoordicate(centerOfFace.y - offsetY)
+        val landmarks = face.landmarks
+        val left = face.landmarks.first{ it.type == Landmark.LEFT_EYE }
+        val right = face.landmarks.first{ it.type == Landmark.RIGHT_EYE }
 
-        val bitmap:Bitmap =Bitmap.createBitmap(imageWithFaces, x, y, face.width.toInt() + offsetX, face.height.toInt() + offsetY)
+
+        val offsetX = 200
+        val offsetY = 200
+        val x: Int = getNonNegativeValueOfFaceCoordicate(left.position.x - offsetX)
+        val y: Int = getNonNegativeValueOfFaceCoordicate(left.position.y - offsetY)
+        Log.d("left-right", "l " + left.position.toString() + " r " + right.position.toString())
+        var w: Int = face.width.toInt() + offsetX
+        var h: Int = face.height.toInt() + offsetY
+
+        if(x+w > imageWithFaces.width) {
+            w = imageWithFaces.width-x
+        }
+        if(y+h > imageWithFaces.height) {
+            h = imageWithFaces.height-y
+        }
+
+        val bitmap:Bitmap =Bitmap.createBitmap(imageWithFaces, x, y, w, h)
         val maxSize:Int = intArrayOf(bitmap.height.toInt(), bitmap.width.toInt()).min()!!
 
         val crop:Bitmap = Bitmap.createBitmap(bitmap, (bitmap.width - maxSize)/2, 0, maxSize, maxSize)
