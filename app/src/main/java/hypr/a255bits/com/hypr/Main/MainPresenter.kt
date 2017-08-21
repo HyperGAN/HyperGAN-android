@@ -6,7 +6,6 @@ import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
-import kotlinx.coroutines.experimental.Deferred
 import java.io.File
 
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter {
@@ -62,9 +61,6 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     override fun attemptToStartModel(itemId: Int) {
         interactor.attemptToStartModel(itemId)
-    }
-    fun hasBoughtItem(itemId: String?): Deferred<Boolean>? {
-        return itemId?.let { interactor.hasBoughtItem(it) }
     }
 
     override fun startModel(itemId: Int, image: ByteArray?) {

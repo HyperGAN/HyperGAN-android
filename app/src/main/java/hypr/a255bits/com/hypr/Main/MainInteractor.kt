@@ -58,7 +58,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
 
     override fun hasBoughtItem(itemId: String): Deferred<Boolean> {
         return async(UI) {
-            val inventory = billingHelper.query(true, mutableListOf(itemId), null).await()
+            val inventory = query(true, mutableListOf(itemId), null).await()
             inventory.hasPurchase(itemId)
         }
     }
@@ -79,13 +79,13 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
 
     suspend fun buyProduct(productId: String) {
         val skus = mutableListOf(productId)
-        val inventory = billingHelper.query(true, skus, null).await()
+        val inventory = query(true, skus, null).await()
         if (!inventory.hasPurchase(productId)) {
             presenter?.buyModel(productId, billingHelper)
         }
     }
 
-    fun IabHelper.query(query: Boolean, skus: MutableList<String>, moreSubsSkus: List<String>?): Deferred<Inventory> {
+    fun query(query: Boolean, skus: MutableList<String>, moreSubsSkus: List<String>?): Deferred<Inventory> {
         return async(UI) {
             billingHelper.queryInventory(true, skus, null)
         }
