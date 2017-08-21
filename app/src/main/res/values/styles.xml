@@ -7,6 +7,10 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+    <style name="SpinnerAppTheme" parent="android:Widget.Spinner">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:dropDownSelector">#ffffff</item>
+    </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>

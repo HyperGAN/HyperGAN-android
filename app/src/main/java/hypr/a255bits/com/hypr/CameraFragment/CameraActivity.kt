@@ -7,7 +7,9 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.NavUtils
 import android.view.MenuItem
+import android.view.View
 import com.flurgle.camerakit.CameraListener
+import com.flurgle.camerakit.CameraView
 import hypr.a255bits.com.hypr.Main.MainActivity
 
 import hypr.a255bits.com.hypr.R
@@ -15,7 +17,7 @@ import kotlinx.android.synthetic.main.activity_camera.*
 import org.jetbrains.anko.clearTop
 import org.jetbrains.anko.intentFor
 
-class CameraActivity : AppCompatActivity(), CameraMVP.view {
+class CameraActivity : AppCompatActivity(), CameraMVP.view{
     val presenter: CameraPresenter by lazy { CameraPresenter(this, applicationContext) }
     private val  RESULT_GET_IMAGE: Int = 1
     var indexInJson: Int? = null
@@ -27,14 +29,23 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
         setSupportActionBar(toolbar)
         indexInJson = intent.extras.getInt("indexInJson")
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        takePictureListener(cameraView)
+    }
+
+    fun takePictureButtonClick(view: View){
+        cameraView.captureImage()
+    }
+    fun galleryButtonClick(view: View){
+        displayGallery()
+    }
+
+    private fun takePictureListener(cameraView: CameraView) {
         cameraView.setCameraListener(object : CameraListener() {
             override fun onPictureTaken(jpeg: ByteArray?) {
                 super.onPictureTaken(jpeg)
                 presenter.sendPictureToModel(jpeg)
             }
         })
-        takePicture.setOnClickListener { cameraView.captureImage() }
-        galleryButton.setOnClickListener{displayGallery()}
     }
 
     override fun displayGallery() {

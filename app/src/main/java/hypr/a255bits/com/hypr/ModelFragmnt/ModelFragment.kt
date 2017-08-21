@@ -1,27 +1,37 @@
 package hypr.a255bits.com.hypr.ModelFragmnt
 
+import android.app.ActionBar
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.*
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import android.widget.SpinnerAdapter
 import com.pawegio.kandroid.onProgressChanged
+import com.pawegio.kandroid.setSize
+import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.GeneratorLoader
 
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.app_bar_main2.*
 import org.jetbrains.anko.toast
 import java.io.File
+import java.util.*
 
 
 class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     var pbFile: File? = null
-    private var modelUrl: String? = null
+    private var modelUrl: Array<Control>? = null
     private var image: ByteArray? = null
     val interactor by lazy { ModelInteractor(context) }
     val presenter by lazy { ModelFragmentPresenter(this, interactor, context) }
@@ -33,7 +43,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            modelUrl = arguments.getString(MODEL_URL_PARAM)
+            modelUrl = arguments.getParcelableArray(MODEL_CONTROLS) as Array<Control>?
             image = arguments.getByteArray(IMAGE_PARAM)
         }
     }
@@ -41,8 +51,21 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(R.layout.fragment_model, container, false)
+        displayTitleSpinner()
         setHasOptionsMenu(true)
         return view
+    }
+
+    fun displayTitleSpinner() {
+        activity.toolbar.title = ""
+        val actions: List<String?>? = modelUrl?.toList()?.map { it.name }
+        val adapter: SpinnerAdapter = ArrayAdapter<String>(activity, R.layout.spinner_dropdown_item, actions)
+        val spinner = Spinner(activity)
+        spinner.background.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+
+        spinner.adapter = adapter
+        activity.toolbar.addView(spinner, 0)
+
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -51,6 +74,8 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         presenter.loadGenerator(generatorLoader, pbFile)
         val imageBitmap = image?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
         presenter.transformImage(imageBitmap, pbFile, generatorLoader)
+
+
     }
 
     private fun displayImageTransitionSeekbarProgress() {
@@ -110,7 +135,6 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         mask = generatorLoader.mask(scaled)
         val direction = generatorLoader.random_z()
         focusedImage.setImageBitmap(generatorLoader.sample(encoded!!, 0.0f, mask, direction, baseImage!!))
-
     }
 
     override fun shareImageToOtherApps(shareIntent: Intent) {
@@ -132,14 +156,15 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     companion object {
-        private val MODEL_URL_PARAM = "param1"
         private val IMAGE_PARAM = "param2"
 
-        fun newInstance(modelUrl: String, image: ByteArray?, pbFile: File): ModelFragment {
+        private val  MODEL_CONTROLS = "modelControls"
+
+        fun newInstance(modelControls: Array<Control>?, image: ByteArray?, pbFile: File): ModelFragment {
             val fragment = ModelFragment()
             val args = Bundle()
-            args.putString(MODEL_URL_PARAM, modelUrl)
             args.putByteArray(IMAGE_PARAM, image)
+            args.putParcelableArray(MODEL_CONTROLS, modelControls)
             fragment.arguments = args
             fragment.pbFile = pbFile
             return fragment

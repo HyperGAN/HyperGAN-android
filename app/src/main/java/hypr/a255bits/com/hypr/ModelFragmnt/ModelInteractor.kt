@@ -16,7 +16,6 @@ import com.google.android.gms.vision.face.Landmark
 import com.pawegio.kandroid.fromApi
 
 import hypr.a255bits.com.hypr.R
-import hypr.a255bits.com.hypr.Util.BitmapManipulator
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -33,12 +32,13 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
 
     override fun checkIfPermissionGranted(permission: String): Boolean {
         var isPermissionGranted = true
-        fromApi(23){
+        fromApi(23) {
             isPermissionGranted = context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
 
         }
         return isPermissionGranted
     }
+
     override fun getIntentForSharingImagesWithOtherApps(imageFromGallery: Bitmap?): Intent {
         val pathToImage = MediaStore.Images.Media.insertImage(context.contentResolver, imageFromGallery, "title", null)
         val shareableIamge = Uri.parse(pathToImage)
@@ -46,7 +46,7 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
     }
 
 
-    private fun writeByteArrayToFile(fileLocation: String, imageInBytes: ByteArray?){
+    private fun writeByteArrayToFile(fileLocation: String, imageInBytes: ByteArray?) {
         val file = File(fileLocation)
         file.createNewFile()
         val fileOutput = FileOutputStream(file)
@@ -70,12 +70,16 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
     private fun getFaceLocations(imageWithFaces: Bitmap, context: Context): SparseArray<Face>? {
         var locationOfFaces = SparseArray<Face>()
         if (detector.isOperational) {
-            val frame = Frame.Builder().setBitmap(imageWithFaces).build()
-            locationOfFaces = detector.detect(frame)
+            locationOfFaces = getLocationOfFaces(imageWithFaces)
         } else {
             throw IOException(context.resources.getString(R.string.failed_face_detection))
         }
         return locationOfFaces
+    }
+
+    private fun getLocationOfFaces(imageWithFaces: Bitmap): SparseArray<Face> {
+        val frame = Frame.Builder().setBitmap(imageWithFaces).build()
+        return detector.detect(frame)
     }
 
     private fun getListOfFaces(faceLocations: SparseArray<Face>?, imageWithFaces: Bitmap): MutableList<Bitmap> {

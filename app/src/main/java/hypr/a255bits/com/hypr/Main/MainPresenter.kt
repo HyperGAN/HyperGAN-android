@@ -2,23 +2,24 @@ package hypr.a255bits.com.hypr.Main
 
 import android.content.Context
 import hypr.a255bits.com.hypr.BuyGenerator
-import hypr.a255bits.com.hypr.Generator
+import hypr.a255bits.com.hypr.Generator.Control
+import hypr.a255bits.com.hypr.Generator.Generator
 import java.io.File
 
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter {
     val file = File(context.filesDir, "optimized_weight_conv.pb")
     private val DOWNLOAD_COMPLETE: Float = 100.0f
-    var  buyGenerators: MutableList<BuyGenerator> = mutableListOf()
+    var buyGenerators: MutableList<BuyGenerator> = mutableListOf()
 
     override fun createGeneratorLoader(file: File, itemId: Int) {
         if (!file.exists()) {
             val pbFilePointer = interactor.getModelFromFirebase(file, "optimized_weight_conv.pb")
-            interactor.showProgressOfFirebaseDownload(pbFilePointer)
-            pbFilePointer.addOnSuccessListener { taskSnapshot ->
+            pbFilePointer?.let { interactor.showProgressOfFirebaseDownload(it) }
+            pbFilePointer?.addOnSuccessListener { taskSnapshot ->
                 println("successs")
                 view.startCameraActivity(itemId)
             }
-        }else{
+        } else {
             view.startCameraActivity(itemId)
         }
     }
@@ -37,7 +38,8 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun startModel(itemId: Int, image: ByteArray?) {
         val generator = interactor.listOfGenerators?.get(itemId)
         if (generator != null) {
-            view.applyModelToImage(generator.modelUrl, image)
+            val controlArray: Array<Control>? = generator.generator?.viewer?.controls?.toTypedArray()
+            controlArray?.let { view.applyModelToImage(it, image) }
         }
     }
 
@@ -56,8 +58,11 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
                 buyGenerators = mutableListOf<BuyGenerator>()
                 generators.forEachIndexed { index, generator ->
                     view.modeToNavBar(generator, index)
-                    val buyGenerator = BuyGenerator(generator.name)
-                    buyGenerators.add(buyGenerator)
+                    if (generator.name != null) {
+
+                        val buyGenerator = BuyGenerator(generator.name!!)
+                        buyGenerators.add(buyGenerator)
+                    }
                 }
                 view.startModelOnImage(buyGenerators)
             }
