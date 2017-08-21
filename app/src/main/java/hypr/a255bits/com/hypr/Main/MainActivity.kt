@@ -12,7 +12,8 @@ import android.view.MenuItem
 import android.view.SubMenu
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
-import hypr.a255bits.com.hypr.Generator
+import hypr.a255bits.com.hypr.Generator.Control
+import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.WelcomeScreen.WelcomeScreen
@@ -34,8 +35,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
-        presenter.addModelsToNavBar()
         setSupportActionBar(toolbar)
+        presenter.addModelsToNavBar()
         setupDrawer(toolbar)
 
     }
@@ -68,8 +69,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         startActivity(intentFor<CameraActivity>("indexInJson" to indexInJson))
     }
 
-    override fun applyModelToImage(modelUrl: String, image: ByteArray?) {
-        val fragment: Fragment = ModelFragment.newInstance(modelUrl, image, presenter.file)
+    override fun applyModelToImage(controlArray: Array<Control>, image: ByteArray?) {
+        val fragment: Fragment = ModelFragment.newInstance(controlArray, image, presenter.file)
         supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
     }
 

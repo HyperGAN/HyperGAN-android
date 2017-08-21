@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.util.SparseArray
 import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.face.Face
@@ -94,11 +95,19 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
     }
 
     private fun cropFaceOutOfBitmap(face: Face, imageWithFaces: Bitmap): Bitmap {
-        val centerOfFace = face.position
-        val x: Int = getNonNegativeValueOfFaceCoordicate(centerOfFace.x)
-        val y: Int = getNonNegativeValueOfFaceCoordicate(centerOfFace.y)
 
-        return Bitmap.createBitmap(imageWithFaces, x, y, face.width.toInt(), face.height.toInt())
+        val centerOfFace = face.position
+        val offsetX = 80
+        val offsetY = 120
+        val x: Int = getNonNegativeValueOfFaceCoordicate(centerOfFace.x - offsetX)
+        val y: Int = getNonNegativeValueOfFaceCoordicate(centerOfFace.y - offsetY)
+
+        val bitmap:Bitmap =Bitmap.createBitmap(imageWithFaces, x, y, face.width.toInt() + offsetX, face.height.toInt() + offsetY)
+        val maxSize:Int = intArrayOf(bitmap.height.toInt(), bitmap.width.toInt()).min()!!
+
+        val crop:Bitmap = Bitmap.createBitmap(bitmap, (bitmap.width - maxSize)/2, 0, maxSize, maxSize)
+
+        return Bitmap.createScaledBitmap(crop, 256, 256, false)
     }
 
     private fun getNonNegativeValueOfFaceCoordicate(coordinate: Float): Int {
