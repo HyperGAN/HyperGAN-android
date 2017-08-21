@@ -28,6 +28,8 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.*
+import java.io.File
+import java.io.FileOutputStream
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, MainMvp.view {
@@ -113,7 +115,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun applyModelToImage(controlArray: Array<Control>, image: ByteArray?) {
-        val fragment: Fragment = ModelFragment.newInstance(controlArray, image, presenter.file)
+        val file = File.createTempFile("image", "png")
+        val fos = FileOutputStream(file)
+        fos.write(image)
+        val fragment: Fragment = ModelFragment.newInstance(controlArray, file.path, presenter.file)
         supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
     }
 

@@ -31,7 +31,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     var pbFile: File? = null
     private var modelUrl: Array<Control>? = null
-    private var image: ByteArray? = null
+    private var image: String = ""
     val interactor by lazy { ModelInteractor(context) }
     val presenter by lazy { ModelFragmentPresenter(this, interactor, context) }
     val generatorLoader = GeneratorLoader()
@@ -40,7 +40,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
             modelUrl = arguments.getParcelableArray(MODEL_CONTROLS) as Array<Control>?
-            image = arguments.getByteArray(IMAGE_PARAM)
+            image = arguments.getString(IMAGE_PARAM)
         }
     }
 
@@ -68,7 +68,9 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         super.onViewCreated(view, savedInstanceState)
         displayImageTransitionSeekbarProgress()
         presenter.loadGenerator(generatorLoader, pbFile)
-        val imageBitmap = image?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
+        val byteArrayImage = File(image).readBytes()
+
+        val imageBitmap = BitmapFactory.decodeByteArray(byteArrayImage, 0, byteArrayImage.size)
         presenter.transformImage(imageBitmap, pbFile, generatorLoader)
 
 
@@ -145,10 +147,10 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
         private val MODEL_CONTROLS = "modelControls"
 
-        fun newInstance(modelControls: Array<Control>?, image: ByteArray?, pbFile: File): ModelFragment {
+        fun newInstance(modelControls: Array<Control>?, image: String, pbFile: File): ModelFragment {
             val fragment = ModelFragment()
             val args = Bundle()
-            args.putByteArray(IMAGE_PARAM, image)
+            args.putString(IMAGE_PARAM, image)
             args.putParcelableArray(MODEL_CONTROLS, modelControls)
             fragment.arguments = args
             fragment.pbFile = pbFile
