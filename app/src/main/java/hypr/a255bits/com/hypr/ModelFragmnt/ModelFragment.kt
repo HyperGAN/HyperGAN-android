@@ -120,7 +120,12 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         val encoded = generatorLoader.encode(scaled)
         val transformedImage = generatorLoader.sample(encoded)
         presenter.imageFromGallery = transformedImage
-        focusedImage.setImageBitmap(transformedImage)
+        focusedImage.setImageBitmap(generatorLoader.manipulateBitmap(generatorLoader.width, generatorLoader.height, transformedImage))
+
+    }
+
+    override fun changePixelToBitmap(image: IntArray): Bitmap{
+        return generatorLoader.manipulateBitmap(generatorLoader.width, generatorLoader.height, image)
 
     }
 
