@@ -2,12 +2,9 @@ package hypr.a255bits.com.hypr.ModelFragmnt
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.media.Image
 import hypr.a255bits.com.hypr.GeneratorLoader
 import hypr.a255bits.com.hypr.Util.ImageSaver
 import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import java.io.File
 import java.io.IOException
 
@@ -52,12 +49,6 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         return !listOfFaces.isEmpty()
     }
 
-//    override fun saveImageDisplayedToPhone(context: Context): Deferred<Boolean> {
-//    }
-//        return async(UI) {
-//            val saver = ImageSaver()
-//            saver.saveImageToInternalStorage(imageFromGallery, context)
-//        }
     override fun saveImageDisplayedToPhone(context: Context): Deferred<Boolean>? {
     var saver: Deferred<Boolean>? = null
         if(interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)){
