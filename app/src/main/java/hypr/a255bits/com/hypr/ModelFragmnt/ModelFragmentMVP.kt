@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import hypr.a255bits.com.hypr.GeneratorLoader
+import kotlinx.coroutines.experimental.Deferred
 import java.io.File
 
 interface ModelFragmentMVP{
@@ -16,7 +17,7 @@ interface ModelFragmentMVP{
     interface presenter{
         fun findFacesInImage(imageWithFaces: Bitmap, context: Context)
         fun disconnectFaceDetector()
-        fun saveImageDisplayedToPhone()
+        fun saveImageDisplayedToPhone(context: Context): Deferred<Boolean>?
         fun transformImage(normalImage: Bitmap?, pbFile: File?, generatorLoader: GeneratorLoader)
         fun  convertToNegative1To1(progress: Int): Double
     }

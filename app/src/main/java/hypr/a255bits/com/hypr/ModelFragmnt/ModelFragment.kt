@@ -1,6 +1,5 @@
 package hypr.a255bits.com.hypr.ModelFragmnt
 
-import android.app.ActionBar
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -15,16 +14,17 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.SpinnerAdapter
 import com.pawegio.kandroid.onProgressChanged
-import com.pawegio.kandroid.setSize
+import com.pawegio.kandroid.toast
 import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.GeneratorLoader
-
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main2.*
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
+import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.toast
 import java.io.File
-import java.util.*
 
 
 class ModelFragment : Fragment(), ModelFragmentMVP.view {
@@ -88,9 +88,14 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.saveImage -> presenter.saveImageDisplayedToPhone()
-            R.id.shareIamge -> presenter.shareImageToOtherApps()
+        launch(UI) {
+            when (item.itemId) {
+                R.id.saveImage -> {
+                    bg { presenter.saveImageDisplayedToPhone(getContext()) }.await()
+                    toast("Image Saved!")
+                }
+                R.id.shareIamge -> presenter.shareImageToOtherApps()
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -138,7 +143,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     companion object {
         private val IMAGE_PARAM = "param2"
 
-        private val  MODEL_CONTROLS = "modelControls"
+        private val MODEL_CONTROLS = "modelControls"
 
         fun newInstance(modelControls: Array<Control>?, image: ByteArray?, pbFile: File): ModelFragment {
             val fragment = ModelFragment()

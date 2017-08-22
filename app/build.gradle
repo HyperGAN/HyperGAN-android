@@ -29,7 +29,7 @@ android {
             jniLibs.srcDirs += ['libs']
             java.srcDirs = ['src/main/java']
             resources.srcDirs = ['src/main/java']
-            aidl.srcDirs = ['src/main/java']
+            aidl.srcDirs = ['src/main/java', 'src/main/aidl', 'src/main/aidl/']
             renderscript.srcDirs = ['src/main/java']
             res.srcDirs = ['src/main/res']
             assets.srcDirs = ['src/main/assets']
@@ -52,6 +52,8 @@ dependencies {
     compile 'org.jetbrains.anko:anko-coroutines:0.10.1'
     compile 'com.beardedhen:androidbootstrap:2.3.1'
     compile 'com.google.android.gms:play-services-vision:9.4.0'
+    compile 'com.google.android.gms:play-services-auth:9.4.0'
+
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.moshi:moshi:1.5.0'
     compile 'com.squareup.retrofit2:converter-moshi:2.3.0'
@@ -74,3 +76,8 @@ dependencies {
 }
 
 apply plugin: 'com.google.gms.google-services'
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
+}

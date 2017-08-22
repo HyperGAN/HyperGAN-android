@@ -18,7 +18,6 @@ class Generator {
 
     @Json(name = "price_in_cents")
     var priceInCents: Int? = null
-
     @Json(name = "google_play_id")
     var google_play_id: String? = null
 

@@ -1,6 +1,8 @@
 package hypr.a255bits.com.hypr.Main
 
+import android.app.Activity
 import android.app.ProgressDialog
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
@@ -10,20 +12,23 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.SubMenu
+import com.google.android.gms.auth.api.Auth
+import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment
 import hypr.a255bits.com.hypr.R
+import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import hypr.a255bits.com.hypr.WelcomeScreen.WelcomeScreen
 import kotlinx.android.synthetic.main.activity_main2.*
 import kotlinx.android.synthetic.main.app_bar_main2.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import org.jetbrains.anko.progressDialog
-import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.*
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, MainMvp.view {
 
@@ -31,6 +36,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     val presenter by lazy { MainPresenter(this, interactor, applicationContext) }
     private var modelSubMenu: SubMenu? = null
     var progressDownloadingModel: ProgressDialog? = null
+    private val SIGN_INTO_GOOGLE_RESULT: Int = 12
+    val ZERO_PERCENT: Float = -0.0f
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,15 +49,51 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
+    override fun buyModelPopup(skus: String, billingHelper: IabHelper?) {
+        billingHelper?.launchPurchaseFlow(this, skus, 1001, { result, info ->
+            if (result.isSuccess) {
+                println("success")
+            } else {
+                println("buy error: $result")
+            }
+        }, "")
+    }
+
+    override fun popupSigninGoogle(googleSignInClient: GoogleApiClient) {
+        alert {
+            message = "Would you like to sign into Google?"
+            title = "Sign in to Google"
+            okButton {
+                signinToGoogle(googleSignInClient)
+            }
+            cancelButton { dialog ->
+                dialog.dismiss()
+            }
+        }.show()
+    }
+
+
+    fun signinToGoogle(googleSignInClient: GoogleApiClient) {
+        val signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleSignInClient)
+        startActivityForResult(signInIntent, SIGN_INTO_GOOGLE_RESULT)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == SIGN_INTO_GOOGLE_RESULT && resultCode == Activity.RESULT_OK) {
+            presenter.isLoggedIntoGoogle = true
+        }
+    }
+
     override fun startModelOnImage(buyGenerators: MutableList<BuyGenerator>) {
         if (intent.hasExtra("indexInJson")) {
             val indexInJson = intent.extras.getInt("indexInJson")
             val image = intent.extras.getByteArray("image")
             presenter.startModel(indexInJson, image)
-        }else{
+        } else {
             displayGeneratorsOnHomePage(buyGenerators)
         }
     }
+
     override fun displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>) {
         val fragment: Fragment = WelcomeScreen.newInstance(generators, "")
         supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
@@ -101,28 +145,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         if (item.itemId in 0..100) {
-            presenter.startModel(item.itemId)
+           presenter.attemptToStartModel(item.itemId)
 
-        }else if(item.itemId == R.id.homeButton){
+        } else if (item.itemId == R.id.homeButton) {
             displayGeneratorsOnHomePage(presenter.buyGenerators)
         }
         drawer.closeDrawer(GravityCompat.START)
         return true
     }
 
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun showModelDownloadProgress(progressPercent: java.lang.Float) {
         println("percent: $progressPercent")
-        if (presenter.isDownloadComplete(progressPercent.toFloat())) {
-            presenter.downloadingModelFinished()
-        } else if (progressPercent.toFloat() == -0.0f) {
-//            displayModelDownloadProgress()
-        } else {
-            progressDownloadingModel?.progress = progressPercent.toInt()
+        when {
+            presenter.isDownloadComplete(progressPercent.toFloat()) -> presenter.downloadingModelFinished()
+            progressPercent.toFloat() == ZERO_PERCENT -> { }
+            else -> progressDownloadingModel?.progress = progressPercent.toInt()
         }
     }
-
 
     override fun closeDownloadingModelDialog() {
         progressDownloadingModel?.dismiss()
@@ -136,5 +176,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.stopInAppBilling()
     }
 }
