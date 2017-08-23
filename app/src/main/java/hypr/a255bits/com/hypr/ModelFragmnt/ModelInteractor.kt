@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
@@ -118,22 +119,32 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
         val right = face.landmarks.first{ it.type == Landmark.RIGHT_EYE }
 
 
-        val offsetX = 200
-        val offsetY = 200
-        val x: Int = getNonNegativeValueOfFaceCoordicate(left.position.x - offsetX)
-        val y: Int = getNonNegativeValueOfFaceCoordicate(left.position.y - offsetY)
-        Log.d("left-right", "l " + left.position.toString() + " r " + right.position.toString())
-        var w: Int = face.width.toInt() + offsetX
-        var h: Int = face.height.toInt() + offsetY
+        val offsetX: Int = (0.51*256).toInt()
+        val offsetY: Int = (0.4*256).toInt()
+        val x1: Int = (left.position.x - offsetX).toInt()
+        val y1: Int = (left.position.y - offsetY).toInt()
+        val x2: Int = (right.position.x + offsetX).toInt()
+        val y2: Int = (left.position.y + offsetY).toInt()
 
-        if(x+w > imageWithFaces.width) {
-            w = imageWithFaces.width-x
-        }
-        if(y+h > imageWithFaces.height) {
-            h = imageWithFaces.height-y
-        }
+        var w: Int = x2-x1
+        var h: Int = y2-y1
 
-        val bitmap:Bitmap =Bitmap.createBitmap(imageWithFaces, x, y, w, h)
+        val hpad = imageWithFaces.height + offsetY*2
+        val wpad = imageWithFaces.width + offsetX*2
+
+        val padded:Bitmap =Bitmap.createBitmap(wpad, hpad, Bitmap.Config.ARGB_8888)
+        val canvas:Canvas = Canvas(padded)
+        canvas.drawBitmap(imageWithFaces, offsetX.toFloat(), offsetY.toFloat(), null)
+
+        // x1 < 0
+        // y1 < 0
+        // x2 > image.w
+        // y2 > image.h
+
+        // Create empty image X
+        // Paste x1,x2 to X
+
+        val bitmap:Bitmap =Bitmap.createBitmap(padded, x1+offsetX, y1+offsetY, w, h)
         val maxSize:Int = intArrayOf(bitmap.height.toInt(), bitmap.width.toInt()).min()!!
 
         val crop:Bitmap = Bitmap.createBitmap(bitmap, (bitmap.width - maxSize)/2, 0, maxSize, maxSize)
