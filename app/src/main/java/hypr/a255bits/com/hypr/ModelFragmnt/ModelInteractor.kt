@@ -17,6 +17,11 @@ import hypr.a255bits.com.hypr.R
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import android.graphics.Paint.FILTER_BITMAP_FLAG
+import android.R.attr.bitmap
+import android.R.attr.top
+import android.graphics.Canvas
+import android.graphics.Paint
 
 
 class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
@@ -27,6 +32,8 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
                 .setLandmarkType(FaceDetector.ALL_LANDMARKS)
                 .build()
     }
+    var leftOfFace = 0.0f
+    var topOfFace = 0.0f
 
     override fun checkIfPermissionGranted(permission: String): Boolean {
         var isPermissionGranted = true
@@ -93,12 +100,23 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
         return croppedFaces
     }
 
+    fun joinImageWithFace(fullImage: Bitmap, faceImage: Bitmap): Bitmap? {
+        var mutableBitmap = fullImage.copy(Bitmap.Config.ARGB_8888, true)
+        val canvas = Canvas(mutableBitmap)
+        val paint = Paint(FILTER_BITMAP_FLAG)
+        canvas.drawBitmap(faceImage, leftOfFace, topOfFace, paint)
+        return mutableBitmap
+    }
+
     private fun cropFaceOutOfBitmap(face: Face, imageWithFaces: Bitmap): Bitmap {
         val centerOfFace = face.position
         val x: Int = getNonNegativeValueOfFaceCoordicate(centerOfFace.x)
         val y: Int = getNonNegativeValueOfFaceCoordicate(centerOfFace.y)
+        leftOfFace = y.toFloat()
+        topOfFace = x.toFloat()
+        val onlyFace = Bitmap.createBitmap(imageWithFaces, x, y, face.width.toInt(), face.height.toInt())
 
-        return Bitmap.createBitmap(imageWithFaces, x, y, face.width.toInt(), face.height.toInt())
+        return Bitmap.createBitmap(imageWithFaces, x, y, onlyFace.width, onlyFace.height)
     }
 
     private fun getNonNegativeValueOfFaceCoordicate(coordinate: Float): Int {
