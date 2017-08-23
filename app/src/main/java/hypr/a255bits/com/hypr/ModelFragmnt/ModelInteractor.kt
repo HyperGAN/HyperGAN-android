@@ -23,7 +23,6 @@ import java.io.IOException
 import android.graphics.Paint.FILTER_BITMAP_FLAG
 import android.R.attr.bitmap
 import android.R.attr.top
-import android.graphics.Canvas
 import android.graphics.Paint
 
 

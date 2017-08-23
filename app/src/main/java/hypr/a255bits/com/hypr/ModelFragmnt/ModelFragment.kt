@@ -131,12 +131,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     override fun displayFocusedImage(imageFromGallery: Bitmap) {
-        //val scaled = Bitmap.createScaledBitmap(imageFromGallery, 128, 128, false)
-        //val encoded = generatorLoader.encode(scaled)
-        //val transformedImage = generatorLoader.sample(encoded)
-        //presenter.imageFromGallery = transformedImage
-        //val image: Bitmap? = presenter.joinFaceWithImage(transformedImage)
-        //focusedImage.setImageBitmap(image)
+
         val scaled = Bitmap.createScaledBitmap(imageFromGallery, 256, 256, false)
         baseImage = scaled
 
@@ -145,6 +140,13 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         mask = generatorLoader.mask(scaled)
         val direction = generatorLoader.random_z()
         focusedImage.setImageBitmap(generatorLoader.sample(encoded!!, 0.0f, mask, direction, baseImage!!))
+
+        //val scaled = Bitmap.createScaledBitmap(imageFromGallery, 128, 128, false)
+        //val encoded = generatorLoader.encode(scaled)
+        //val transformedImage = generatorLoader.sample(encoded)
+        //presenter.imageFromGallery = transformedImage
+        //val image: Bitmap? = presenter.joinFaceWithImage(transformedImage)
+        //focusedImage.setImageBitmap(image)
     }
 
 
