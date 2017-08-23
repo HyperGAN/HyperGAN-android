@@ -69,8 +69,9 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         displayImageTransitionSeekbarProgress()
         presenter.loadGenerator(generatorLoader, pbFile)
         val imageBitmap = image?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
-        presenter.imageWithFaces = imageBitmap
         presenter.transformImage(imageBitmap, pbFile, generatorLoader)
+
+
     }
 
     private fun displayImageTransitionSeekbarProgress() {
@@ -117,11 +118,9 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         val encoded = generatorLoader.encode(scaled)
         val transformedImage = generatorLoader.sample(encoded)
         presenter.imageFromGallery = transformedImage
-        val image: Bitmap? = presenter.joinFaceWithImage(transformedImage)
-        focusedImage.setImageBitmap(image)
+        focusedImage.setImageBitmap(transformedImage)
 
     }
-
 
     override fun shareImageToOtherApps(shareIntent: Intent) {
         startActivity(Intent.createChooser(shareIntent, getString(R.string.share_image)))

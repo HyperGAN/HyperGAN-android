@@ -12,7 +12,6 @@ import java.io.IOException
 class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: ModelInteractor, val context: Context) : ModelFragmentMVP.presenter {
 
     var imageFromGallery: Bitmap? = null
-    var imageWithFaces: Bitmap? = null
     val SHARE_IMAGE_PERMISSION_REQUEST = 10
     val SAVE_IMAGE_PERMISSION_REQUEST: Int = 10
     override fun disconnectFaceDetector() {
@@ -32,10 +31,6 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         return ((progress - 100) / 100.00)
     }
 
-
-    override fun joinFaceWithImage(transformedImage: Bitmap): Bitmap? {
-        return imageWithFaces?.let { interactor.joinImageWithFace(it, transformedImage) }
-    }
 
     override fun findFacesInImage(imageWithFaces: Bitmap, context: Context) {
         try {

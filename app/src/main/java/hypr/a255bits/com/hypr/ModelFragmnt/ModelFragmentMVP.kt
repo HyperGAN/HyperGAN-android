@@ -20,7 +20,6 @@ interface ModelFragmentMVP{
         fun saveImageDisplayedToPhone(context: Context): Deferred<Boolean>?
         fun transformImage(normalImage: Bitmap?, pbFile: File?, generatorLoader: GeneratorLoader)
         fun  convertToNegative1To1(progress: Int): Double
-        fun  joinFaceWithImage(transformedImage: Bitmap): Bitmap?
     }
     interface interactor{
         fun  getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context): MutableList<Bitmap>
