@@ -144,7 +144,8 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
         mask = generatorLoader.mask(scaled)
         val direction = generatorLoader.random_z()
-        focusedImage.setImageBitmap(generatorLoader.sample(encoded!!, 0.0f, mask, direction, baseImage!!))
+        val transformedImage = generatorLoader.sample(encoded!!, 0.0f, mask, direction, baseImage!!)
+        focusedImage.setImageBitmap(transformedImage)
     }
 
 

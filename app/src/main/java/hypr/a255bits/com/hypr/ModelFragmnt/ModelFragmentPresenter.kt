@@ -68,7 +68,6 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         if (normalImage != null) {
             this.imageFromGallery = normalImage
             view.displayFocusedImage(normalImage)
-            findFacesInImage(normalImage, context)
         }
     }
 
