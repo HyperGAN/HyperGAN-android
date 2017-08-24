@@ -23,6 +23,7 @@ import java.io.IOException
 import android.graphics.Paint.FILTER_BITMAP_FLAG
 import android.R.attr.bitmap
 import android.R.attr.top
+import android.graphics.Matrix
 import android.graphics.Paint
 
 
@@ -118,8 +119,8 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
         val right = face.landmarks.first{ it.type == Landmark.RIGHT_EYE }
 
 
-        val offsetX: Int = (0.51*256).toInt()
-        val offsetY: Int = (0.4*256).toInt()
+        val offsetX: Int = (0.51*imageWithFaces.width).toInt()
+        val offsetY: Int = (0.4*imageWithFaces.height).toInt()
         val x1: Int = (left.position.x - offsetX).toInt()
         val y1: Int = (left.position.y - offsetY).toInt()
         val x2: Int = (right.position.x + offsetX).toInt()
@@ -135,22 +136,25 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
         val canvas:Canvas = Canvas(padded)
         canvas.drawBitmap(imageWithFaces, offsetX.toFloat(), offsetY.toFloat(), null)
 
-        // x1 < 0
-        // y1 < 0
-        // x2 > image.w
-        // y2 > image.h
-
-        // Create empty image X
-        // Paste x1,x2 to X
-
         val bitmap:Bitmap =Bitmap.createBitmap(padded, x1+offsetX, y1+offsetY, w, h)
         val maxSize:Int = intArrayOf(bitmap.height.toInt(), bitmap.width.toInt()).min()!!
 
-        val crop:Bitmap = Bitmap.createBitmap(bitmap, (bitmap.width - maxSize)/2, 0, maxSize, maxSize)
-
-        return Bitmap.createScaledBitmap(crop, 256, 256, false)
+        val scaledBitmap = getResizedBitmap(bitmap, maxSize, maxSize)
+        return scaledBitmap
     }
 
+    fun getResizedBitmap(bm: Bitmap, newWidth: Int, newHeight: Int): Bitmap {
+        val width = bm.width
+        val height = bm.height
+        val scaleWidth = newWidth.toFloat() / width
+        val scaleHeight = newHeight.toFloat() / height
+        val matrix = Matrix()
+        matrix.postScale(scaleWidth, scaleHeight)
+        val resizedBitmap = Bitmap.createBitmap(
+                bm, 0, 0, width, height, matrix, false)
+        bm.recycle()
+        return resizedBitmap
+    }
     private fun getNonNegativeValueOfFaceCoordicate(coordinate: Float): Int {
         return intArrayOf(coordinate.toInt(), 0).max()!!
 
