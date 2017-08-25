@@ -6,9 +6,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
-import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import android.util.SparseArray
 import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.face.Face
@@ -21,8 +19,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import android.graphics.Paint.FILTER_BITMAP_FLAG
-import android.R.attr.bitmap
-import android.R.attr.top
 import android.graphics.Matrix
 import android.graphics.Paint
 
@@ -119,6 +115,7 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
         val right = face.landmarks.first{ it.type == Landmark.RIGHT_EYE }
 
 
+//        val offsetX: Int = (0.51*imageWithFaces.width).toInt()
         val offsetX: Int = (0.51*imageWithFaces.width).toInt()
         val offsetY: Int = (0.4*imageWithFaces.height).toInt()
         val x1: Int = (left.position.x - offsetX).toInt()
@@ -137,9 +134,10 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
         canvas.drawBitmap(imageWithFaces, offsetX.toFloat(), offsetY.toFloat(), null)
 
         val bitmap:Bitmap =Bitmap.createBitmap(padded, x1+offsetX, y1+offsetY, w, h)
-        val maxSize:Int = intArrayOf(bitmap.height.toInt(), bitmap.width.toInt()).min()!!
+        val maxSize:Int = intArrayOf(bitmap.height, bitmap.width).min()!!
+        padded.recycle()
 
-        val scaledBitmap = getResizedBitmap(bitmap, maxSize, maxSize)
+        val scaledBitmap = getResizedBitmap(bitmap, 256, 256)
         return scaledBitmap
     }
 
