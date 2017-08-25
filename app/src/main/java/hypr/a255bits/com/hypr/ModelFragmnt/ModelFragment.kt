@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.*
 import android.widget.ArrayAdapter
 import android.widget.Spinner
@@ -35,6 +36,9 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     val interactor by lazy { ModelInteractor(context) }
     val presenter by lazy { ModelFragmentPresenter(this, interactor, context) }
     val generatorLoader = GeneratorLoader()
+    var encoded: FloatArray? = null
+    var mask: FloatArray? = null
+    var baseImage: Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,9 +81,23 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     private fun displayImageTransitionSeekbarProgress() {
         imageTransitionSeekBar.onProgressChanged { progress, _ ->
             val ganValue: Double = presenter.convertToNegative1To1(progress)
+            changeGanImageFromSlider(ganValue)
             println("oldValue: $progress")
             println("actualyValue: $ganValue")
         }
+    }
+
+    private fun changeGanImageFromSlider(ganValue: Double) {
+        encoded?.let {
+            val direction = generatorLoader.random_z()
+            val ganImage = generatorLoader.sample(it, ganValue.toFloat(), mask, direction, baseImage!!)
+            val z_slider = generatorLoader.get_z(it, ganValue.toFloat(), it)
+
+            Log.d("z_slider", z_slider[0].toString())
+            focusedImage.setImageBitmap(ganImage)
+
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -114,12 +132,14 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     override fun displayFocusedImage(imageFromGallery: Bitmap) {
-        val scaled = Bitmap.createScaledBitmap(imageFromGallery, 128, 128, false)
-        val encoded = generatorLoader.encode(scaled)
-        val transformedImage = generatorLoader.sample(encoded)
-        presenter.imageFromGallery = transformedImage
-        focusedImage.setImageBitmap(transformedImage)
+        val scaled = Bitmap.createScaledBitmap(imageFromGallery, 256, 256, false)
+        baseImage = scaled
 
+        encoded = generatorLoader.encode(scaled)
+
+        mask = generatorLoader.mask(scaled)
+        val direction = generatorLoader.random_z()
+        focusedImage.setImageBitmap(generatorLoader.sample(encoded!!, 0.0f, mask, direction, baseImage!!))
     }
 
     override fun shareImageToOtherApps(shareIntent: Intent) {
