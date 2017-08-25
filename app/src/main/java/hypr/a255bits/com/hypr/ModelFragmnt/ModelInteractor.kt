@@ -136,7 +136,7 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
         val maxSize:Int = intArrayOf(bitmap.height, bitmap.width).min()!!
         padded.recycle()
 
-        val scaledBitmap = getResizedBitmap(bitmap, 256, 256)
+        val scaledBitmap = getResizedBitmap(bitmap, maxSize, maxSize)
         return scaledBitmap
     }
 
