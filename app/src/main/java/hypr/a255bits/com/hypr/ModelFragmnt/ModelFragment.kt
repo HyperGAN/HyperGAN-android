@@ -17,7 +17,7 @@ import android.widget.SpinnerAdapter
 import com.pawegio.kandroid.onProgressChanged
 import com.pawegio.kandroid.toast
 import hypr.a255bits.com.hypr.Generator.Control
-import hypr.a255bits.com.hypr.GeneratorLoader
+import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorLoader
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main2.*

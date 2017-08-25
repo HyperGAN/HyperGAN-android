@@ -7,7 +7,7 @@ import android.graphics.BitmapFactory
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import android.test.suitebuilder.annotation.LargeTest
-import hypr.a255bits.com.hypr.GeneratorLoader
+import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorLoader
 import hypr.a255bits.com.hypr.Util.ImageSaver
 
 import org.junit.Rule

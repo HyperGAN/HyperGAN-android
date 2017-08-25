@@ -2,7 +2,7 @@ package hypr.a255bits.com.hypr.ModelFragmnt
 
 import android.content.Context
 import android.graphics.Bitmap
-import hypr.a255bits.com.hypr.GeneratorLoader
+import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorLoader
 import hypr.a255bits.com.hypr.Util.ImageSaver
 import kotlinx.coroutines.experimental.Deferred
 import java.io.File

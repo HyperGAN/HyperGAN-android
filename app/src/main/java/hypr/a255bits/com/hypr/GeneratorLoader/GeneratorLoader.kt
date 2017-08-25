@@ -1,4 +1,4 @@
-package hypr.a255bits.com.hypr
+package hypr.a255bits.com.hypr.GeneratorLoader
 
 import android.content.res.AssetManager
 import android.graphics.Bitmap
