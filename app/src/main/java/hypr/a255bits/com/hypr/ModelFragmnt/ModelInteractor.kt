@@ -116,7 +116,7 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
 
 
 //        val offsetX: Int = (0.51*imageWithFaces.width).toInt()
-        val offsetX: Int = (0.51*imageWithFaces.width).toInt()
+        val offsetX: Int = (0.91*face.width).toInt()
         val offsetY: Int = (0.4*imageWithFaces.height).toInt()
         val x1: Int = (left.position.x - offsetX).toInt()
         val y1: Int = (left.position.y - offsetY).toInt()
