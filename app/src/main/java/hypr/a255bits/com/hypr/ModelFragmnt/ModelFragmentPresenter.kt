@@ -11,7 +11,7 @@ import java.io.IOException
 
 class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: ModelInteractor, val context: Context) : ModelFragmentMVP.presenter {
 
-    var imageFromGallery: Bitmap? = null
+    var imageFromGallery: IntArray? = null
     val SHARE_IMAGE_PERMISSION_REQUEST = 10
     val SAVE_IMAGE_PERMISSION_REQUEST: Int = 10
     override fun disconnectFaceDetector() {
@@ -20,7 +20,8 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
 
     fun shareImageToOtherApps() {
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            val shareIntent = interactor.getIntentForSharingImagesWithOtherApps(imageFromGallery)
+            val bitmap = imageFromGallery?.let { view.changePixelToBitmap(it) }
+            val shareIntent = interactor.getIntentForSharingImagesWithOtherApps(bitmap)
             view.shareImageToOtherApps(shareIntent)
         } else {
             view.requestPermissionFromUser(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), SHARE_IMAGE_PERMISSION_REQUEST)
@@ -52,7 +53,8 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     override fun saveImageDisplayedToPhone(context: Context): Deferred<Boolean>? {
     var saver: Deferred<Boolean>? = null
         if(interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)){
-            saver = ImageSaver().saveImageToInternalStorage(imageFromGallery, context)
+            val bitmap = imageFromGallery?.let { view.changePixelToBitmap(it) }
+            saver = ImageSaver().saveImageToInternalStorage(bitmap, context)
         }else{
             view.requestPermissionFromUser(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), SAVE_IMAGE_PERMISSION_REQUEST)
         }
