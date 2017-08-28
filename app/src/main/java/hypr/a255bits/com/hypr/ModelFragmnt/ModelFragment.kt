@@ -32,7 +32,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     var pbFile: File? = null
     private var modelUrl: Array<Control>? = null
-    private var image: ByteArray? = null
+    private var image: String = ""
     val interactor by lazy { ModelInteractor(context) }
     val presenter by lazy { ModelFragmentPresenter(this, interactor, context) }
     val generatorLoader = GeneratorLoader()
@@ -44,7 +44,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
             modelUrl = arguments.getParcelableArray(MODEL_CONTROLS) as Array<Control>?
-            image = arguments.getByteArray(IMAGE_PARAM)
+            image = arguments.getString(IMAGE_PARAM)
         }
     }
 
@@ -72,8 +72,9 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         super.onViewCreated(view, savedInstanceState)
         displayImageTransitionSeekbarProgress()
         presenter.loadGenerator(generatorLoader, pbFile)
-        val imageBitmap = image?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
-        presenter.imageWithFaces = imageBitmap
+        val byteArrayImage = File(image).readBytes()
+
+        val imageBitmap = BitmapFactory.decodeByteArray(byteArrayImage, 0, byteArrayImage.size)
         presenter.transformImage(imageBitmap, pbFile, generatorLoader)
     }
 
@@ -93,7 +94,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
             val z_slider = generatorLoader.get_z(it, ganValue.toFloat(), it)
 
             Log.d("z_slider", z_slider[0].toString())
-            focusedImage.setImageBitmap(ganImage)
+            focusedImage.setImageBitmap(generatorLoader.manipulateBitmap(generatorLoader.width, generatorLoader.height, ganImage))
 
         }
 
@@ -131,7 +132,6 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     override fun displayFocusedImage(imageFromGallery: Bitmap) {
-
         val scaled = Bitmap.createScaledBitmap(imageFromGallery, 256, 256, false)
         baseImage = scaled
 
@@ -140,7 +140,13 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         mask = generatorLoader.mask(scaled)
         val direction = generatorLoader.random_z()
         val transformedImage = generatorLoader.sample(encoded!!, 0.0f, mask, direction, baseImage!!)
-        focusedImage.setImageBitmap(transformedImage)
+        focusedImage.setImageBitmap(generatorLoader.manipulateBitmap(generatorLoader.width, generatorLoader.height, transformedImage))
+    }
+
+    override fun changePixelToBitmap(image: IntArray): Bitmap {
+        return generatorLoader.manipulateBitmap(generatorLoader.width, generatorLoader.height, image)
+
+
     }
 
 
@@ -167,10 +173,10 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
         private val MODEL_CONTROLS = "modelControls"
 
-        fun newInstance(modelControls: Array<Control>?, image: ByteArray?, pbFile: File): ModelFragment {
+        fun newInstance(modelControls: Array<Control>?, image: String, pbFile: File): ModelFragment {
             val fragment = ModelFragment()
             val args = Bundle()
-            args.putByteArray(IMAGE_PARAM, image)
+            args.putString(IMAGE_PARAM, image)
             args.putParcelableArray(MODEL_CONTROLS, modelControls)
             fragment.arguments = args
             fragment.pbFile = pbFile

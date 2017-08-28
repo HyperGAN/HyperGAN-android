@@ -30,7 +30,7 @@ class GeneratorLoader {
 
     }
 
-    fun sample(z:FloatArray, slider:Float, mask: FloatArray?, direction: FloatArray, bitmap:Bitmap): Bitmap {
+    fun sample(z:FloatArray, slider:Float, mask: FloatArray?, direction: FloatArray, bitmap:Bitmap): IntArray {
         print("Sampling ")
         feedInput(bitmap)
 
@@ -51,8 +51,7 @@ class GeneratorLoader {
         this.inference.fetch("add_21", this.raw)
 
         val pixelsInBitmap = manipulatePixelsInBitmap()
-        val bitmap = manipulateBitmap(width, height, pixelsInBitmap)
-        return bitmap
+        return pixelsInBitmap
     }
 
     fun mask(bitmap: Bitmap): FloatArray {
@@ -129,7 +128,7 @@ class GeneratorLoader {
         return pixelsInBitmap
     }
 
-    private fun manipulateBitmap(width: Int, height: Int, pixelsInBitmap: IntArray): Bitmap {
+    fun manipulateBitmap(width: Int, height: Int, pixelsInBitmap: IntArray): Bitmap {
         val bitmap: Bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         bitmap.setPixels(pixelsInBitmap, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
         return bitmap
