@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private var modelSubMenu: SubMenu? = null
     var progressDownloadingModel: ProgressDialog? = null
     private val SIGN_INTO_GOOGLE_RESULT: Int = 12
+    val ZERO_PERCENT: Float = -0.0f
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -163,8 +164,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         println("percent: $progressPercent")
         when {
             presenter.isDownloadComplete(progressPercent.toFloat()) -> presenter.downloadingModelFinished()
-            progressPercent.toFloat() == -0.0f -> {
-            }
+            progressPercent.toFloat() == ZERO_PERCENT -> { }
             else -> progressDownloadingModel?.progress = progressPercent.toInt()
         }
     }

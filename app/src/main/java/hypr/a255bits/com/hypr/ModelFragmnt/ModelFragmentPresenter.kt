@@ -50,12 +50,6 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         return !listOfFaces.isEmpty()
     }
 
-//    override fun saveImageDisplayedToPhone(context: Context): Deferred<Boolean> {
-//    }
-//        return async(UI) {
-//            val saver = ImageSaver()
-//            saver.saveImageToInternalStorage(imageFromGallery, context)
-//        }
     override fun saveImageDisplayedToPhone(context: Context): Deferred<Boolean>? {
     var saver: Deferred<Boolean>? = null
         if(interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)){
@@ -69,7 +63,8 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
 
     override fun transformImage(normalImage: Bitmap?, pbFile: File?, generatorLoader: GeneratorLoader) {
         if (normalImage != null) {
-            view.displayFocusedImage(normalImage)
+            this.imageFromGallery = normalImage
+//            view.displayFocusedImage(normalImage)
             findFacesInImage(normalImage, context)
         }
     }
