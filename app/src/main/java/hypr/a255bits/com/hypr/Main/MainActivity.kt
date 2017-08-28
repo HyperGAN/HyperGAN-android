@@ -16,9 +16,8 @@ import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
-import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.Generator.Generator
-import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment
+import hypr.a255bits.com.hypr.MultiModels.MultiModels
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import hypr.a255bits.com.hypr.WelcomeScreen.WelcomeScreen
@@ -115,11 +114,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         startActivity(intentFor<CameraActivity>("indexInJson" to indexInJson))
     }
 
-    override fun applyModelToImage(controlArray: Array<Control>, image: ByteArray?) {
+    override fun applyModelToImage(generators: List<Generator>?, indexOfGenerator: Int, image: ByteArray?) {
         val file = File.createTempFile("image", "png")
         val fos = FileOutputStream(file)
-        fos.write(image)
-        val fragment: Fragment = ModelFragment.newInstance(controlArray, file.path, presenter.file)
+        fos.write(indexOfGenerator)
+        val fragment: Fragment = MultiModels.newInstance(generators, indexOfGenerator, file.path, presenter.file)
         supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
     }
 
@@ -169,9 +168,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun openCamera(index: java.lang.Integer){
+       startCameraActivity(index.toInt())
+    }
+
     override fun closeDownloadingModelDialog() {
         progressDownloadingModel?.dismiss()
     }
+
 
     override fun onStart() {
         super.onStart()
