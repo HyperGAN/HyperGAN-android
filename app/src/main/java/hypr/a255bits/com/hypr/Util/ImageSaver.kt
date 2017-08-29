@@ -43,5 +43,11 @@ class ImageSaver {
         }
 
     }
+    fun writeByteArrayToFile(fileLocation: String, imageInBytes: ByteArray?) {
+        val file = File(fileLocation)
+        file.createNewFile()
+        val fileOutput = FileOutputStream(file)
+        fileOutput.write(imageInBytes)
+    }
 
 }

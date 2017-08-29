@@ -15,7 +15,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     val SHARE_IMAGE_PERMISSION_REQUEST = 10
     val SAVE_IMAGE_PERMISSION_REQUEST: Int = 10
     override fun disconnectFaceDetector() {
-        interactor.detector.release()
+        interactor.faceDetection.release()
     }
 
     fun shareImageToOtherApps() {
