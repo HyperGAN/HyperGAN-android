@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun applyModelToImage(generators: List<Generator>?, indexOfGenerator: Int, image: ByteArray?) {
         val file = File.createTempFile("image", "png")
         val fos = FileOutputStream(file)
-        fos.write(indexOfGenerator)
+        fos.write(image)
         val fragment: Fragment = MultiModels.newInstance(generators, indexOfGenerator, file.path, presenter.file)
         supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
     }

@@ -15,14 +15,13 @@ import java.io.File
 class MultiModelAdapter(fm: FragmentManager?, val generators: Array<Generator>, val image: String?, val file: File) : FragmentPagerAdapter(fm) {
     override fun getItem(position: Int): Fragment? {
         val generator = generators[position]
-        var fragment: Fragment? = null
-        if (generator != null) {
-            val controlArray: Array<Control>? = generator.generator?.viewer?.controls?.toTypedArray()
-            fragment = image?.let { ModelFragment.newInstance(controlArray, it, file) }
-        }
-        return fragment
+        return createFragment(generator)
     }
 
+    fun createFragment(generator: Generator): ModelFragment? {
+        val controlArray: Array<Control>? = generator.generator?.viewer?.controls?.toTypedArray()
+        return image?.let { ModelFragment.newInstance(controlArray, it, file) }
+    }
 
     override fun getPageTitle(position: Int): CharSequence {
         return generators[position].name.toString()
