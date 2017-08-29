@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/hypr.iml" filepath="$PROJECT_DIR$/hypr.iml" />
-      <module fileurl="file://$PROJECT_DIR$/hyprProject.iml" filepath="$PROJECT_DIR$/hyprProject.iml" />
+      <module fileurl="file://C:\Users\tedho\AndroidStudioProjects\hypr\hyprProject.iml" filepath="C:\Users\tedho\AndroidStudioProjects\hypr\hyprProject.iml" />
     </modules>
   </component>
 </project>

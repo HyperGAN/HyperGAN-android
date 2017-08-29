@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Environment
 import android.provider.MediaStore
 import android.util.SparseArray
 import com.google.android.gms.vision.Frame
@@ -14,6 +13,8 @@ import com.google.android.gms.vision.face.FaceDetector
 import com.pawegio.kandroid.fromApi
 
 import hypr.a255bits.com.hypr.R
+import hypr.a255bits.com.hypr.Util.BitmapManipulator
+import hypr.a255bits.com.hypr.Util.nonNegativeInt
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -95,15 +96,8 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
 
     private fun cropFaceOutOfBitmap(face: Face, imageWithFaces: Bitmap): Bitmap {
         val centerOfFace = face.position
-        val x: Int = getNonNegativeValueOfFaceCoordicate(centerOfFace.x)
-        val y: Int = getNonNegativeValueOfFaceCoordicate(centerOfFace.y)
-
-        return Bitmap.createBitmap(imageWithFaces, x, y, face.width.toInt(), face.height.toInt())
+        val x = centerOfFace.x.nonNegativeInt()
+        val y = centerOfFace.y.nonNegativeInt()
+        return BitmapManipulator().cropAreaOutOfBitmap(imageWithFaces,x,y,face.width.toInt(), face.height.toInt())
     }
-
-    private fun getNonNegativeValueOfFaceCoordicate(coordinate: Float): Int {
-        return intArrayOf(coordinate.toInt(), 0).max()!!
-
-    }
-
 }
