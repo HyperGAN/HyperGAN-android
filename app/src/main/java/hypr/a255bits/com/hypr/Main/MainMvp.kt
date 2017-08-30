@@ -37,7 +37,7 @@ interface MainMvp {
     }
 
     interface interactor {
-        fun addModelsToNavBar(): Deferred<List<Generator>?>
+        fun getGeneratorsFromNetwork(): Deferred<List<Generator>?>
 
         fun getModelFromFirebase(saveLocation: File, filenameInFirebase: String): FileDownloadTask?
         fun showProgressOfFirebaseDownload(firebaseDownloader: FileDownloadTask)

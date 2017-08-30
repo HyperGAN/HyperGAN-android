@@ -83,7 +83,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     override fun addModelsToNavBar() {
         launch(UI) {
-            val generators = interactor.addModelsToNavBar().await()
+            val generators = interactor.getGeneratorsFromNetwork().await()
             buyGenerators = mutableListOf()
             generators?.forEachIndexed { index, generator ->
                 view.modeToNavBar(generator, index)
