@@ -4,8 +4,9 @@ import android.content.Context
 import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.Generator.Control
-import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
 import java.io.File
 
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter {
@@ -81,18 +82,17 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
 
     override fun addModelsToNavBar() {
-        interactor.addModelsToNavBar(object : GeneratorListener {
-            override fun getGenerators(generators: List<Generator>, index: Int) {
-                buyGenerators = mutableListOf()
-                generators.forEachIndexed { index, generator ->
-                    view.modeToNavBar(generator, index)
-                    if (generator.name != null) {
-                        saveGeneratorInfo(generator.name!!)
-                    }
+        launch(UI) {
+            val generators = interactor.addModelsToNavBar().await()
+            buyGenerators = mutableListOf()
+            generators?.forEachIndexed { index, generator ->
+                view.modeToNavBar(generator, index)
+                if (generator.name != null) {
+                    saveGeneratorInfo(generator.name!!)
                 }
-                view.startModelOnImage(buyGenerators)
             }
-        })
+            view.startModelOnImage(buyGenerators)
+        }
     }
 
     private fun saveGeneratorInfo(name: String) {

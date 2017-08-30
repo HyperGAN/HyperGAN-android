@@ -113,23 +113,19 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
 
     }
 
-    override fun addModelsToNavBar(param: GeneratorListener) {
-        if (listOfGenerators == null) {
-            getGeneratorFromNetwork(param)
-        } else {
-            callListenerForEachGenerator(param, listOfGenerators)
-        }
+    override fun addModelsToNavBar(): Deferred<List<Generator>?> {
+            return getGeneratorFromNetwork()
     }
 
-    private fun getGeneratorFromNetwork(param: GeneratorListener) {
-        val modelApi = ModelApi()
-        val listOfModels = modelApi.listOfModels()
-        async(UI) {
+    private fun getGeneratorFromNetwork(): Deferred<List<Generator>?> {
+        return async(UI) {
+            val modelApi = ModelApi()
+            val listOfModels = modelApi.listOfModels()
             val listOfGenerators = bg {
                 listOfModels?.execute()?.body()
             }.await()
             this@MainInteractor.listOfGenerators = listOfGenerators
-            callListenerForEachGenerator(param, listOfGenerators)
+            listOfGenerators
 
         }
     }
