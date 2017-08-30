@@ -15,7 +15,7 @@ interface MainMvp {
         fun displayModelDownloadProgress()
         fun closeDownloadingModelDialog()
         fun startCameraActivity(indexInJson: Int)
-        fun applyModelToImage(controlArray: Array<Control>, image: ByteArray?)
+        fun applyModelToImage(controlArray: Array<Control>, image: ByteArray?, path: String)
         fun startModelOnImage(buyGenerators: MutableList<BuyGenerator>)
         fun  displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>)
         fun popupSigninGoogle(googleSignInClient: GoogleApiClient)

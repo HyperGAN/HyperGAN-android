@@ -43,8 +43,13 @@ class ImageSaver {
             context.sendBroadcast(Intent(intent))
             true
         }
-
     }
+
+    fun saveImageToFile(file: File, image: ByteArray?) {
+        val fos = FileOutputStream(file)
+        fos.write(image)
+    }
+
     fun writeByteArrayToFile(fileLocation: String, imageInBytes: ByteArray?) {
         val file = File(fileLocation)
         file.createNewFile()

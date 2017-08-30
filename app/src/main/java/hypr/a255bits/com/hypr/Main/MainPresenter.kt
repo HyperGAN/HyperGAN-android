@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.Generator.Control
+import hypr.a255bits.com.hypr.Util.ImageSaver
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
@@ -68,8 +69,17 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         val generator = interactor.listOfGenerators?.get(itemId)
         if (generator != null) {
             val controlArray: Array<Control>? = generator.generator?.viewer?.controls?.toTypedArray()
-            controlArray?.let { view.applyModelToImage(it, image) }
+            controlArray?.let {
+                val imageLocation = saveImageSoOtherFragmentCanViewIt(image)
+                view.applyModelToImage(it, image, imageLocation.path) }
         }
+    }
+
+    fun  saveImageSoOtherFragmentCanViewIt(image: ByteArray?): File {
+        val file = File.createTempFile("image", "png")
+        ImageSaver().saveImageToFile(file, image)
+        return file
+
     }
 
     override fun downloadingModelFinished() {
