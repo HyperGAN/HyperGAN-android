@@ -5,6 +5,8 @@ import android.graphics.Bitmap
 import hypr.a255bits.com.hypr.GeneratorLoader
 import hypr.a255bits.com.hypr.Util.ImageSaver
 import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 import java.io.File
 import java.io.IOException
 
@@ -14,13 +16,14 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     var imageFromGallery: IntArray? = null
     val SHARE_IMAGE_PERMISSION_REQUEST = 10
     val SAVE_IMAGE_PERMISSION_REQUEST: Int = 10
+    val generatorLoader = GeneratorLoader()
     override fun disconnectFaceDetector() {
         interactor.faceDetection.release()
     }
 
     fun shareImageToOtherApps() {
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            val bitmap = imageFromGallery?.let { view.changePixelToBitmap(it) }
+            val bitmap = imageFromGallery?.let { changePixelToBitmap(it) }
             val shareIntent = interactor.getIntentForSharingImagesWithOtherApps(bitmap)
             view.shareImageToOtherApps(shareIntent)
         } else {
@@ -51,24 +54,34 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     }
 
     override fun saveImageDisplayedToPhone(context: Context): Deferred<Boolean>? {
-    var saver: Deferred<Boolean>? = null
-        if(interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)){
-            val bitmap = imageFromGallery?.let { view.changePixelToBitmap(it) }
+        var saver: Deferred<Boolean>? = null
+        if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            val bitmap = imageFromGallery?.let { changePixelToBitmap(it) }
             saver = ImageSaver().saveImageToInternalStorage(bitmap, context)
-        }else{
+        } else {
             view.requestPermissionFromUser(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), SAVE_IMAGE_PERMISSION_REQUEST)
         }
-    return saver
+        return saver
     }
 
-    override fun transformImage(normalImage: Bitmap?, pbFile: File?, generatorLoader: GeneratorLoader) {
+    override fun transformImage(normalImage: Bitmap?, pbFile: File?) {
         if (normalImage != null) {
-//            view.displayFocusedImage(normalImage)
             findFacesInImage(normalImage, context)
         }
     }
 
-    fun loadGenerator(generatorLoader: GeneratorLoader, pbFile: File?) {
+    fun loadGenerator(pbFile: File?) {
         pbFile?.let { generatorLoader.load(context.assets, it) }
+    }
+
+    override fun sampleImage(imageFromGallery: Bitmap): Deferred<IntArray> {
+        return async(UI) {
+            val scaled = Bitmap.createScaledBitmap(imageFromGallery, 128, 128, false)
+            val encoded = generatorLoader.encode(scaled)
+            return@async generatorLoader.sample(encoded)
+        }
+    }
+    override fun changePixelToBitmap(transformedImage: IntArray): Bitmap? {
+        return generatorLoader.manipulateBitmap(generatorLoader.width, generatorLoader.height, transformedImage)
     }
 }

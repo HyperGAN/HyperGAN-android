@@ -16,7 +16,6 @@ import android.widget.SpinnerAdapter
 import com.pawegio.kandroid.onProgressChanged
 import com.pawegio.kandroid.toast
 import hypr.a255bits.com.hypr.Generator.Control
-import hypr.a255bits.com.hypr.GeneratorLoader
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main2.*
@@ -34,7 +33,6 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     private var image: String = ""
     val interactor by lazy { ModelInteractor(context) }
     val presenter by lazy { ModelFragmentPresenter(this, interactor, context) }
-    val generatorLoader = GeneratorLoader()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,11 +65,11 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         displayImageTransitionSeekbarProgress()
-        presenter.loadGenerator(generatorLoader, pbFile)
+        presenter.loadGenerator(pbFile)
         val byteArrayImage = File(image).readBytes()
 
         val imageBitmap = BitmapFactory.decodeByteArray(byteArrayImage, 0, byteArrayImage.size)
-        presenter.transformImage(imageBitmap, pbFile, generatorLoader)
+        presenter.transformImage(imageBitmap, pbFile)
 
 
     }
@@ -116,17 +114,11 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     override fun displayFocusedImage(imageFromGallery: Bitmap) {
-        val scaled = Bitmap.createScaledBitmap(imageFromGallery, 128, 128, false)
-        val encoded = generatorLoader.encode(scaled)
-        val transformedImage = generatorLoader.sample(encoded)
-        presenter.imageFromGallery = transformedImage
-        focusedImage.setImageBitmap(generatorLoader.manipulateBitmap(generatorLoader.width, generatorLoader.height, transformedImage))
-
-    }
-
-    override fun changePixelToBitmap(image: IntArray): Bitmap{
-        return generatorLoader.manipulateBitmap(generatorLoader.width, generatorLoader.height, image)
-
+        launch(UI) {
+            val transformedImage = presenter.sampleImage(imageFromGallery).await()
+            presenter.imageFromGallery = transformedImage
+            focusedImage.setImageBitmap(presenter.changePixelToBitmap(transformedImage))
+        }
     }
 
     override fun shareImageToOtherApps(shareIntent: Intent) {
