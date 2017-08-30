@@ -2,6 +2,7 @@ package hypr.a255bits.com.hypr.CameraFragment
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.view.MenuItem
 
 
 interface CameraMVP{
@@ -9,10 +10,12 @@ interface CameraMVP{
        fun  sendImageToModel(image: ByteArray?)
 
        fun displayGallery()
+       fun navigateUpActivity()
    }
     interface presenter{
         fun  sendPictureToModel(jpeg: ByteArray?)
         fun getImageFromImageFileLocation(imageLocation: Uri)
+        fun onOptionsItemSelected(item: MenuItem?)
     }
     interface interactor{
     }

@@ -1,9 +1,11 @@
 package hypr.a255bits.com.hypr.Main
 
 import android.content.Context
+import android.view.MenuItem
 import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.Generator.Control
+import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.ImageSaver
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import kotlinx.coroutines.experimental.android.UI
@@ -108,4 +110,12 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         buyGenerators.add(buyGenerator)
     }
 
+    override fun onNavigationItemSelected(item: MenuItem) {
+        if (item.itemId in 0..100) {
+           attemptToStartModel(item.itemId)
+
+        } else if (item.itemId == R.id.homeButton) {
+            view.displayGeneratorsOnHomePage(buyGenerators)
+        }
+    }
 }

@@ -1,12 +1,18 @@
 package hypr.a255bits.com.hypr.ModelFragmnt
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.view.MenuItem
 import hypr.a255bits.com.hypr.GeneratorLoader
+import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.ImageSaver
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
+import org.jetbrains.anko.coroutines.experimental.bg
+import org.jetbrains.anko.toast
 import java.io.File
 import java.io.IOException
 
@@ -81,7 +87,27 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
             return@async generatorLoader.sample(encoded)
         }
     }
+
     override fun changePixelToBitmap(transformedImage: IntArray): Bitmap? {
         return generatorLoader.manipulateBitmap(generatorLoader.width, generatorLoader.height, transformedImage)
+    }
+
+    override fun onRequestPermissionResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        grantResults.filter { item -> item == PackageManager.PERMISSION_GRANTED }.forEach { item ->
+            if (requestCode == SHARE_IMAGE_PERMISSION_REQUEST) {
+                shareImageToOtherApps()
+            }
+        }
+    }
+    override fun onOptionsItemSelected(item: MenuItem, context: Context) {
+        launch(UI) {
+            when (item.itemId) {
+                R.id.saveImage -> {
+                    bg { saveImageDisplayedToPhone(context)}.await()
+                    context.toast("Image Saved!")
+                }
+                R.id.shareIamge -> shareImageToOtherApps()
+            }
+        }
     }
 }

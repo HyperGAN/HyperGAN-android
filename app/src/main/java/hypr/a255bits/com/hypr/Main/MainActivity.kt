@@ -144,12 +144,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        if (item.itemId in 0..100) {
-           presenter.attemptToStartModel(item.itemId)
-
-        } else if (item.itemId == R.id.homeButton) {
-            displayGeneratorsOnHomePage(presenter.buyGenerators)
-        }
+        presenter.onNavigationItemSelected(item)
         drawer.closeDrawer(GravityCompat.START)
         return true
     }

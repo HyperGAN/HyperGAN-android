@@ -2,7 +2,6 @@ package hypr.a255bits.com.hypr.ModelFragmnt
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -14,14 +13,12 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.SpinnerAdapter
 import com.pawegio.kandroid.onProgressChanged
-import com.pawegio.kandroid.toast
 import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main2.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
-import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.toast
 import java.io.File
 
@@ -70,8 +67,6 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
         val imageBitmap = BitmapFactory.decodeByteArray(byteArrayImage, 0, byteArrayImage.size)
         presenter.transformImage(imageBitmap, pbFile)
-
-
     }
 
     private fun displayImageTransitionSeekbarProgress() {
@@ -88,15 +83,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        launch(UI) {
-            when (item.itemId) {
-                R.id.saveImage -> {
-                    bg { presenter.saveImageDisplayedToPhone(getContext()) }.await()
-                    toast("Image Saved!")
-                }
-                R.id.shareIamge -> presenter.shareImageToOtherApps()
-            }
-        }
+        presenter.onOptionsItemSelected(item, context)
         return super.onOptionsItemSelected(item)
     }
 
@@ -131,12 +118,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        grantResults.filter { item -> item == PackageManager.PERMISSION_GRANTED }.forEach { item ->
-            if (requestCode == presenter.SHARE_IMAGE_PERMISSION_REQUEST) {
-                presenter.shareImageToOtherApps()
-            }
-        }
-
+        presenter.onRequestPermissionResult(requestCode, permissions, grantResults)
     }
 
     companion object {

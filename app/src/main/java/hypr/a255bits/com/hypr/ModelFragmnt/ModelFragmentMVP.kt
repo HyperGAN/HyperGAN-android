@@ -3,6 +3,7 @@ package hypr.a255bits.com.hypr.ModelFragmnt
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.view.MenuItem
 import kotlinx.coroutines.experimental.Deferred
 import java.io.File
 
@@ -21,6 +22,8 @@ interface ModelFragmentMVP{
         fun  convertToNegative1To1(progress: Int): Double
         fun  changePixelToBitmap(transformedImage: IntArray): Bitmap?
         fun sampleImage(imageFromGallery: Bitmap): Deferred<IntArray>
+        fun onRequestPermissionResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray)
+        fun  onOptionsItemSelected(item: MenuItem, context: Context)
     }
     interface interactor{
         fun  getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context): MutableList<Bitmap>

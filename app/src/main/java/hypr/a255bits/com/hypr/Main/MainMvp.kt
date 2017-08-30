@@ -1,5 +1,6 @@
 package hypr.a255bits.com.hypr.Main
 
+import android.view.MenuItem
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.storage.FileDownloadTask
 import hypr.a255bits.com.hypr.BuyGenerator
@@ -34,6 +35,7 @@ interface MainMvp {
         fun  signInToGoogle(googleSignInClient: GoogleApiClient)
         fun  buyModel(skus: String, billingHelper: IabHelper?)
         fun attemptToStartModel(itemId: Int)
+        fun onNavigationItemSelected(item: MenuItem)
     }
 
     interface interactor {
