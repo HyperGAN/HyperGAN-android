@@ -87,9 +87,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             buyGenerators = mutableListOf()
             generators?.forEachIndexed { index, generator ->
                 view.modeToNavBar(generator, index)
-                if (generator.name != null) {
-                    saveGeneratorInfo(generator.name!!)
-                }
+                    saveGeneratorInfo(generator.name)
             }
             view.startModelOnImage(buyGenerators)
         }
