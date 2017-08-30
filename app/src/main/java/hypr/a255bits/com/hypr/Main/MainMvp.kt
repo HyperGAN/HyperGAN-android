@@ -11,7 +11,7 @@ import java.io.File
 
 interface MainMvp {
     interface view {
-        fun modeToNavBar(generator: Generator, index: Int)
+        fun addModelsToNavBar(generator: Generator, index: Int)
         fun displayModelDownloadProgress()
         fun closeDownloadingModelDialog()
         fun startCameraActivity(indexInJson: Int)

@@ -123,7 +123,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
     }
 
-    override fun modeToNavBar(generator: Generator, index: Int) {
+    override fun addModelsToNavBar(generator: Generator, index: Int) {
         modelSubMenu?.add(R.id.group1, index, index, generator.name)
         modelSubMenu?.getItem(index)?.setIcon(R.drawable.ic_lock)
 
