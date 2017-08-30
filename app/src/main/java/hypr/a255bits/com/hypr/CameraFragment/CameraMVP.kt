@@ -15,7 +15,5 @@ interface CameraMVP{
         fun getImageFromImageFileLocation(imageLocation: Uri)
     }
     interface interactor{
-        fun  uriToBitmap(imageLocation: Uri): Bitmap
-
     }
 }

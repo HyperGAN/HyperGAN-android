@@ -3,6 +3,7 @@ package hypr.a255bits.com.hypr.CameraFragment
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import hypr.a255bits.com.hypr.Util.ImageSaver
 
 
 class CameraPresenter(val view: CameraMVP.view, val context: Context) : CameraMVP.presenter {
@@ -13,7 +14,7 @@ class CameraPresenter(val view: CameraMVP.view, val context: Context) : CameraMV
     }
 
     override fun getImageFromImageFileLocation(imageLocation: Uri) {
-        val imageFromGallery: ByteArray? = interactor.uriToByteArray(imageLocation)
+        val imageFromGallery: ByteArray? = ImageSaver().uriToByteArray(imageLocation, context)
         view.sendImageToModel(imageFromGallery)
     }
 
