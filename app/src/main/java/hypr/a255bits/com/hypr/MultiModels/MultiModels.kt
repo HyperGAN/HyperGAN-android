@@ -24,7 +24,6 @@ import java.io.File
  */
 class MultiModels : Fragment(), MultiMvp.view {
 
-    // TODO: Rename and change types of parameters
     private var generators: Array<Generator>? = null
     private var indexOfGenerator: String? = null
     private var  pathToGenerator: String? = null
