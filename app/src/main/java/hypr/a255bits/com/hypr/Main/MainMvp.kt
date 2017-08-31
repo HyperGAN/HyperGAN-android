@@ -3,7 +3,6 @@ package hypr.a255bits.com.hypr.Main
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.storage.FileDownloadTask
 import hypr.a255bits.com.hypr.BuyGenerator
-import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import kotlinx.coroutines.experimental.Deferred
@@ -15,7 +14,7 @@ interface MainMvp {
         fun displayModelDownloadProgress()
         fun closeDownloadingModelDialog()
         fun startCameraActivity(indexInJson: Int)
-        fun applyModelToImage(controlArray: Array<Control>, image: ByteArray?)
+        fun applyModelToImage(generators: List<Generator>?, indexOfGenerator: Int, image: ByteArray?)
         fun startModelOnImage(buyGenerators: MutableList<BuyGenerator>)
         fun  displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>)
         fun popupSigninGoogle(googleSignInClient: GoogleApiClient)

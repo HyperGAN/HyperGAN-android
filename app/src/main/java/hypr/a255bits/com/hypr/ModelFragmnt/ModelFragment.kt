@@ -47,21 +47,8 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(R.layout.fragment_model, container, false)
-        displayTitleSpinner()
         setHasOptionsMenu(true)
         return view
-    }
-
-    fun displayTitleSpinner() {
-        activity.toolbar.title = ""
-        val actions: List<String?>? = modelUrl?.toList()?.map { it.name }
-        val adapter: SpinnerAdapter = ArrayAdapter<String>(activity, R.layout.spinner_dropdown_item, actions)
-        val spinner = Spinner(activity)
-        spinner.background.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-
-        spinner.adapter = adapter
-        activity.toolbar.addView(spinner, 0)
-
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
