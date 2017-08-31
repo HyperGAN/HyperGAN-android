@@ -4,19 +4,24 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.net.Uri
-import android.os.Environment
 import android.provider.MediaStore
 import android.util.SparseArray
 import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.face.Face
 import com.google.android.gms.vision.face.FaceDetector
+import com.google.android.gms.vision.face.Landmark
 import com.pawegio.kandroid.fromApi
 
 import hypr.a255bits.com.hypr.R
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import android.graphics.Paint.FILTER_BITMAP_FLAG
+import android.graphics.Matrix
+import android.graphics.Paint
+import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorFacePosition
 
 
 class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
@@ -27,6 +32,9 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
                 .setLandmarkType(FaceDetector.ALL_LANDMARKS)
                 .build()
     }
+    val generatorFaceResizer = GeneratorFacePosition()
+    var leftOfFace = 0.0f
+    var topOfFace = 0.0f
 
     override fun checkIfPermissionGranted(permission: String): Boolean {
         var isPermissionGranted = true
@@ -86,20 +94,21 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
         repeat(numOfFaces) { index ->
             val faceLocation = faceLocations.valueAt(index)
             if (faceLocation != null) {
-                val face = cropFaceOutOfBitmap(faceLocation, imageWithFaces)
+                val face = generatorFaceResizer.cropFaceOutOfBitmap(faceLocation, imageWithFaces)
                 croppedFaces.add(face)
             }
         }
         return croppedFaces
     }
 
-    private fun cropFaceOutOfBitmap(face: Face, imageWithFaces: Bitmap): Bitmap {
-        val centerOfFace = face.position
-        val x: Int = getNonNegativeValueOfFaceCoordicate(centerOfFace.x)
-        val y: Int = getNonNegativeValueOfFaceCoordicate(centerOfFace.y)
-
-        return Bitmap.createBitmap(imageWithFaces, x, y, face.width.toInt(), face.height.toInt())
+    fun joinImageWithFace(fullImage: Bitmap, faceImage: Bitmap): Bitmap? {
+        var mutableBitmap = fullImage.copy(Bitmap.Config.ARGB_8888, true)
+        val canvas = Canvas(mutableBitmap)
+        val paint = Paint(FILTER_BITMAP_FLAG)
+        canvas.drawBitmap(faceImage, leftOfFace, topOfFace, paint)
+        return mutableBitmap
     }
+
 
     private fun getNonNegativeValueOfFaceCoordicate(coordinate: Float): Int {
         return intArrayOf(coordinate.toInt(), 0).max()!!

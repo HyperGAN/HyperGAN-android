@@ -25,6 +25,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
 
     var presenter: MainPresenter? = null
 
+    var inappBillingEnabled = false
     var billingHelper: IabHelper = IabHelper(context, context.getString(R.string.API_KEY))
     val gso: GoogleSignInOptions by lazy {
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -41,7 +42,9 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     var modelDownloader = ModelDownloader(FirebaseStorage.getInstance().reference)
 
     init {
-        startInAppBilling()
+        if (inappBillingEnabled) {
+            startInAppBilling()
+        }
     }
 
     private fun startInAppBilling() {
@@ -57,9 +60,15 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     }
 
     override fun hasBoughtItem(itemId: String): Deferred<Boolean> {
-        return async(UI) {
-            val inventory = query(true, mutableListOf(itemId), null).await()
-            inventory.hasPurchase(itemId)
+        if (inappBillingEnabled) {
+            return async(UI) {
+                val inventory = query(true, mutableListOf(itemId), null).await()
+                inventory.hasPurchase(itemId)
+            }
+        } else {
+            return async(UI) {
+                true
+            }
         }
     }
 
@@ -78,16 +87,22 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     }
 
     suspend fun buyProduct(productId: String) {
-        val skus = mutableListOf(productId)
-        val inventory = query(true, skus, null).await()
-        if (!inventory.hasPurchase(productId)) {
-            presenter?.buyModel(productId, billingHelper)
+        if(inappBillingEnabled) {
+            val skus = mutableListOf(productId)
+            val inventory = query(true, skus, null).await()
+            if (!inventory.hasPurchase(productId)) {
+                presenter?.buyModel(productId, billingHelper)
+            }
         }
     }
 
     fun query(query: Boolean, skus: MutableList<String>, moreSubsSkus: List<String>?): Deferred<Inventory> {
-        return async(UI) {
-            billingHelper.queryInventory(true, skus, null)
+        if(inappBillingEnabled) {
+            return async(UI) {
+                billingHelper.queryInventory(true, skus, null)
+            }
+        } else {
+            return async(UI) { Inventory() }
         }
     }
 
