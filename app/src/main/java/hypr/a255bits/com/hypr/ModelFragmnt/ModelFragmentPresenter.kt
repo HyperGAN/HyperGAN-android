@@ -72,20 +72,18 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     }
 
     override fun saveImageDisplayedToPhone(context: Context): Deferred<Boolean>? {
-        var saver: Deferred<Boolean>? = null
+        var isSaved: Deferred<Boolean>? = null
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             val bitmap = imageFromGallery?.let { changePixelToBitmap(it) }
-            saver = ImageSaver().saveImageToInternalStorage(bitmap, context)
+            isSaved = ImageSaver().saveImageToInternalStorage(bitmap, context)
         } else {
             view.requestPermissionFromUser(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), SAVE_IMAGE_PERMISSION_REQUEST)
         }
-        return saver
+        return isSaved
     }
 
     override fun transformImage(normalImage: Bitmap?, pbFile: File?) {
-        if (normalImage != null) {
-            findFacesInImage(normalImage, context)
-        }
+        normalImage?.let { findFacesInImage(it, context) }
     }
 
     fun loadGenerator(pbFile: File?) {

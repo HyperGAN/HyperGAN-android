@@ -83,10 +83,6 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-    }
-
     override fun onDetach() {
         super.onDetach()
         presenter.disconnectFaceDetector()
