@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main2.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
+import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.toast
 import java.io.File
 
@@ -45,16 +46,6 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         return view
     }
 
-    override fun displayTitleSpinner(actions: List<String?>?) {
-        activity.toolbar.title = ""
-        val adapter: SpinnerAdapter = ArrayAdapter<String>(activity, R.layout.spinner_dropdown_item, actions)
-        val spinner = Spinner(activity)
-        spinner.background.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-
-        spinner.adapter = adapter
-        activity.toolbar.addView(spinner, 0)
-
-    }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

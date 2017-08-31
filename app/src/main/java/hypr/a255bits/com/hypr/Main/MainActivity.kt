@@ -3,6 +3,8 @@ package hypr.a255bits.com.hypr.Main
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
@@ -12,13 +14,16 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.SubMenu
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import android.widget.SpinnerAdapter
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.Generator.Generator
-import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment
+import hypr.a255bits.com.hypr.MultiModels.MultiModels
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import hypr.a255bits.com.hypr.WelcomeScreen.WelcomeScreen
@@ -38,6 +43,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var progressDownloadingModel: ProgressDialog? = null
     private val SIGN_INTO_GOOGLE_RESULT: Int = 12
     val ZERO_PERCENT: Float = -0.0f
+    private var spinner: Spinner? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,6 +82,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     fun signinToGoogle(googleSignInClient: GoogleApiClient) {
         val signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleSignInClient)
         startActivityForResult(signInIntent, SIGN_INTO_GOOGLE_RESULT)
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -113,8 +120,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         startActivity(intentFor<CameraActivity>("indexInJson" to indexInJson))
     }
 
-    override fun applyModelToImage(controlArray: Array<Control>, image: ByteArray?, path: String) {
-        val fragment: Fragment = ModelFragment.newInstance(controlArray, path, presenter.file)
+    override fun applyModelToImage(controlArray: Array<Control>, image: ByteArray?, path: String, generators: List<Generator>?, itemId: Int) {
+        val fragment: Fragment = MultiModels.newInstance(generators, itemId, path, presenter.file)
         supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
     }
 
@@ -154,14 +161,36 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         println("percent: $progressPercent")
         when {
             presenter.isDownloadComplete(progressPercent.toFloat()) -> presenter.downloadingModelFinished()
-            progressPercent.toFloat() == ZERO_PERCENT -> { }
+            progressPercent.toFloat() == ZERO_PERCENT -> {
+            }
             else -> progressDownloadingModel?.progress = progressPercent.toInt()
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun openCamera(index: java.lang.Integer) {
+        startCameraActivity(index.toInt())
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun addControlNamesToToolbar(controlNames: List<String?>?) {
+        toolbar.title = ""
+        val adapter: SpinnerAdapter = ArrayAdapter<String>(this, R.layout.spinner_dropdown_item, controlNames)
+        spinner.let { toolbar.removeView(it) }
+        if (controlNames!!.isNotEmpty()) {
+
+            this.spinner = Spinner(this)
+            spinner?.background?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+            spinner?.adapter = adapter
+            toolbar.addView(spinner)
         }
     }
 
     override fun closeDownloadingModelDialog() {
         progressDownloadingModel?.dismiss()
     }
+
 
     override fun onStart() {
         super.onStart()

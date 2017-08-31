@@ -73,7 +73,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             val controlArray: Array<Control>? = generator.generator?.viewer?.controls?.toTypedArray()
             controlArray?.let {
                 val imageLocation = saveImageSoOtherFragmentCanViewIt(image)
-                view.applyModelToImage(it, image, imageLocation.path) }
+                view.applyModelToImage(it, image, imageLocation.path, interactor.listOfGenerators, itemId) }
         }
     }
 
