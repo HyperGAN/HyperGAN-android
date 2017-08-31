@@ -1,25 +1,17 @@
 package hypr.a255bits.com.hypr.ModelFragmnt
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
-import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.*
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.SpinnerAdapter
 import com.pawegio.kandroid.onProgressChanged
 import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.app_bar_main2.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
-import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.toast
 import java.io.File
 
