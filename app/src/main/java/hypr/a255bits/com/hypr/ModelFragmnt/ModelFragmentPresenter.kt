@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.view.MenuItem
+import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.GeneratorLoader
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.ImageSaver
@@ -23,10 +24,21 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     val SHARE_IMAGE_PERMISSION_REQUEST = 10
     val SAVE_IMAGE_PERMISSION_REQUEST: Int = 10
     val generatorLoader = GeneratorLoader()
+    var  modelUrl: Array<Control>? = null
+    var byteArrayImage: ByteArray? = null
     override fun disconnectFaceDetector() {
         interactor.faceDetection.release()
     }
 
+    override fun displayTitleSpinner() {
+        val actions: List<String?>? = modelUrl?.toList()?.map { it.name }
+        view.displayTitleSpinner(actions)
+
+    }
+
+    override fun readImageToBytes(imagePath: String?) {
+        byteArrayImage = File(imagePath).readBytes()
+    }
     fun shareImageToOtherApps() {
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             val bitmap = imageFromGallery?.let { changePixelToBitmap(it) }
@@ -110,4 +122,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
             }
         }
     }
+
+
+
 }

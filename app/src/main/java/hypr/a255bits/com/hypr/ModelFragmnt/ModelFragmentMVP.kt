@@ -13,6 +13,7 @@ interface ModelFragmentMVP{
         fun  showError(errorMesssage: String)
         fun  shareImageToOtherApps(shareIntent: Intent)
         fun  requestPermissionFromUser(permissions: Array<String>, REQUEST_CODE: Int)
+        fun displayTitleSpinner(actions: List<String?>?)
     }
     interface presenter{
         fun findFacesInImage(imageWithFaces: Bitmap, context: Context)
@@ -24,6 +25,8 @@ interface ModelFragmentMVP{
         fun sampleImage(imageFromGallery: Bitmap): Deferred<IntArray>
         fun onRequestPermissionResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray)
         fun  onOptionsItemSelected(item: MenuItem, context: Context)
+        fun displayTitleSpinner()
+        fun  readImageToBytes(imagePath: String?)
     }
     interface interactor{
         fun  getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context): MutableList<Bitmap>

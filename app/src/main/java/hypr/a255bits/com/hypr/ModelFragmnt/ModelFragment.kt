@@ -26,30 +26,27 @@ import java.io.File
 class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     var pbFile: File? = null
-    private var modelUrl: Array<Control>? = null
-    private var image: String = ""
     val interactor by lazy { ModelInteractor(context) }
     val presenter by lazy { ModelFragmentPresenter(this, interactor, context) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            modelUrl = arguments.getParcelableArray(MODEL_CONTROLS) as Array<Control>?
-            image = arguments.getString(IMAGE_PARAM)
+            presenter.modelUrl = arguments.getParcelableArray(MODEL_CONTROLS) as Array<Control>?
+            presenter.readImageToBytes(arguments.getString(IMAGE_PARAM))
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(R.layout.fragment_model, container, false)
-        displayTitleSpinner()
+        presenter.displayTitleSpinner()
         setHasOptionsMenu(true)
         return view
     }
 
-    fun displayTitleSpinner() {
+    override fun displayTitleSpinner(actions: List<String?>?) {
         activity.toolbar.title = ""
-        val actions: List<String?>? = modelUrl?.toList()?.map { it.name }
         val adapter: SpinnerAdapter = ArrayAdapter<String>(activity, R.layout.spinner_dropdown_item, actions)
         val spinner = Spinner(activity)
         spinner.background.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
@@ -63,9 +60,8 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         super.onViewCreated(view, savedInstanceState)
         displayImageTransitionSeekbarProgress()
         presenter.loadGenerator(pbFile)
-        val byteArrayImage = File(image).readBytes()
 
-        val imageBitmap = BitmapFactory.decodeByteArray(byteArrayImage, 0, byteArrayImage.size)
+        val imageBitmap = presenter.byteArrayImage?.size?.let { BitmapFactory.decodeByteArray(presenter.byteArrayImage, 0, it) }
         presenter.transformImage(imageBitmap, pbFile)
     }
 
