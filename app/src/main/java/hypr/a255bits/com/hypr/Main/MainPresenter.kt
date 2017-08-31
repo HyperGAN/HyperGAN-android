@@ -65,10 +65,8 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     override fun startModel(itemId: Int, image: ByteArray?) {
         val generator = interactor.listOfGenerators?.get(itemId)
-        if (generator != null) {
-            val controlArray: Array<Control>? = generator.generator?.viewer?.controls?.toTypedArray()
-            controlArray?.let { view.applyModelToImage(it, image) }
-        }
+        view.applyModelToImage(interactor.listOfGenerators, itemId, image)
+
     }
 
     override fun downloadingModelFinished() {
