@@ -2,7 +2,6 @@ package hypr.a255bits.com.hypr.ModelFragmnt
 
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.*
@@ -11,7 +10,6 @@ import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import org.greenrobot.eventbus.EventBus
@@ -24,7 +22,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     var pbFile: File? = null
     val interactor by lazy { ModelInteractor(context) }
-    val presenter by lazy { ModelFragmentPresenter(this, interactor, context) }
+    val presenter by lazy { ModelFragmentPresenter(this, interactor, context, pbFile) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,10 +44,6 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         displayImageTransitionSeekbarProgress()
-        presenter.loadGenerator(pbFile)
-
-        val imageBitmap = presenter.byteArrayImage?.size?.let { BitmapFactory.decodeByteArray(presenter.byteArrayImage, 0, it) }
-        presenter.transformImage(imageBitmap, pbFile)
         chooseImageFromGalleryButton.setOnClickListener {
             presenter.startCameraActivity()
         }

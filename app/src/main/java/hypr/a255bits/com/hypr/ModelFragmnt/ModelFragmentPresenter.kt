@@ -2,11 +2,13 @@ package hypr.a255bits.com.hypr.ModelFragmnt
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.view.MenuItem
 import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.GeneratorLoader
 import hypr.a255bits.com.hypr.R
+import hypr.a255bits.com.hypr.Util.BitmapManipulator
 import hypr.a255bits.com.hypr.Util.ImageSaver
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
@@ -18,7 +20,15 @@ import java.io.File
 import java.io.IOException
 
 
-class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: ModelInteractor, val context: Context) : ModelFragmentMVP.presenter {
+class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: ModelInteractor, val context: Context, pbFile: File?) : ModelFragmentMVP.presenter {
+    init {
+        val cont = context
+        launch(UI) {
+            loadGenerator(pbFile, cont.assets).await()
+            val imageBitmap = convertByteArrayImageToBitmap()
+            transformImage(imageBitmap.await())
+        }
+    }
 
     var imageFromGallery: IntArray? = null
     val SHARE_IMAGE_PERMISSION_REQUEST = 10
@@ -81,12 +91,14 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         return isSaved
     }
 
-    override fun transformImage(normalImage: Bitmap?, pbFile: File?) {
+    override fun transformImage(normalImage: Bitmap?) {
         normalImage?.let { findFacesInImage(it, context) }
     }
 
-    fun loadGenerator(pbFile: File?) {
-        pbFile?.let { generatorLoader.load(context.assets, it) }
+    fun loadGenerator(pbFile: File?, assets: AssetManager): Deferred<Unit?> {
+        return async(UI) {
+            pbFile?.let { generatorLoader.load(assets, it) }
+        }
     }
 
     override fun sampleImage(imageFromGallery: Bitmap): Deferred<IntArray> {
@@ -109,6 +121,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         }
     }
 
+
     override fun onOptionsItemSelected(item: MenuItem, context: Context) {
         launch(UI) {
             when (item.itemId) {
@@ -123,6 +136,13 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
 
     fun startCameraActivity() {
         view.startCameraActivity()
+    }
+
+    override fun convertByteArrayImageToBitmap(): Deferred<Bitmap?> {
+        return async(UI) {
+            byteArrayImage?.let { BitmapManipulator().createBitmapFromByteArray(it) }
+        }
+
     }
 
 

@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.view.MenuItem
 import kotlinx.coroutines.experimental.Deferred
-import java.io.File
 
 interface ModelFragmentMVP{
     interface view{
@@ -19,7 +18,7 @@ interface ModelFragmentMVP{
         fun findFacesInImage(imageWithFaces: Bitmap, context: Context)
         fun disconnectFaceDetector()
         fun saveImageDisplayedToPhone(context: Context): Deferred<Boolean>?
-        fun transformImage(normalImage: Bitmap?, pbFile: File?)
+        fun transformImage(normalImage: Bitmap?)
         fun  convertToNegative1To1(progress: Int): Double
         fun  changePixelToBitmap(transformedImage: IntArray): Bitmap?
         fun sampleImage(imageFromGallery: Bitmap): Deferred<IntArray>
@@ -27,6 +26,7 @@ interface ModelFragmentMVP{
         fun  onOptionsItemSelected(item: MenuItem, context: Context)
         fun displayTitleSpinner()
         fun  readImageToBytes(imagePath: String?)
+        fun convertByteArrayImageToBitmap(): Deferred<Bitmap?>
     }
     interface interactor{
         fun  getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context): MutableList<Bitmap>

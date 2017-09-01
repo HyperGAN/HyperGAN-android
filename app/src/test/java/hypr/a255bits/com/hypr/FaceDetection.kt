@@ -11,7 +11,7 @@ class FaceDetection{
     val context: Context = mock()
     val view: ModelFragmentMVP.view = mock()
     val interactor: ModelInteractor = mock()
-    val presenter: ModelFragmentPresenter = ModelFragmentPresenter(view, interactor, context)
+    val presenter: ModelFragmentPresenter = ModelFragmentPresenter(view, interactor, context, pbFile)
 
     @Test
     fun findingFacesCallsGoogleFaceApi(){
