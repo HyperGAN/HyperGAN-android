@@ -7,11 +7,15 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.*
 import com.pawegio.kandroid.onProgressChanged
+import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
+import org.greenrobot.eventbus.EventBus
+import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.toast
 import java.io.File
 
@@ -46,6 +50,14 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
         val imageBitmap = presenter.byteArrayImage?.size?.let { BitmapFactory.decodeByteArray(presenter.byteArrayImage, 0, it) }
         presenter.transformImage(imageBitmap, pbFile)
+        chooseImageFromGalleryButton.setOnClickListener {
+            presenter.startCameraActivity()
+        }
+    }
+
+    override fun startCameraActivity() {
+        val intent = activity.intentFor<CameraActivity>("indexInJson" to 0)
+        EventBus.getDefault().post(intent)
     }
 
     private fun displayImageTransitionSeekbarProgress() {

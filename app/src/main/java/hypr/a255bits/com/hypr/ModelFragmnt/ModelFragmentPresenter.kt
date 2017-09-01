@@ -121,5 +121,9 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         }
     }
 
+    fun startCameraActivity() {
+        view.startCameraActivity()
+    }
+
 
 }

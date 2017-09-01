@@ -156,6 +156,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
+    @Subscribe
+    fun startIntent(intent: Intent){
+        startActivity(intent)
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun showModelDownloadProgress(progressPercent: java.lang.Float) {
         println("percent: $progressPercent")
