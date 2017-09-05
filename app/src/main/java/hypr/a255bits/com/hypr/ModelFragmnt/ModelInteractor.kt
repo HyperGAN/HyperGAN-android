@@ -7,17 +7,9 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.SparseArray
-import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.face.Face
-import com.google.android.gms.vision.face.FaceDetector
 import com.pawegio.kandroid.fromApi
-
-import hypr.a255bits.com.hypr.R
-import hypr.a255bits.com.hypr.Util.BitmapManipulator
 import hypr.a255bits.com.hypr.Util.FaceDetection
-import hypr.a255bits.com.hypr.Util.nonNegativeInt
-import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 
 

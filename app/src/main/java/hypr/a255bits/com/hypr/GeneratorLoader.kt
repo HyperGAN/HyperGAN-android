@@ -31,7 +31,7 @@ class GeneratorLoader {
         print("Sampling ")
 
 
-        var dims = longArrayOf(1.toLong(), 16.toLong(), 16.toLong(), 96.toLong())
+        val dims = longArrayOf(1.toLong(), 16.toLong(), 16.toLong(), 96.toLong())
         this.inference.feed("concat", z, *dims)
 
         this.inference.run(arrayOf("Tanh_1"))

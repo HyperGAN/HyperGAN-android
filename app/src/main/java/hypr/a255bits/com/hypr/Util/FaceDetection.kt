@@ -9,9 +9,6 @@ import com.google.android.gms.vision.face.FaceDetector
 import hypr.a255bits.com.hypr.R
 import java.io.IOException
 
-/**
- * Created by tedho on 8/29/2017.
- */
 
 class FaceDetection(val context: Context){
     val detector: FaceDetector by lazy {

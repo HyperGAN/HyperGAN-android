@@ -1,6 +1,5 @@
 package hypr.a255bits.com.hypr.CameraFragment
 
-import android.graphics.Bitmap
 import android.net.Uri
 import android.view.MenuItem
 

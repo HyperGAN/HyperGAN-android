@@ -1,7 +1,6 @@
 package hypr.a255bits.com.hypr.CameraFragment
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.net.Uri
 import android.view.MenuItem
 import hypr.a255bits.com.hypr.Util.ImageSaver

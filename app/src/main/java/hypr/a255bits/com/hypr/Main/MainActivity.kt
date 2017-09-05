@@ -187,7 +187,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (controlNames!!.isNotEmpty()) {
 
             this.spinner = Spinner(this)
-            spinner?.background?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+            spinner?.background?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
             spinner?.adapter = adapter
             toolbar.addView(spinner)
         }

@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.fragment_welcome_screen.*
-import org.greenrobot.eventbus.EventBus
 
 
 class WelcomeScreen : Fragment() {

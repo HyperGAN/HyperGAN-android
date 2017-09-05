@@ -1,7 +1,6 @@
 package hypr.a255bits.com.hypr.MultiModels
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
@@ -14,14 +13,6 @@ import kotlinx.android.synthetic.main.fragment_multi_models.*
 import java.io.File
 
 
-/**
- * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [MultiModels.OnFragmentInteractionListener] interface
- * to handle interaction events.
- * Use the [MultiModels.newInstance] factory method to
- * create an instance of this fragment.
- */
 class MultiModels : Fragment(), MultiMvp.view {
 
     private var generators: Array<Generator>? = null
@@ -43,7 +34,6 @@ class MultiModels : Fragment(), MultiMvp.view {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
         return inflater!!.inflate(R.layout.fragment_multi_models, container, false)
     }
 
@@ -94,4 +84,4 @@ class MultiModels : Fragment(), MultiMvp.view {
             return fragment
         }
     }
-}// Required empty public constructor
+}
