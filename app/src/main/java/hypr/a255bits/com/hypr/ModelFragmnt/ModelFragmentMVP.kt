@@ -21,12 +21,13 @@ interface ModelFragmentMVP{
         fun transformImage(normalImage: Bitmap?)
         fun  convertToNegative1To1(progress: Int): Double
         fun  changePixelToBitmap(transformedImage: IntArray): Bitmap?
-        fun sampleImage(imageFromGallery: Bitmap): Deferred<IntArray>
+        fun sampleImage(image: Bitmap): Deferred<Bitmap>
         fun onRequestPermissionResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray)
         fun  onOptionsItemSelected(item: MenuItem, context: Context)
         fun displayTitleSpinner()
         fun  readImageToBytes(imagePath: String?)
         fun convertByteArrayImageToBitmap(): Deferred<Bitmap?>
+        fun  joinFaceWithImage(transformedImage: Bitmap): Bitmap?
     }
     interface interactor{
         fun  getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context): MutableList<Bitmap>

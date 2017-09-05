@@ -6,6 +6,7 @@ import android.util.SparseArray
 import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.face.Face
 import com.google.android.gms.vision.face.FaceDetector
+import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorFacePosition
 import hypr.a255bits.com.hypr.R
 import java.io.IOException
 
@@ -40,7 +41,7 @@ class FaceDetection(val context: Context){
         repeat(numOfFaces) { index ->
             val faceLocation = faceLocations.valueAt(index)
             if (faceLocation != null) {
-                val face = cropFaceOutOfBitmap(faceLocation, imageWithFaces)
+                val face = GeneratorFacePosition().cropFaceOutOfBitmap(faceLocation, imageWithFaces)
                 croppedFaces.add(face)
             }
         }

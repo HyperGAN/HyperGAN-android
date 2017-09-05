@@ -6,7 +6,7 @@ import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.view.MenuItem
 import hypr.a255bits.com.hypr.Generator.Control
-import hypr.a255bits.com.hypr.GeneratorLoader
+import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorLoader
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.BitmapManipulator
 import hypr.a255bits.com.hypr.Util.ImageSaver
@@ -30,12 +30,16 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         }
     }
 
+    var imageWithFaces: Bitmap? = null
     var imageFromGallery: IntArray? = null
     val SHARE_IMAGE_PERMISSION_REQUEST = 10
     val SAVE_IMAGE_PERMISSION_REQUEST: Int = 10
     val generatorLoader = GeneratorLoader()
     var modelUrl: Array<Control>? = null
     var byteArrayImage: ByteArray? = null
+    var baseImage: Bitmap? = null
+    var mask: FloatArray? = null
+    var encoded: FloatArray? = null
     override fun disconnectFaceDetector() {
         interactor.faceDetection.release()
     }
@@ -62,6 +66,11 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         return ((progress - 100) / 100.00)
     }
 
+
+    override fun joinFaceWithImage(transformedImage: Bitmap): Bitmap? {
+//        return imageWithFaces?.let { interactor.joinImageWithFace(it, transformedImage) }
+        return null
+    }
 
     override fun findFacesInImage(imageWithFaces: Bitmap, context: Context) {
         try {
@@ -101,11 +110,18 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         }
     }
 
-    override fun sampleImage(imageFromGallery: Bitmap): Deferred<IntArray> {
+    override fun sampleImage(image: Bitmap): Deferred<Bitmap> {
         return async(UI) {
-            val scaled = Bitmap.createScaledBitmap(imageFromGallery, 128, 128, false)
-            val encoded = generatorLoader.encode(scaled)
-            return@async generatorLoader.sample(encoded)
+            val scaled = Bitmap.createScaledBitmap(image, 256, 256, false)
+            baseImage = scaled
+
+            encoded = generatorLoader.encode(scaled)
+
+            mask = generatorLoader.mask(scaled)
+            val direction = generatorLoader.random_z()
+            val transformedImage = generatorLoader.sample(encoded!!, 0.0f, mask, direction, scaled!!)
+            imageFromGallery = transformedImage
+            return@async generatorLoader.manipulateBitmap(generatorLoader.width, generatorLoader.height, transformedImage)
         }
     }
 

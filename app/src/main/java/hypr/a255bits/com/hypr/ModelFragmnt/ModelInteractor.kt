@@ -8,14 +8,25 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.SparseArray
 import com.google.android.gms.vision.face.Face
+import com.google.android.gms.vision.face.FaceDetector
 import com.pawegio.kandroid.fromApi
 import hypr.a255bits.com.hypr.Util.FaceDetection
 import java.io.IOException
+import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorFacePosition
 
 
 class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
     val faceDetection = FaceDetection(context)
 
+    val detector: FaceDetector by lazy {
+        FaceDetector.Builder(context)
+                .setTrackingEnabled(false)
+                .setLandmarkType(FaceDetector.ALL_LANDMARKS)
+                .build()
+    }
+    val generatorFaceResizer = GeneratorFacePosition()
+    var leftOfFace = 0.0f
+    var topOfFace = 0.0f
 
     override fun checkIfPermissionGranted(permission: String): Boolean {
         var isPermissionGranted = true

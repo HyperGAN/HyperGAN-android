@@ -2,6 +2,7 @@ package hypr.a255bits.com.hypr
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorLoader
 import org.junit.Test
 import java.io.File
 

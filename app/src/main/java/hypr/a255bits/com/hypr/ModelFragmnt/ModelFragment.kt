@@ -4,10 +4,12 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.*
 import com.pawegio.kandroid.onProgressChanged
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator.Control
+import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorLoader
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.experimental.android.UI
@@ -57,9 +59,25 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     private fun displayImageTransitionSeekbarProgress() {
         imageTransitionSeekBar.onProgressChanged { progress, _ ->
             val ganValue: Double = presenter.convertToNegative1To1(progress)
+            changeGanImageFromSlider(ganValue)
             println("oldValue: $progress")
             println("actualyValue: $ganValue")
         }
+    }
+
+    private fun changeGanImageFromSlider(ganValue: Double) {
+        presenter.encoded?.let {
+            val direction = presenter.generatorLoader.random_z()
+            val ganImage = presenter.generatorLoader.sample(it, ganValue.toFloat(), presenter.mask, direction, presenter.baseImage!!)
+            val z_slider = presenter.generatorLoader.get_z(it, ganValue.toFloat(), it)
+
+            Log.d("z_slider", z_slider[0].toString())
+            focusedImage.setImageBitmap(presenter.generatorLoader.manipulateBitmap(presenter.generatorLoader.width, presenter.generatorLoader.height, ganImage))
+
+
+        }
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -84,10 +102,10 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun displayFocusedImage(imageFromGallery: Bitmap) {
         launch(UI) {
             val transformedImage = presenter.sampleImage(imageFromGallery).await()
-            presenter.imageFromGallery = transformedImage
-            focusedImage.setImageBitmap(presenter.changePixelToBitmap(transformedImage))
+            focusedImage.setImageBitmap(transformedImage)
         }
     }
+
 
     override fun shareImageToOtherApps(shareIntent: Intent) {
         startActivity(Intent.createChooser(shareIntent, getString(R.string.share_image)))
