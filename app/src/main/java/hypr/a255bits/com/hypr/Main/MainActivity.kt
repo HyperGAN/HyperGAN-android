@@ -104,6 +104,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>) {
         val fragment: Fragment = WelcomeScreen.newInstance(generators, "")
         supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
+        presenter.startModel(0)
     }
 
     fun setupDrawer(toolbar: Toolbar) {

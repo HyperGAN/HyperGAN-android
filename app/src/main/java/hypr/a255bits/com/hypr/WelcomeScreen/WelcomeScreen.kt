@@ -34,7 +34,6 @@ class WelcomeScreen : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         displayListOfModels()
-        EventBus.getDefault().post(0)
     }
 
     private fun displayListOfModels() {
