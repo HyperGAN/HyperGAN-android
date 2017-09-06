@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/saveImage"
-        android:title="Save"
-        />
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
         android:id="@+id/shareIamge"
+        android:icon="@drawable/ic_share_white_24px"
         android:title="Share"
-        />
-
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/saveImage"
+        android:icon="@drawable/ic_save_white_24px"
+        android:title="Save"
+        app:showAsAction="always" />
 </menu>
