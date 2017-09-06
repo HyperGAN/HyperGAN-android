@@ -5,9 +5,11 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Environment
+import android.provider.MediaStore
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -41,6 +43,31 @@ class ImageSaver {
             context.sendBroadcast(Intent(intent))
             true
         }
+    }
+
+    fun saveImageToFile(file: File, image: ByteArray?) {
+        val fos = FileOutputStream(file)
+        fos.write(image)
+    }
+
+    fun writeByteArrayToFile(fileLocation: String, imageInBytes: ByteArray?) {
+        val file = File(fileLocation)
+        file.createNewFile()
+        val fileOutput = FileOutputStream(file)
+        fileOutput.write(imageInBytes)
+    }
+    private fun uriToBitmap(imageLocation: Uri, context: Context): Bitmap {
+        return MediaStore.Images.Media.getBitmap(context.contentResolver, imageLocation)
+    }
+    fun uriToByteArray(imageLocation: Uri, context: Context): ByteArray? {
+        val bitmap = uriToBitmap(imageLocation, context)
+        return bitmapToByteArray(bitmap)
+    }
+    private fun bitmapToByteArray(bitmap: Bitmap): ByteArray? {
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        return stream.toByteArray()
 
     }
+
 }

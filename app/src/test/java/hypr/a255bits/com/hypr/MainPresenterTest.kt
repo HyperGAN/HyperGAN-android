@@ -1,15 +1,14 @@
 package hypr.a255bits.com.hypr
 
 import android.content.Context
-import com.google.firebase.storage.FileDownloadTask
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.verify
 import hypr.a255bits.com.hypr.Main.MainInteractor
 import hypr.a255bits.com.hypr.Main.MainMvp
 import hypr.a255bits.com.hypr.Main.MainPresenter
 import org.junit.Test
 import java.io.File
-
-
 
 
 class MainPresenterTest{

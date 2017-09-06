@@ -17,9 +17,10 @@ import kotlinx.android.synthetic.main.activity_camera.*
 import org.jetbrains.anko.clearTop
 import org.jetbrains.anko.intentFor
 
-class CameraActivity : AppCompatActivity(), CameraMVP.view{
+class CameraActivity : AppCompatActivity(), CameraMVP.view {
+
     val presenter: CameraPresenter by lazy { CameraPresenter(this, applicationContext) }
-    private val  RESULT_GET_IMAGE: Int = 1
+    private val RESULT_GET_IMAGE: Int = 1
     var indexInJson: Int? = null
     val galleryFileLocation: Uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
 
@@ -32,10 +33,11 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view{
         takePictureListener(cameraView)
     }
 
-    fun takePictureButtonClick(view: View){
+    fun takePictureButtonClick(view: View) {
         cameraView.captureImage()
     }
-    fun galleryButtonClick(view: View){
+
+    fun galleryButtonClick(view: View) {
         displayGallery()
     }
 
@@ -46,6 +48,10 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view{
                 presenter.sendPictureToModel(jpeg)
             }
         })
+    }
+
+    override fun navigateUpActivity() {
+        NavUtils.navigateUpFromSameTask(this)
     }
 
     override fun displayGallery() {
@@ -63,7 +69,7 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view{
 
     override fun onResume() {
         super.onResume()
-        if(presenter.shouldLoadCamera){
+        if (presenter.shouldLoadCamera) {
             cameraView.start()
         }
     }
@@ -74,9 +80,7 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view{
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
-            android.R.id.home -> NavUtils.navigateUpFromSameTask(this)
-        }
+        presenter.onOptionsItemSelected(item)
         return super.onOptionsItemSelected(item)
 
     }

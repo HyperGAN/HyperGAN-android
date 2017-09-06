@@ -1,11 +1,15 @@
 package hypr.a255bits.com.hypr.Main
 
 import android.content.Context
+import android.view.MenuItem
 import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.Generator.Control
-import hypr.a255bits.com.hypr.Generator.Generator
+import hypr.a255bits.com.hypr.R
+import hypr.a255bits.com.hypr.Util.ImageSaver
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
 import java.io.File
 
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter {
@@ -65,7 +69,18 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     override fun startModel(itemId: Int, image: ByteArray?) {
         val generator = interactor.listOfGenerators?.get(itemId)
-        view.applyModelToImage(interactor.listOfGenerators, itemId, image)
+        if (generator != null) {
+            val controlArray: Array<Control>? = generator.generator?.viewer?.controls?.toTypedArray()
+            controlArray?.let {
+                val imageLocation = saveImageSoOtherFragmentCanViewIt(image)
+                view.applyModelToImage(it, image, imageLocation.path, interactor.listOfGenerators, itemId) }
+        }
+    }
+
+    fun  saveImageSoOtherFragmentCanViewIt(image: ByteArray?): File {
+        val file = File.createTempFile("image", "png")
+        ImageSaver().saveImageToFile(file, image)
+        return file
 
     }
 
@@ -79,18 +94,15 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
 
     override fun addModelsToNavBar() {
-        interactor.addModelsToNavBar(object : GeneratorListener {
-            override fun getGenerators(generators: List<Generator>, index: Int) {
-                buyGenerators = mutableListOf()
-                generators.forEachIndexed { index, generator ->
-                    view.modeToNavBar(generator, index)
-                    if (generator.name != null) {
-                        saveGeneratorInfo(generator.name!!)
-                    }
-                }
-                view.startModelOnImage(buyGenerators)
+        launch(UI) {
+            val generators = interactor.getGeneratorsFromNetwork().await()
+            buyGenerators = mutableListOf()
+            generators?.forEachIndexed { index, generator ->
+                view.addModelsToNavBar(generator, index)
+                    saveGeneratorInfo(generator.name)
             }
-        })
+            view.startModelOnImage(buyGenerators)
+        }
     }
 
     private fun saveGeneratorInfo(name: String) {
@@ -98,4 +110,12 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         buyGenerators.add(buyGenerator)
     }
 
+    override fun onNavigationItemSelected(item: MenuItem) {
+        if (item.itemId in 0..100) {
+           attemptToStartModel(item.itemId)
+
+        } else if (item.itemId == R.id.homeButton) {
+            view.displayGeneratorsOnHomePage(buyGenerators)
+        }
+    }
 }

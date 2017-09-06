@@ -9,9 +9,6 @@ import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment
 import org.greenrobot.eventbus.EventBus
 import java.io.File
 
-/**
- * Created by tedho on 8/28/2017.
- */
 
 class MultiModelAdapter(fm: FragmentManager?, val generators: Array<Generator>, val image: String?, val file: File) : FragmentPagerAdapter(fm) {
     init{
@@ -33,7 +30,7 @@ class MultiModelAdapter(fm: FragmentManager?, val generators: Array<Generator>, 
     }
 
     override fun getPageTitle(position: Int): CharSequence {
-        return generators[position].name.toString()
+        return generators[position].name
     }
 
     override fun getCount(): Int {

@@ -6,7 +6,7 @@ import com.squareup.moshi.Json
 
 class Generator() : Parcelable {
     @Json(name = "name")
-    var name: String? = null
+    var name: String = ""
 
     @Json(name = "file_size_in_bytes")
     var fileSizeInBytes: Long? = null

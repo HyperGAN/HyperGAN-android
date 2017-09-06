@@ -1,8 +1,10 @@
 package hypr.a255bits.com.hypr.Main
 
+import android.view.MenuItem
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.storage.FileDownloadTask
 import hypr.a255bits.com.hypr.BuyGenerator
+import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import kotlinx.coroutines.experimental.Deferred
@@ -10,11 +12,11 @@ import java.io.File
 
 interface MainMvp {
     interface view {
-        fun modeToNavBar(generator: Generator, index: Int)
+        fun addModelsToNavBar(generator: Generator, index: Int)
         fun displayModelDownloadProgress()
         fun closeDownloadingModelDialog()
         fun startCameraActivity(indexInJson: Int)
-        fun applyModelToImage(generators: List<Generator>?, indexOfGenerator: Int, image: ByteArray?)
+        fun applyModelToImage(controlArray: Array<Control>, image: ByteArray?, path: String, generators: List<Generator>?, itemId: Int)
         fun startModelOnImage(buyGenerators: MutableList<BuyGenerator>)
         fun  displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>)
         fun popupSigninGoogle(googleSignInClient: GoogleApiClient)
@@ -33,10 +35,11 @@ interface MainMvp {
         fun  signInToGoogle(googleSignInClient: GoogleApiClient)
         fun  buyModel(skus: String, billingHelper: IabHelper?)
         fun attemptToStartModel(itemId: Int)
+        fun onNavigationItemSelected(item: MenuItem)
     }
 
     interface interactor {
-        fun addModelsToNavBar(param: GeneratorListener)
+        fun getGeneratorsFromNetwork(): Deferred<List<Generator>?>
 
         fun getModelFromFirebase(saveLocation: File, filenameInFirebase: String): FileDownloadTask?
         fun showProgressOfFirebaseDownload(firebaseDownloader: FileDownloadTask)

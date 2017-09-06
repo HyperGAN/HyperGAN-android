@@ -21,6 +21,7 @@ import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
+import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.MultiModels.MultiModels
 import hypr.a255bits.com.hypr.R
@@ -32,8 +33,6 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.*
-import java.io.File
-import java.io.FileOutputStream
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, MainMvp.view {
@@ -105,6 +104,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>) {
         val fragment: Fragment = WelcomeScreen.newInstance(generators, "")
         supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
+        presenter.startModel(0)
     }
 
     fun setupDrawer(toolbar: Toolbar) {
@@ -121,15 +121,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         startActivity(intentFor<CameraActivity>("indexInJson" to indexInJson))
     }
 
-    override fun applyModelToImage(generators: List<Generator>?, indexOfGenerator: Int, image: ByteArray?) {
-        val file = File.createTempFile("image", "png")
-        val fos = FileOutputStream(file)
-        fos.write(image)
-        val fragment: Fragment = MultiModels.newInstance(generators, indexOfGenerator, file.path, presenter.file)
+    override fun applyModelToImage(controlArray: Array<Control>, image: ByteArray?, path: String, generators: List<Generator>?, itemId: Int) {
+        val fragment: Fragment = MultiModels.newInstance(generators, itemId, path, presenter.file)
         supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
     }
 
-    override fun modeToNavBar(generator: Generator, index: Int) {
+    override fun addModelsToNavBar(generator: Generator, index: Int) {
         modelSubMenu?.add(R.id.group1, index, index, generator.name)
         modelSubMenu?.getItem(index)?.setIcon(R.drawable.ic_lock)
 
@@ -155,14 +152,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        if (item.itemId in 0..100) {
-            presenter.attemptToStartModel(item.itemId)
-
-        } else if (item.itemId == R.id.homeButton) {
-            displayGeneratorsOnHomePage(presenter.buyGenerators)
-        }
+        presenter.onNavigationItemSelected(item)
         drawer.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    @Subscribe
+    fun startIntent(intent: Intent){
+        startActivity(intent)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -190,7 +187,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (controlNames!!.isNotEmpty()) {
 
             this.spinner = Spinner(this)
-            spinner?.background?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+            spinner?.background?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
             spinner?.adapter = adapter
             toolbar.addView(spinner)
         }
