@@ -33,7 +33,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     var imageWithFaces: Bitmap? = null
     var imageFromGallery: IntArray? = null
     val SHARE_IMAGE_PERMISSION_REQUEST = 10
-    val SAVE_IMAGE_PERMISSION_REQUEST: Int = 10
+    val SAVE_IMAGE_PERMISSION_REQUEST: Int = 11
     val generatorLoader = GeneratorLoader()
     var modelUrl: Array<Control>? = null
     var byteArrayImage: ByteArray? = null
@@ -133,6 +133,8 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         grantResults.filter { item -> item == PackageManager.PERMISSION_GRANTED }.forEach { item ->
             if (requestCode == SHARE_IMAGE_PERMISSION_REQUEST) {
                 shareImageToOtherApps()
+            } else if (requestCode == SAVE_IMAGE_PERMISSION_REQUEST) {
+                saveImageDisplayedToPhone(context)
             }
         }
     }
