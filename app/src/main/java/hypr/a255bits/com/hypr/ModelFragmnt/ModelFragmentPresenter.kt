@@ -8,6 +8,8 @@ import android.view.MenuItem
 import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorLoader
 import hypr.a255bits.com.hypr.R
+import hypr.a255bits.com.hypr.Util.Analytics
+import hypr.a255bits.com.hypr.Util.AnalyticsEvent
 import hypr.a255bits.com.hypr.Util.BitmapManipulator
 import hypr.a255bits.com.hypr.Util.ImageSaver
 import kotlinx.coroutines.experimental.Deferred
@@ -30,6 +32,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         }
     }
 
+    val analytics = Analytics(context)
     var imageWithFaces: Bitmap? = null
     var imageFromGallery: IntArray? = null
     val SHARE_IMAGE_PERMISSION_REQUEST = 10
@@ -145,9 +148,13 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
             when (item.itemId) {
                 R.id.saveImage -> {
                     bg { saveImageDisplayedToPhone(context) }.await()
+                    analytics.logEvent(AnalyticsEvent.SAVE_IMAGE)
                     context.toast("Image Saved!")
                 }
-                R.id.shareIamge -> shareImageToOtherApps()
+                R.id.shareIamge -> {
+                    shareImageToOtherApps()
+                    analytics.logEvent(AnalyticsEvent.SHARE_IMAGE)
+                }
             }
         }
     }
