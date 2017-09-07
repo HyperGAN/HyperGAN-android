@@ -10,10 +10,26 @@ import com.google.firebase.analytics.FirebaseAnalytics
 
 class Analytics(val context: Context){
     val analytics = FirebaseAnalytics.getInstance(context)
+    private val GENERATOR = "generator"
+    private val EXISTING_PHOTO = "existingPhoto"
+    private val TAKE_PICTURE = "takePicture"
 
     fun logGeneratorDownload(){
         val bundle = Bundle()
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "generator")
-        analytics.logEvent("generator", bundle)
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, GENERATOR)
+        analytics.logEvent(GENERATOR, bundle)
+    }
+
+    fun pickExistingPhoto(){
+       val bundle = Bundle()
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, EXISTING_PHOTO)
+        analytics.logEvent(EXISTING_PHOTO, bundle)
+    }
+
+    fun pickTakePicture(){
+        val bundle = Bundle()
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, TAKE_PICTURE)
+        analytics.logEvent(TAKE_PICTURE, bundle)
+
     }
 }
