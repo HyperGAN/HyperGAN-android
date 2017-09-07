@@ -6,6 +6,7 @@ import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.R
+import hypr.a255bits.com.hypr.Util.Analytics
 import hypr.a255bits.com.hypr.Util.ImageSaver
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import kotlinx.coroutines.experimental.android.UI
@@ -18,6 +19,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     private val DOWNLOAD_COMPLETE: Float = 100.0f
     var isLoggedIntoGoogle: Boolean = false
     var buyGenerators: MutableList<BuyGenerator> = mutableListOf()
+    val analytics by lazy{ Analytics(context) }
 
     init {
         interactor.presenter = this
@@ -32,6 +34,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             val pbFilePointer = interactor.getModelFromFirebase(file, "optimized_weight_conv.pb")
             pbFilePointer?.let { interactor.showProgressOfFirebaseDownload(it) }
             pbFilePointer?.addOnSuccessListener { taskSnapshot ->
+                analytics.logGeneratorDownload()
                 println("successs")
                 view.startCameraActivity(itemId)
             }
