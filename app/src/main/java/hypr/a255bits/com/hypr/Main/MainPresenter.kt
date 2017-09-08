@@ -35,7 +35,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             val pbFilePointer = interactor.getModelFromFirebase(file, "optimized_weight_conv.pb")
             pbFilePointer?.let { interactor.showProgressOfFirebaseDownload(it) }
             pbFilePointer?.addOnSuccessListener { taskSnapshot ->
-                analytics.logEvent(AnalyticsEvent.GENERATOR)
+                analytics.logEvent(AnalyticsEvent.GENERATOR_DOWNLOAD)
                 view.startCameraActivity(itemId)
             }
         } else {
