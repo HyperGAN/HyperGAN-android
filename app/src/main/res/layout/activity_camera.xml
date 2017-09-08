@@ -36,11 +36,13 @@
         app:subtitleTextColor="#ffffff"
         app:titleTextColor="#ffffff" />
 
-    <Button
+    <ImageButton
         android:id="@+id/takePicture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
         android:layout_marginBottom="8dp"
+        android:src="@drawable/camera"
+        android:background="@drawable/round_corner"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:onClick="takePictureButtonClick"
