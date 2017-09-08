@@ -13,7 +13,6 @@ import com.flurgle.camerakit.CameraView
 import hypr.a255bits.com.hypr.Main.MainActivity
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.activity_camera.*
-import kotlinx.android.synthetic.main.activity_camera.view.*
 import org.jetbrains.anko.clearTop
 import org.jetbrains.anko.intentFor
 
@@ -31,18 +30,16 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
         indexInJson = intent.extras.getInt("indexInJson")
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         takePictureListener(cameraView)
+        takePicture.setOnClickListener {presenter.captureImage()}
     }
 
-    fun takePictureButtonClick(view: View) {
-        presenter.captureImage()
-    }
 
     fun galleryButtonClick(view: View) {
         presenter.displayGallery()
     }
 
     override fun takePicture() {
-        cameraView.takePicture
+        cameraView.captureImage()
     }
     private fun takePictureListener(cameraView: CameraView) {
         cameraView.setCameraListener(object : CameraListener() {
