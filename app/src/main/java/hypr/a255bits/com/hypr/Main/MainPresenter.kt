@@ -119,6 +119,8 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
         } else if (item.itemId == R.id.homeButton) {
             view.displayGeneratorsOnHomePage(buyGenerators)
+            analytics.logEvent(AnalyticsEvent.CHOOSE_HOME_NAV_OPTION)
         }
+        analytics.logEvent(AnalyticsEvent.CHOOSE_SIDE_NAV_OPTION)
     }
 }
