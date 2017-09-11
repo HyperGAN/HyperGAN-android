@@ -112,7 +112,8 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
 
     override fun getModelFromFirebase(saveLocation: File, filenameInFirebase: String): FileDownloadTask? {
         val firebaseGeneratorPath = listOfGenerators?.get(0)?.model_url
-        return firebaseGeneratorPath?.let { modelDownloader.getFile(saveLocation, it) }
+        return firebaseGeneratorPath?.let {
+            modelDownloader.getFile(saveLocation, it) }
 
     }
 

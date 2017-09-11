@@ -45,7 +45,6 @@
         android:background="@drawable/round_corner"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:onClick="takePictureButtonClick"
         android:text="@string/take_picture"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

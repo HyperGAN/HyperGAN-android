@@ -3,15 +3,14 @@ package hypr.a255bits.com.hypr.CameraFragment
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.NavUtils
+import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.View
 import com.flurgle.camerakit.CameraListener
 import com.flurgle.camerakit.CameraView
 import hypr.a255bits.com.hypr.Main.MainActivity
-
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.activity_camera.*
 import org.jetbrains.anko.clearTop
@@ -31,16 +30,17 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
         indexInJson = intent.extras.getInt("indexInJson")
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         takePictureListener(cameraView)
+        takePicture.setOnClickListener {presenter.captureImage()}
     }
 
-    fun takePictureButtonClick(view: View) {
-        cameraView.captureImage()
-    }
 
     fun galleryButtonClick(view: View) {
-        displayGallery()
+        presenter.displayGallery()
     }
 
+    override fun takePicture() {
+        cameraView.captureImage()
+    }
     private fun takePictureListener(cameraView: CameraView) {
         cameraView.setCameraListener(object : CameraListener() {
             override fun onPictureTaken(jpeg: ByteArray?) {
