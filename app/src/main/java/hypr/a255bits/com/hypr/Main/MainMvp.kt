@@ -21,6 +21,8 @@ interface MainMvp {
         fun  displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>)
         fun popupSigninGoogle(googleSignInClient: GoogleApiClient)
         fun  buyModelPopup(skus: String, billingHelper: IabHelper?)
+        fun goBackToMainActivity()
+        fun  displayBackButton()
 
     }
 
@@ -36,6 +38,7 @@ interface MainMvp {
         fun  buyModel(skus: String, billingHelper: IabHelper?)
         fun attemptToStartModel(itemId: Int)
         fun onNavigationItemSelected(item: MenuItem)
+        fun onOptionsItemSelected(item: MenuItem?)
     }
 
     interface interactor {

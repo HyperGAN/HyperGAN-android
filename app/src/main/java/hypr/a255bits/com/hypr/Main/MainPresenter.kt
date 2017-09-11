@@ -20,7 +20,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     private val DOWNLOAD_COMPLETE: Float = 100.0f
     var isLoggedIntoGoogle: Boolean = false
     var buyGenerators: MutableList<BuyGenerator> = mutableListOf()
-    val analytics by lazy{ Analytics(context) }
+    val analytics by lazy { Analytics(context) }
 
     init {
         interactor.presenter = this
@@ -55,6 +55,14 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         interactor.stopInAppBilling()
     }
 
+    override fun onOptionsItemSelected(item: MenuItem?) {
+        when (item?.itemId) {
+            android.R.id.home -> {
+                view.goBackToMainActivity()
+            }
+        }
+    }
+
     override fun startModel(itemId: Int) {
         val generator = interactor.listOfGenerators?.get(itemId)
         if (generator != null) {
@@ -76,11 +84,13 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             val controlArray: Array<Control>? = generator.generator?.viewer?.controls?.toTypedArray()
             controlArray?.let {
                 val imageLocation = saveImageSoOtherFragmentCanViewIt(image)
-                view.applyModelToImage(it, image, imageLocation.path, interactor.listOfGenerators, itemId) }
+                view.applyModelToImage(it, image, imageLocation.path, interactor.listOfGenerators, itemId)
+                view.displayBackButton()
+            }
         }
     }
 
-    fun  saveImageSoOtherFragmentCanViewIt(image: ByteArray?): File {
+    fun saveImageSoOtherFragmentCanViewIt(image: ByteArray?): File {
         val file = File.createTempFile("image", "png")
         ImageSaver().saveImageToFile(file, image)
         return file
@@ -102,7 +112,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             buyGenerators = mutableListOf()
             generators?.forEachIndexed { index, generator ->
                 view.addModelsToNavBar(generator, index)
-                    saveGeneratorInfo(generator.name)
+                saveGeneratorInfo(generator.name)
             }
             view.startModelOnImage(buyGenerators)
         }
@@ -115,7 +125,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     override fun onNavigationItemSelected(item: MenuItem) {
         if (item.itemId in 0..100) {
-           attemptToStartModel(item.itemId)
+            attemptToStartModel(item.itemId)
 
         } else if (item.itemId == R.id.homeButton) {
             view.displayGeneratorsOnHomePage(buyGenerators)
