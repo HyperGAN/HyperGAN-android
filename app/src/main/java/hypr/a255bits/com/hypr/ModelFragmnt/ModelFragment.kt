@@ -46,7 +46,10 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         displayImageTransitionSeekbarProgress()
-        randomizeModel.setOnClickListener { direction = presenter.generatorLoader.random_z() }
+        randomizeModel.setOnClickListener {
+            direction = presenter.generatorLoader.random_z()
+            presenter.randomizeModel(imageTransitionSeekBar.progress)
+        }
         chooseImageFromGalleryButton.setOnClickListener {
             presenter.startCameraActivity()
         }
@@ -66,7 +69,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         }
     }
 
-    private fun changeGanImageFromSlider(ganValue: Double) {
+    override fun changeGanImageFromSlider(ganValue: Double) {
         presenter.encoded?.let {
             val direction = this.direction ?: presenter.generatorLoader.random_z()
             val ganImage = presenter.generatorLoader.sample(it, ganValue.toFloat(), presenter.mask, direction, presenter.baseImage!!)
