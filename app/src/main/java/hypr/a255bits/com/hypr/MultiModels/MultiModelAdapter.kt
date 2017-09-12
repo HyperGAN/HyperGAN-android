@@ -17,7 +17,7 @@ class MultiModelAdapter(fm: FragmentManager?, val generators: Array<Generator>, 
     }
     override fun getItem(position: Int): Fragment? {
         val generator = generators[position]
-        val modelFragment = createFragment(generator)
+        val modelFragment = createFragment(generator, position)
         modelFragment?.let { modelFragments.add(it) }
         return modelFragment
     }
@@ -27,9 +27,9 @@ class MultiModelAdapter(fm: FragmentManager?, val generators: Array<Generator>, 
         EventBus.getDefault().post(controlNames)
     }
 
-    fun createFragment(generator: Generator): ModelFragment? {
+    fun createFragment(generator: Generator, position: Int): ModelFragment? {
         val controlArray: Array<Control>? = generator.generator?.viewer?.controls?.toTypedArray()
-        return image?.let { ModelFragment.newInstance(controlArray, it, file) }
+        return image?.let { ModelFragment.newInstance(controlArray, it, file, position) }
     }
 
     override fun getPageTitle(position: Int): CharSequence {
@@ -40,9 +40,13 @@ class MultiModelAdapter(fm: FragmentManager?, val generators: Array<Generator>, 
         return generators.size
     }
 
-    fun  disableModelFromIndex(indexOfFragment: Int) {
+    fun lockModelFromIndex(indexOfFragment: Int) {
 
-        modelFragments[indexOfFragment].disableModel()
+        modelFragments[indexOfFragment].lockModel()
+    }
+
+    fun  unlockModelFromIndex(indexOfFragment: Int) {
+        modelFragments[indexOfFragment].unLockModel()
     }
 
 }

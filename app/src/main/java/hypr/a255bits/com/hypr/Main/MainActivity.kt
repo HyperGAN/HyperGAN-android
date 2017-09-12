@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun lockModelFromFragmentAdapterIndex(indexOfFragment: Int) {
-        multiModel?.presenter?.disableModel(indexOfFragment)
+        multiModel?.presenter?.lockModel(indexOfFragment)
 
     }
 
@@ -191,6 +191,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             spinner?.adapter = adapter
             toolbar.addView(spinner)
         }
+    }
+
+    @Subscribe fun unlockModel(generatorIndex: Int){
+        multiModel?.presenter?.unlockModel(generatorIndex)
     }
 
     override fun closeDownloadingModelDialog() {

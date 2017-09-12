@@ -13,7 +13,10 @@ class MultiPresenter(val view: MultiMvp.view): MultiMvp.presenter{
         view.startModelList(adapter)
     }
 
-    override fun disableModel(indexOfFragment: Int) {
-        adapter?.disableModelFromIndex(indexOfFragment)
+    override fun lockModel(indexOfFragment: Int) {
+        adapter?.lockModelFromIndex(indexOfFragment)
+    }
+    override fun unlockModel(indexOfFragment: Int){
+       adapter?.unlockModelFromIndex(indexOfFragment)
     }
 }

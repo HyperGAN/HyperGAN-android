@@ -13,7 +13,7 @@ interface ModelFragmentMVP{
         fun  shareImageToOtherApps(shareIntent: Intent)
         fun  requestPermissionFromUser(permissions: Array<String>, REQUEST_CODE: Int)
         fun startCameraActivity()
-        fun disableModel()
+        fun lockModel()
         fun unLockModel()
     }
     interface presenter{
