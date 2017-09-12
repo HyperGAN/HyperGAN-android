@@ -30,6 +30,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         if (arguments != null) {
             presenter.modelUrl = arguments.getParcelableArray(MODEL_CONTROLS) as Array<Control>?
             presenter.readImageToBytes(arguments.getString(IMAGE_PARAM))
+            presenter.generatorIndex = arguments.getInt(GENERATOR_INDEX)
         }
     }
 
@@ -38,10 +39,13 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         val view = inflater!!.inflate(R.layout.fragment_model, container, false)
         presenter.displayTitleSpinner()
         setHasOptionsMenu(true)
+        lockLayout.setOnClickListener {
+            EventBus.getDefault().post(presenter.generatorIndex)
+        }
         return view
     }
 
-    override fun disableModel() {
+    override fun lockModel() {
         lockLayout.visibility = View.VISIBLE
         imageTransitionSeekBar.isEnabled = false
     }
@@ -123,12 +127,15 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     companion object {
         private val IMAGE_PARAM = "param2"
         private val MODEL_CONTROLS = "modelControls"
+        private val GENERATOR_INDEX = "generatorPosition"
 
-        fun newInstance(modelControls: Array<Control>?, image: String, pbFile: File): ModelFragment {
+
+        fun newInstance(modelControls: Array<Control>?, image: String, pbFile: File, generatorIndex: Int): ModelFragment {
             val fragment = ModelFragment()
             val args = Bundle()
             args.putString(IMAGE_PARAM, image)
             args.putParcelableArray(MODEL_CONTROLS, modelControls)
+            args.putInt(GENERATOR_INDEX, generatorIndex)
             fragment.arguments = args
             fragment.pbFile = pbFile
             return fragment
