@@ -13,6 +13,8 @@ interface ModelFragmentMVP{
         fun  shareImageToOtherApps(shareIntent: Intent)
         fun  requestPermissionFromUser(permissions: Array<String>, REQUEST_CODE: Int)
         fun startCameraActivity()
+        fun disableModel()
+        fun unLockModel()
     }
     interface presenter{
         fun findFacesInImage(imageWithFaces: Bitmap, context: Context)

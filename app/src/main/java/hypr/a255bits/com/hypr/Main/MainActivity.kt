@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val SIGN_INTO_GOOGLE_RESULT: Int = 12
     val ZERO_PERCENT: Float = -0.0f
     private var spinner: Spinner? = null
+    var multiModel: MultiModels? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,6 +79,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }.show()
     }
 
+    override fun lockModelFromFragmentAdapterIndex(indexOfFragment: Int) {
+        multiModel?.presenter?.disableModel(indexOfFragment)
+
+    }
 
     fun signinToGoogle(googleSignInClient: GoogleApiClient) {
         val signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleSignInClient)
@@ -95,7 +100,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (intent.hasExtra("indexInJson")) {
             val indexInJson = intent.extras.getInt("indexInJson")
             val image = intent.extras.getByteArray("image")
-            presenter.startModel(indexInJson, image)
+            presenter.startModels(indexInJson, image)
+            presenter.disableModelsIfNotBought(presenter.interactor.listOfGenerators)
         } else {
             displayGeneratorsOnHomePage(buyGenerators)
         }
@@ -121,9 +127,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         startActivity(intentFor<CameraActivity>("indexInJson" to indexInJson))
     }
 
-    override fun applyModelToImage(controlArray: Array<Control>, image: ByteArray?, path: String, generators: List<Generator>?, itemId: Int) {
-        val fragment: Fragment = MultiModels.newInstance(generators, itemId, path, presenter.file)
-        supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
+    override fun startMultipleModels(controlArray: Array<Control>, image: ByteArray?, path: String, generators: List<Generator>?, itemId: Int) {
+        multiModel  = MultiModels.newInstance(generators, itemId, path, presenter.file)
+        supportFragmentManager.beginTransaction().replace(R.id.container, multiModel).commit()
     }
 
     override fun addModelsToNavBar(generator: Generator, index: Int) {
@@ -172,12 +178,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             else -> progressDownloadingModel?.progress = progressPercent.toInt()
         }
     }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun openCamera(index: java.lang.Integer) {
-        startCameraActivity(index.toInt())
-    }
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun addControlNamesToToolbar(controlNames: List<String?>?) {

@@ -4,14 +4,13 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.*
 import com.pawegio.kandroid.onProgressChanged
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator.Control
-import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorLoader
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_model.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import org.greenrobot.eventbus.EventBus
@@ -42,6 +41,15 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         return view
     }
 
+    override fun disableModel() {
+        lockLayout.visibility = View.VISIBLE
+        imageTransitionSeekBar.isEnabled = false
+    }
+    override fun unLockModel(){
+        lockLayout.visibility = View.INVISIBLE
+        imageTransitionSeekBar.isEnabled = true
+
+    }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -60,8 +68,6 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         imageTransitionSeekBar.onProgressChanged { progress, _ ->
             val ganValue: Double = presenter.convertToNegative1To1(progress)
             changeGanImageFromSlider(ganValue)
-            println("oldValue: $progress")
-            println("actualyValue: $ganValue")
         }
     }
 
@@ -69,15 +75,9 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         presenter.encoded?.let {
             val direction = presenter.generatorLoader.random_z()
             val ganImage = presenter.generatorLoader.sample(it, ganValue.toFloat(), presenter.mask, direction, presenter.baseImage!!)
-            val z_slider = presenter.generatorLoader.get_z(it, ganValue.toFloat(), it)
 
-            Log.d("z_slider", z_slider[0].toString())
             focusedImage.setImageBitmap(presenter.generatorLoader.manipulateBitmap(presenter.generatorLoader.width, presenter.generatorLoader.height, ganImage))
-
-
         }
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -122,7 +122,6 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     companion object {
         private val IMAGE_PARAM = "param2"
-
         private val MODEL_CONTROLS = "modelControls"
 
         fun newInstance(modelControls: Array<Control>?, image: String, pbFile: File): ModelFragment {

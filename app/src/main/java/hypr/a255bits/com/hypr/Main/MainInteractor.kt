@@ -59,6 +59,12 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
         }
     }
 
+    override fun isModelBought(googlePlayId: String): Deferred<Boolean> {
+        return async(UI) {
+                return@async hasBoughtItem(googlePlayId).await()
+        }
+    }
+
     override fun hasBoughtItem(itemId: String): Deferred<Boolean> {
         if (inappBillingEnabled) {
             return async(UI) {
@@ -87,7 +93,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     }
 
     suspend fun buyProduct(productId: String) {
-        if(inappBillingEnabled) {
+        if (inappBillingEnabled) {
             val skus = mutableListOf(productId)
             val inventory = query(true, skus, null).await()
             if (!inventory.hasPurchase(productId)) {
@@ -97,7 +103,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     }
 
     fun query(query: Boolean, skus: MutableList<String>, moreSubsSkus: List<String>?): Deferred<Inventory> {
-        if(inappBillingEnabled) {
+        if (inappBillingEnabled) {
             return async(UI) {
                 billingHelper.queryInventory(true, skus, null)
             }
@@ -113,7 +119,8 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     override fun getModelFromFirebase(saveLocation: File, filenameInFirebase: String): FileDownloadTask? {
         val firebaseGeneratorPath = listOfGenerators?.get(0)?.model_url
         return firebaseGeneratorPath?.let {
-            modelDownloader.getFile(saveLocation, it) }
+            modelDownloader.getFile(saveLocation, it)
+        }
 
     }
 

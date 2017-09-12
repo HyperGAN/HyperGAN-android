@@ -11,12 +11,15 @@ import java.io.File
 
 
 class MultiModelAdapter(fm: FragmentManager?, val generators: Array<Generator>, val image: String?, val file: File) : FragmentPagerAdapter(fm) {
+    val modelFragments = mutableListOf<ModelFragment>()
     init{
        addControlNamesToToolbar(generators[0])
     }
     override fun getItem(position: Int): Fragment? {
         val generator = generators[position]
-        return createFragment(generator)
+        val modelFragment = createFragment(generator)
+        modelFragment?.let { modelFragments.add(it) }
+        return modelFragment
     }
 
     fun addControlNamesToToolbar(generator: Generator) {
@@ -35,6 +38,11 @@ class MultiModelAdapter(fm: FragmentManager?, val generators: Array<Generator>, 
 
     override fun getCount(): Int {
         return generators.size
+    }
+
+    fun  disableModelFromIndex(indexOfFragment: Int) {
+
+        modelFragments[indexOfFragment].disableModel()
     }
 
 }

@@ -16,11 +16,12 @@ interface MainMvp {
         fun displayModelDownloadProgress()
         fun closeDownloadingModelDialog()
         fun startCameraActivity(indexInJson: Int)
-        fun applyModelToImage(controlArray: Array<Control>, image: ByteArray?, path: String, generators: List<Generator>?, itemId: Int)
+        fun startMultipleModels(controlArray: Array<Control>, image: ByteArray?, path: String, generators: List<Generator>?, itemId: Int)
         fun startModelOnImage(buyGenerators: MutableList<BuyGenerator>)
         fun  displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>)
         fun popupSigninGoogle(googleSignInClient: GoogleApiClient)
         fun  buyModelPopup(skus: String, billingHelper: IabHelper?)
+        fun  lockModelFromFragmentAdapterIndex(indexOfFragment: Int)
 
     }
 
@@ -29,13 +30,14 @@ interface MainMvp {
         fun isDownloadComplete(progressPercent: Float): Boolean
         fun downloadingModelFinished()
         fun startModel(itemId: Int)
-        fun startModel(itemId: Int, image: ByteArray?)
+        fun startModels(itemId: Int, image: ByteArray?)
         fun createGeneratorLoader(itemId: File, itemId1: Int)
         fun stopInAppBilling()
         fun  signInToGoogle(googleSignInClient: GoogleApiClient)
         fun  buyModel(skus: String, billingHelper: IabHelper?)
         fun attemptToStartModel(itemId: Int)
         fun onNavigationItemSelected(item: MenuItem)
+        fun disableModelsIfNotBought(listOfGenerators: List<Generator>?)
     }
 
     interface interactor {
@@ -46,6 +48,7 @@ interface MainMvp {
         fun stopInAppBilling()
         fun hasBoughtItem(itemId: String): Deferred<Boolean>
         fun attemptToStartModel(itemId: Int)
+        fun  isModelBought(googlePlayId: String): Deferred<Boolean>
     }
 
 }
