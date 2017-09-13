@@ -23,6 +23,7 @@ import java.io.IOException
 
 
 class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: ModelInteractor, val context: Context, pbFile: File?) : ModelFragmentMVP.presenter {
+
     init {
         val cont = context
         launch(UI) {
@@ -77,6 +78,10 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         return null
     }
 
+    override fun randomizeModel(progress: Int) {
+        val ganValue: Double = convertToNegative1To1(progress)
+        view.changeGanImageFromSlider(ganValue)
+    }
     override fun findFacesInImage(imageWithFaces: Bitmap, context: Context) {
         try {
             val croppedFaces: MutableList<Bitmap> = interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)
