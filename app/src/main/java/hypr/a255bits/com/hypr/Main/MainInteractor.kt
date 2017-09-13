@@ -25,7 +25,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
 
     var presenter: MainPresenter? = null
 
-    var inappBillingEnabled = false
+    var inappBillingEnabled = true
     var billingHelper: IabHelper = IabHelper(context, context.getString(R.string.API_KEY))
     val gso: GoogleSignInOptions by lazy {
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -50,30 +50,25 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     private fun startInAppBilling() {
         billingHelper.startSetup { result ->
             if (!result.isSuccess) {
-                Log.d("MainInteractor", "Problem setting up In-app Billing: $result")
+                inappBillingEnabled = true
                 presenter?.isLoggedIntoGoogle = false
                 presenter?.signInToGoogle(googleSignInClient)
             } else {
+                Log.d("MainInteractor", "Problem setting up In-app Billing: $result")
                 presenter?.isLoggedIntoGoogle = true
             }
         }
     }
 
-    override fun isModelBought(googlePlayId: String): Deferred<Boolean> {
-        return async(UI) {
-                return@async hasBoughtItem(googlePlayId).await()
-        }
-    }
-
     override fun hasBoughtItem(itemId: String): Deferred<Boolean> {
-        if (inappBillingEnabled) {
-            return async(UI) {
+        return if (inappBillingEnabled) {
+            async(UI) {
                 val inventory = query(true, mutableListOf(itemId), null).await()
-                inventory.hasPurchase(itemId)
+                return@async inventory.hasPurchase(itemId)
             }
         } else {
-            return async(UI) {
-                true
+            async(UI) {
+                return@async true
             }
         }
     }

@@ -39,7 +39,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         val view = inflater!!.inflate(R.layout.fragment_model, container, false)
         presenter.displayTitleSpinner()
         setHasOptionsMenu(true)
-        lockLayout.setOnClickListener {
+        lockLayout?.setOnClickListener {
             EventBus.getDefault().post(presenter.generatorIndex)
         }
         return view

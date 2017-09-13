@@ -48,7 +48,6 @@ interface MainMvp {
         fun stopInAppBilling()
         fun hasBoughtItem(itemId: String): Deferred<Boolean>
         fun attemptToStartModel(itemId: Int)
-        fun  isModelBought(googlePlayId: String): Deferred<Boolean>
     }
 
 }

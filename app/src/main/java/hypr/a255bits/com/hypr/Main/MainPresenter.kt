@@ -49,7 +49,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         launch(UI) {
 
             listOfGenerators?.forEachWithIndex { index, generator ->
-                val isModelBought = interactor.isModelBought(generator.google_play_id).await()
+                val isModelBought = interactor.hasBoughtItem(generator.google_play_id).await()
                 if(!isModelBought){
                     view.lockModelFromFragmentAdapterIndex(index)
                 }
