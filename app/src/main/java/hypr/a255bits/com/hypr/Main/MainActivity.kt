@@ -56,10 +56,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
-    override fun buyModelPopup(skus: String, billingHelper: IabHelper?) {
+    override fun buyModelPopup(skus: String, billingHelper: IabHelper?, generatorIndex: Int) {
         billingHelper?.launchPurchaseFlow(this, skus, 1001, { result, info ->
             if (result.isSuccess) {
                 println("success")
+                multiModel?.presenter?.unlockModel(generatorIndex)
             } else {
                 println("buy error: $result")
             }
@@ -92,7 +93,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == SIGN_INTO_GOOGLE_RESULT && resultCode == Activity.RESULT_OK) {
-            presenter.isLoggedIntoGoogle = true
         }
     }
 
@@ -193,8 +193,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    @Subscribe fun unlockModel(generatorIndex: Int){
-        multiModel?.presenter?.unlockModel(generatorIndex)
+    @Subscribe fun unlockModel(generatorIndex: java.lang.Integer){
+        buyModelPopup(presenter.interactor.listOfGenerators?.get(generatorIndex.toInt())?.google_play_id!!, presenter.interactor.billingHelper, generatorIndex.toInt())
     }
 
     override fun closeDownloadingModelDialog() {

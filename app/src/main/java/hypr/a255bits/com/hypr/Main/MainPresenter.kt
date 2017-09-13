@@ -48,16 +48,15 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         launch(UI) {
             listOfGenerators?.forEachWithIndex { index, generator ->
                 val isModelBought = interactor.hasBoughtItem(generator.google_play_id).await()
-                if(!isModelBought){
+                if (!isModelBought) {
                     view.lockModelFromFragmentAdapterIndex(index)
                 }
             }
         }
     }
-
     override fun buyModel(skus: String, billingHelper: IabHelper?) {
         if (interactor.googleSignInClient.isConnected) {
-            view.buyModelPopup(skus, billingHelper)
+//            view.buyModelPopup(skus, billingHelper, generatorIndex)
         } else {
             signInToGoogle(interactor.googleSignInClient)
         }
@@ -128,7 +127,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     override fun onNavigationItemSelected(item: MenuItem) {
         if (item.itemId in 0..100) {
-            attemptToStartModel(item.itemId)
+//            attemptToStartModel(item.itemId)
 
         } else if (item.itemId == R.id.homeButton) {
             view.displayGeneratorsOnHomePage(buyGenerators)

@@ -20,7 +20,7 @@ interface MainMvp {
         fun startModelOnImage(buyGenerators: MutableList<BuyGenerator>)
         fun  displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>)
         fun popupSigninGoogle(googleSignInClient: GoogleApiClient)
-        fun  buyModelPopup(skus: String, billingHelper: IabHelper?)
+        fun  buyModelPopup(skus: String, billingHelper: IabHelper?, generatorIndex: Int)
         fun  lockModelFromFragmentAdapterIndex(indexOfFragment: Int)
 
     }

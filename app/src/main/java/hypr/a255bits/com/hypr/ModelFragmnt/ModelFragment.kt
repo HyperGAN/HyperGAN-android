@@ -39,9 +39,6 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         val view = inflater!!.inflate(R.layout.fragment_model, container, false)
         presenter.displayTitleSpinner()
         setHasOptionsMenu(true)
-        lockLayout?.setOnClickListener {
-            EventBus.getDefault().post(presenter.generatorIndex)
-        }
         return view
     }
 
@@ -60,6 +57,9 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         displayImageTransitionSeekbarProgress()
         chooseImageFromGalleryButton.setOnClickListener {
             presenter.startCameraActivity()
+        }
+        lockLayout.setOnClickListener {
+            EventBus.getDefault().post(presenter.generatorIndex)
         }
     }
 
