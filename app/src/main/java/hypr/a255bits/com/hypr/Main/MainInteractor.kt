@@ -51,11 +51,9 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
         billingHelper.startSetup { result ->
             if (!result.isSuccess) {
                 inappBillingEnabled = true
-                presenter?.isLoggedIntoGoogle = false
                 presenter?.signInToGoogle(googleSignInClient)
             } else {
                 Log.d("MainInteractor", "Problem setting up In-app Billing: $result")
-                presenter?.isLoggedIntoGoogle = true
             }
         }
     }

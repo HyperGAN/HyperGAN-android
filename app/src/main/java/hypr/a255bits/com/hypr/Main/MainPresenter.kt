@@ -20,7 +20,6 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     val file = File(context.filesDir, "optimized_weight_conv.pb")
     private val DOWNLOAD_COMPLETE: Float = 100.0f
-    var isLoggedIntoGoogle: Boolean = false
     var buyGenerators: MutableList<BuyGenerator> = mutableListOf()
     val analytics by lazy { Analytics(context) }
 
@@ -47,7 +46,6 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     override fun disableModelsIfNotBought(listOfGenerators: List<Generator>?) {
         launch(UI) {
-
             listOfGenerators?.forEachWithIndex { index, generator ->
                 val isModelBought = interactor.hasBoughtItem(generator.google_play_id).await()
                 if(!isModelBought){
@@ -58,7 +56,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
     override fun buyModel(skus: String, billingHelper: IabHelper?) {
-        if (isLoggedIntoGoogle) {
+        if (interactor.googleSignInClient.isConnected) {
             view.buyModelPopup(skus, billingHelper)
         } else {
             signInToGoogle(interactor.googleSignInClient)
