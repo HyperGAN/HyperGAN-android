@@ -9,7 +9,6 @@ import android.view.*
 import com.pawegio.kandroid.onProgressChanged
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator.Control
-import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorLoader
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.experimental.android.UI
@@ -25,6 +24,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     var pbFile: File? = null
     val interactor by lazy { ModelInteractor(context) }
     val presenter by lazy { ModelFragmentPresenter(this, interactor, context, pbFile) }
+    var direction: FloatArray? =  null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +46,10 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         displayImageTransitionSeekbarProgress()
+        randomizeModel.setOnClickListener {
+            direction = presenter.generatorLoader.random_z()
+            presenter.randomizeModel(imageTransitionSeekBar.progress)
+        }
         chooseImageFromGalleryButton.setOnClickListener {
             presenter.startCameraActivity()
         }
@@ -65,9 +69,9 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         }
     }
 
-    private fun changeGanImageFromSlider(ganValue: Double) {
+    override fun changeGanImageFromSlider(ganValue: Double) {
         presenter.encoded?.let {
-            val direction = presenter.generatorLoader.random_z()
+            val direction = this.direction ?: presenter.generatorLoader.random_z()
             val ganImage = presenter.generatorLoader.sample(it, ganValue.toFloat(), presenter.mask, direction, presenter.baseImage!!)
             val z_slider = presenter.generatorLoader.get_z(it, ganValue.toFloat(), it)
 

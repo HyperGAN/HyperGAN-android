@@ -13,6 +13,7 @@ interface ModelFragmentMVP{
         fun  shareImageToOtherApps(shareIntent: Intent)
         fun  requestPermissionFromUser(permissions: Array<String>, REQUEST_CODE: Int)
         fun startCameraActivity()
+        fun changeGanImageFromSlider(ganValue: Double)
     }
     interface presenter{
         fun findFacesInImage(imageWithFaces: Bitmap, context: Context)
@@ -28,6 +29,7 @@ interface ModelFragmentMVP{
         fun  readImageToBytes(imagePath: String?)
         fun convertByteArrayImageToBitmap(): Deferred<Bitmap?>
         fun  joinFaceWithImage(transformedImage: Bitmap): Bitmap?
+        fun randomizeModel(progress: Int)
     }
     interface interactor{
         fun  getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context): MutableList<Bitmap>
