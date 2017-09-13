@@ -54,9 +54,9 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             }
         }
     }
-    override fun buyModel(skus: String, billingHelper: IabHelper?) {
+    override fun buyModel(skus: String, billingHelper: IabHelper?, generatorIndex: Int) {
         if (interactor.googleSignInClient.isConnected) {
-//            view.buyModelPopup(skus, billingHelper, generatorIndex)
+            view.buyModelPopup(skus, billingHelper, generatorIndex)
         } else {
             signInToGoogle(interactor.googleSignInClient)
         }
@@ -64,6 +64,14 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     override fun stopInAppBilling() {
         interactor.stopInAppBilling()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?) {
+        when (item?.itemId) {
+            android.R.id.home -> {
+                view.goBackToMainActivity()
+            }
+        }
     }
 
     override fun startModel(itemId: Int) {
@@ -88,6 +96,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             controlArray?.let {
                 val imageLocation = saveImageSoOtherFragmentCanViewIt(image)
                 view.startMultipleModels(it, image, imageLocation.path, interactor.listOfGenerators, itemId)
+                view.displayBackButton()
             }
         }
     }
@@ -128,7 +137,6 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun onNavigationItemSelected(item: MenuItem) {
         if (item.itemId in 0..100) {
 //            attemptToStartModel(item.itemId)
-
         } else if (item.itemId == R.id.homeButton) {
             view.displayGeneratorsOnHomePage(buyGenerators)
             analytics.logEvent(AnalyticsEvent.CHOOSE_HOME_NAV_OPTION)

@@ -22,6 +22,8 @@ interface MainMvp {
         fun popupSigninGoogle(googleSignInClient: GoogleApiClient)
         fun  buyModelPopup(skus: String, billingHelper: IabHelper?, generatorIndex: Int)
         fun  lockModelFromFragmentAdapterIndex(indexOfFragment: Int)
+        fun goBackToMainActivity()
+        fun  displayBackButton()
 
     }
 
@@ -34,10 +36,11 @@ interface MainMvp {
         fun createGeneratorLoader(itemId: File, itemId1: Int)
         fun stopInAppBilling()
         fun  signInToGoogle(googleSignInClient: GoogleApiClient)
-        fun  buyModel(skus: String, billingHelper: IabHelper?)
+        fun  buyModel(skus: String, billingHelper: IabHelper?, generatorIndex: Int)
         fun attemptToStartModel(itemId: Int)
         fun onNavigationItemSelected(item: MenuItem)
         fun disableModelsIfNotBought(listOfGenerators: List<Generator>?)
+        fun onOptionsItemSelected(item: MenuItem?)
     }
 
     interface interactor {

@@ -42,6 +42,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     var modelDownloader = ModelDownloader(FirebaseStorage.getInstance().reference)
 
     init {
+        googleSignInClient.connect()
         if (inappBillingEnabled) {
             startInAppBilling()
         }
@@ -51,7 +52,6 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
         billingHelper.startSetup { result ->
             if (!result.isSuccess) {
                 inappBillingEnabled = true
-                presenter?.signInToGoogle(googleSignInClient)
             } else {
                 Log.d("MainInteractor", "Problem setting up In-app Billing: $result")
             }
@@ -62,6 +62,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
         return if (inappBillingEnabled) {
             async(UI) {
                 val inventory = query(true, mutableListOf(itemId), null).await()
+                inventory.erasePurchase(itemId)
                 return@async inventory.hasPurchase(itemId)
             }
         } else {
@@ -90,7 +91,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
             val skus = mutableListOf(productId)
             val inventory = query(true, skus, null).await()
             if (!inventory.hasPurchase(productId)) {
-                presenter?.buyModel(productId, billingHelper)
+                presenter?.buyModel(productId, billingHelper, 0)
             }
         }
     }

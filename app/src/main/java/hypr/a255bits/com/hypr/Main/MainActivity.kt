@@ -19,6 +19,7 @@ import android.widget.Spinner
 import android.widget.SpinnerAdapter
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.common.api.GoogleApiClient
+import com.pawegio.kandroid.start
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator.Control
@@ -52,8 +53,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.activity_main2)
         setSupportActionBar(toolbar)
         presenter.addModelsToNavBar()
-        setupDrawer(toolbar)
+//        setupDrawer(toolbar)
 
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        presenter.onOptionsItemSelected(item)
+        return super.onOptionsItemSelected(item)
     }
 
     override fun buyModelPopup(skus: String, billingHelper: IabHelper?, generatorIndex: Int) {
@@ -82,7 +88,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun lockModelFromFragmentAdapterIndex(indexOfFragment: Int) {
         multiModel?.presenter?.lockModel(indexOfFragment)
+    }
 
+    override fun goBackToMainActivity() {
+        intentFor<MainActivity>().start(applicationContext)
     }
 
     fun signinToGoogle(googleSignInClient: GoogleApiClient) {
@@ -128,8 +137,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun startMultipleModels(controlArray: Array<Control>, image: ByteArray?, path: String, generators: List<Generator>?, itemId: Int) {
-        multiModel  = MultiModels.newInstance(generators, itemId, path, presenter.file)
+        multiModel = MultiModels.newInstance(generators, itemId, path, presenter.file)
         supportFragmentManager.beginTransaction().replace(R.id.container, multiModel).commit()
+    }
+
+    override fun displayBackButton() {
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     override fun addModelsToNavBar(generator: Generator, index: Int) {
@@ -164,7 +177,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     @Subscribe
-    fun startIntent(intent: Intent){
+    fun startIntent(intent: Intent) {
         startActivity(intent)
     }
 
@@ -193,8 +206,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    @Subscribe fun unlockModel(generatorIndex: java.lang.Integer){
-        buyModelPopup(presenter.interactor.listOfGenerators?.get(generatorIndex.toInt())?.google_play_id!!, presenter.interactor.billingHelper, generatorIndex.toInt())
+    @Subscribe
+    fun unlockModel(generatorIndex: java.lang.Integer) {
+        presenter.buyModel(presenter.interactor.listOfGenerators?.get(generatorIndex.toInt())?.google_play_id!!, presenter.interactor.billingHelper, generatorIndex.toInt())
     }
 
     override fun closeDownloadingModelDialog() {
