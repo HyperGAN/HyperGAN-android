@@ -73,6 +73,7 @@ import java.util.List;
  */
 public class IabHelper {
     // Is debug logging enabled?
+    public boolean isConnected = false;
     boolean mDebugLog = false;
     String mDebugTag = "IabHelper";
 
@@ -224,6 +225,7 @@ public class IabHelper {
             @Override
             public void onServiceDisconnected(ComponentName name) {
                 logDebug("Billing service disconnected.");
+                isConnected = false;
                 mService = null;
             }
 
@@ -289,6 +291,7 @@ public class IabHelper {
 
                 if (listener != null) {
                     listener.onIabSetupFinished(new IabResult(BILLING_RESPONSE_RESULT_OK, "Setup successful."));
+                    isConnected = true;
                 }
             }
         };
@@ -573,7 +576,7 @@ public class IabHelper {
             }
 
             if (mPurchaseListener != null) {
-                mPurchaseListener.onIabPurchaseFinished(new IabResult(BILLING_RESPONSE_RESULT_OK, "Success"), purchase);
+                mPurchaseListener.onIabPurchaseFinished(new IabResult(BILLING_RESPONSE_RESULT_OK, "uccess"), purchase);
             }
         }
         else if (resultCode == Activity.RESULT_OK) {

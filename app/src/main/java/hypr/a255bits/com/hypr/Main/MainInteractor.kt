@@ -11,6 +11,7 @@ import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.Network.ModelApi
 import hypr.a255bits.com.hypr.Network.ModelDownloader
 import hypr.a255bits.com.hypr.R
+import hypr.a255bits.com.hypr.Util.GoogleSignIn
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import hypr.a255bits.com.hypr.Util.InAppBilling.Inventory
 import kotlinx.coroutines.experimental.Deferred
@@ -25,33 +26,20 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
 
     var presenter: MainPresenter? = null
 
-    var inappBillingEnabled = true
     var billingHelper: IabHelper = IabHelper(context, context.getString(R.string.API_KEY))
-    val gso: GoogleSignInOptions by lazy {
-        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build()
-    }
-    val googleSignInClient: GoogleApiClient by lazy {
-        GoogleApiClient.Builder(context)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build()
-    }
+    val googleSignInClient = GoogleSignIn(context)
 
     var listOfGenerators: List<Generator>? = null
     var modelDownloader = ModelDownloader(FirebaseStorage.getInstance().reference)
 
     init {
-        googleSignInClient.connect()
-        if (inappBillingEnabled) {
-            startInAppBilling()
-        }
+        googleSignInClient.client.connect()
+        startInAppBilling()
     }
 
     private fun startInAppBilling() {
         billingHelper.startSetup { result ->
             if (!result.isSuccess) {
-                inappBillingEnabled = true
             } else {
                 Log.d("MainInteractor", "Problem setting up In-app Billing: $result")
             }
@@ -59,7 +47,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     }
 
     override fun hasBoughtItem(itemId: String): Deferred<Boolean> {
-        return if (inappBillingEnabled) {
+        return if (billingHelper.isConnected) {
             async(UI) {
                 val inventory = query(true, mutableListOf(itemId), null).await()
                 inventory.erasePurchase(itemId)
@@ -87,7 +75,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     }
 
     suspend fun buyProduct(productId: String) {
-        if (inappBillingEnabled) {
+        if (billingHelper.isConnected) {
             val skus = mutableListOf(productId)
             val inventory = query(true, skus, null).await()
             if (!inventory.hasPurchase(productId)) {
@@ -97,7 +85,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     }
 
     fun query(query: Boolean, skus: MutableList<String>, moreSubsSkus: List<String>?): Deferred<Inventory> {
-        if (inappBillingEnabled) {
+        if (billingHelper.isConnected) {
             return async(UI) {
                 billingHelper.queryInventory(true, skus, null)
             }

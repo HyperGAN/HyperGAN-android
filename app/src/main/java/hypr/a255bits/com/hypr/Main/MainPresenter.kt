@@ -55,10 +55,10 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         }
     }
     override fun buyModel(skus: String, billingHelper: IabHelper?, generatorIndex: Int) {
-        if (interactor.googleSignInClient.isConnected) {
+        if (interactor.googleSignInClient.client.isConnected) {
             view.buyModelPopup(skus, billingHelper, generatorIndex)
         } else {
-            signInToGoogle(interactor.googleSignInClient)
+            signInToGoogle(interactor.googleSignInClient.client)
         }
     }
 
