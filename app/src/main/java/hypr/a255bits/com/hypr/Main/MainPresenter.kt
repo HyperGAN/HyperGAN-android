@@ -11,6 +11,7 @@ import hypr.a255bits.com.hypr.Util.Analytics
 import hypr.a255bits.com.hypr.Util.AnalyticsEvent
 import hypr.a255bits.com.hypr.Util.ImageSaver
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
+import hypr.a255bits.com.hypr.Util.InAppBilling.IabResult
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.collections.forEachWithIndex
@@ -29,6 +30,14 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     init {
         interactor.presenter = this
+    }
+
+    override fun handlePurchase(result: IabResult, generatorIndex: Int) {
+        if (result.isSuccess) {
+            multiModel?.presenter?.unlockModel(generatorIndex)
+        } else {
+            println("buy error: $result")
+        }
     }
 
     override fun signInToGoogle(googleSignInClient: GoogleApiClient) {
@@ -97,8 +106,8 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun createMultiModels(itemId: Int, image: ByteArray?) {
         val generator = interactor.listOfGenerators?.get(itemId)
         if (generator != null) {
-                val imageLocation = saveImageSoOtherFragmentCanViewIt(image)
-                displayMultiModels(itemId, imageLocation.path, interactor.listOfGenerators)
+            val imageLocation = saveImageSoOtherFragmentCanViewIt(image)
+            displayMultiModels(itemId, imageLocation.path, interactor.listOfGenerators)
         }
         disableModelsIfNotBought(interactor.listOfGenerators)
     }

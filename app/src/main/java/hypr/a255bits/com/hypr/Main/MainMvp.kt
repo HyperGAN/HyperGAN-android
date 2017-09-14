@@ -7,6 +7,7 @@ import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.MultiModels.MultiModels
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
+import hypr.a255bits.com.hypr.Util.InAppBilling.IabResult
 import kotlinx.coroutines.experimental.Deferred
 import java.io.File
 
@@ -17,7 +18,6 @@ interface MainMvp {
         fun closeDownloadingModelDialog()
         fun startCameraActivity(indexInJson: Int)
         fun startMultipleModels(multiModels: MultiModels)
-        fun startModelOnImage(buyGenerators: MutableList<BuyGenerator>)
         fun  displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>)
         fun popupSigninGoogle(googleSignInClient: GoogleApiClient)
         fun  buyModelPopup(skus: String, billingHelper: IabHelper?, generatorIndex: Int)
@@ -40,6 +40,7 @@ interface MainMvp {
         fun onNavigationItemSelected(item: MenuItem)
         fun disableModelsIfNotBought(listOfGenerators: List<Generator>?)
         fun onOptionsItemSelected(item: MenuItem?)
+        fun handlePurchase(result: IabResult, generatorIndex: Int)
     }
 
     interface interactor {

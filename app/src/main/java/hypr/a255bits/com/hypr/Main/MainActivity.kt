@@ -67,12 +67,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun buyModelPopup(skus: String, billingHelper: IabHelper?, generatorIndex: Int) {
         billingHelper?.launchPurchaseFlow(this, skus, 1001, { result, info ->
-            if (result.isSuccess) {
-                println("success")
-                presenter.multiModel?.presenter?.unlockModel(generatorIndex)
-            } else {
-                println("buy error: $result")
-            }
+            presenter.handlePurchase(result, generatorIndex)
         }, "")
     }
 
@@ -80,9 +75,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         alert {
             message = "Would you like to sign into Google?"
             title = "Sign in to Google"
-            okButton {
-                signinToGoogle(googleSignInClient)
-            }
+            okButton { signinToGoogle(googleSignInClient) }
             cancelButton { dialog ->
                 dialog.dismiss()
             }
@@ -104,16 +97,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    override fun startModelOnImage(buyGenerators: MutableList<BuyGenerator>) {
-        if (intent.hasExtra("indexInJson")) {
-            val indexInJson = intent.extras.getInt("indexInJson")
-            val image = intent.extras.getByteArray("image")
-            presenter.createMultiModels(indexInJson, image)
-        } else {
-            displayGeneratorsOnHomePage(buyGenerators)
-        }
-    }
-
     override fun displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>) {
         val fragment: Fragment = WelcomeScreen.newInstance(generators, "")
         supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
@@ -126,8 +109,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer.setDrawerListener(toggle)
         toggle.syncState()
         navigationView.setNavigationItemSelectedListener(this)
-        val navMenu = navigationView?.menu
-        modelSubMenu = navMenu?.addSubMenu("Models")
+        modelSubMenu = navigationView.menu?.addSubMenu("Models")
     }
 
     override fun startCameraActivity(indexInJson: Int) {
