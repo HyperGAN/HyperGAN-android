@@ -2,9 +2,6 @@ package hypr.a255bits.com.hypr.Main
 
 import android.content.Context
 import android.util.Log
-import com.google.android.gms.auth.api.Auth
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.storage.FileDownloadTask
 import com.google.firebase.storage.FirebaseStorage
 import hypr.a255bits.com.hypr.Generator.Generator
@@ -50,7 +47,6 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
         return if (billingHelper.isConnected) {
             async(UI) {
                 val inventory = query(true, mutableListOf(itemId), null).await()
-                inventory.erasePurchase(itemId)
                 return@async inventory.hasPurchase(itemId)
             }
         } else {

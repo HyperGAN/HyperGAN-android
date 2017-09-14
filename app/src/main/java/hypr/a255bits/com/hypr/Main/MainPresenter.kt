@@ -4,8 +4,8 @@ import android.content.Context
 import android.view.MenuItem
 import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
-import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.Generator.Generator
+import hypr.a255bits.com.hypr.MultiModels.MultiModels
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.Analytics
 import hypr.a255bits.com.hypr.Util.AnalyticsEvent
@@ -22,6 +22,10 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     private val DOWNLOAD_COMPLETE: Float = 100.0f
     var buyGenerators: MutableList<BuyGenerator> = mutableListOf()
     val analytics by lazy { Analytics(context) }
+    var multiModel: MultiModels? = null
+    var isModelFragmentDisplayed: Boolean = false
+    var indexInJson: Int? = null
+    var image: ByteArray? = null
 
     init {
         interactor.presenter = this
@@ -49,11 +53,12 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             listOfGenerators?.forEachWithIndex { index, generator ->
                 val isModelBought = interactor.hasBoughtItem(generator.google_play_id).await()
                 if (!isModelBought) {
-                    view.lockModelFromFragmentAdapterIndex(index)
+                    multiModel?.presenter?.lockModel(index)
                 }
             }
         }
     }
+
     override fun buyModel(skus: String, billingHelper: IabHelper?, generatorIndex: Int) {
         if (interactor.googleSignInClient.client.isConnected) {
             view.buyModelPopup(skus, billingHelper, generatorIndex)
@@ -89,16 +94,19 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         interactor.attemptToStartModel(itemId)
     }
 
-    override fun startModels(itemId: Int, image: ByteArray?) {
+    override fun createMultiModels(itemId: Int, image: ByteArray?) {
         val generator = interactor.listOfGenerators?.get(itemId)
         if (generator != null) {
-            val controlArray: Array<Control>? = generator.generator?.viewer?.controls?.toTypedArray()
-            controlArray?.let {
                 val imageLocation = saveImageSoOtherFragmentCanViewIt(image)
-                view.startMultipleModels(it, image, imageLocation.path, interactor.listOfGenerators, itemId)
-                view.displayBackButton()
-            }
+                displayMultiModels(itemId, imageLocation.path, interactor.listOfGenerators)
         }
+        disableModelsIfNotBought(interactor.listOfGenerators)
+    }
+
+    private fun displayMultiModels(itemId: Int, imageLocationPath: String, listOfGenerators: List<Generator>?) {
+        multiModel = MultiModels.newInstance(listOfGenerators, itemId, imageLocationPath, file)
+        view.startMultipleModels(multiModel!!)
+        view.displayBackButton()
     }
 
     fun saveImageSoOtherFragmentCanViewIt(image: ByteArray?): File {
@@ -119,19 +127,22 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     override fun addModelsToNavBar() {
         launch(UI) {
-            val generators = interactor.getGeneratorsFromNetwork().await()
-            buyGenerators = mutableListOf()
-            generators?.forEachIndexed { index, generator ->
-                view.addModelsToNavBar(generator, index)
-                saveGeneratorInfo(generator.name)
+            val generators = interactor.getGeneratorsFromNetwork()
+            saveGeneratorInfo(generators.await())
+            if (isModelFragmentDisplayed) {
+                indexInJson?.let { createMultiModels(it, image) }
+            } else {
+                view.displayGeneratorsOnHomePage(buyGenerators)
             }
-            view.startModelOnImage(buyGenerators)
         }
     }
 
-    private fun saveGeneratorInfo(name: String) {
-        val buyGenerator = BuyGenerator(name)
-        buyGenerators.add(buyGenerator)
+    private fun saveGeneratorInfo(generators: List<Generator>?) {
+        buyGenerators = mutableListOf()
+        generators?.forEachIndexed { index, generator ->
+            val buyGenerator = BuyGenerator(generator.name)
+            buyGenerators.add(buyGenerator)
+        }
     }
 
     override fun onNavigationItemSelected(item: MenuItem) {
@@ -143,4 +154,6 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         }
         analytics.logEvent(AnalyticsEvent.CHOOSE_SIDE_NAV_OPTION)
     }
+
+
 }

@@ -22,7 +22,6 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.pawegio.kandroid.start
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
-import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.MultiModels.MultiModels
 import hypr.a255bits.com.hypr.R
@@ -45,7 +44,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val SIGN_INTO_GOOGLE_RESULT: Int = 12
     val ZERO_PERCENT: Float = -0.0f
     private var spinner: Spinner? = null
-    var multiModel: MultiModels? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,6 +51,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.activity_main2)
         setSupportActionBar(toolbar)
         presenter.addModelsToNavBar()
+        presenter.isModelFragmentDisplayed = intent.hasExtra("indexInJson")
+        if (presenter.isModelFragmentDisplayed) {
+            presenter.indexInJson = intent.extras.getInt("indexInJson")
+            presenter.image = intent.extras.getByteArray("image")
+        }
 //        setupDrawer(toolbar)
 
     }
@@ -66,7 +69,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         billingHelper?.launchPurchaseFlow(this, skus, 1001, { result, info ->
             if (result.isSuccess) {
                 println("success")
-                multiModel?.presenter?.unlockModel(generatorIndex)
+                presenter.multiModel?.presenter?.unlockModel(generatorIndex)
             } else {
                 println("buy error: $result")
             }
@@ -84,10 +87,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 dialog.dismiss()
             }
         }.show()
-    }
-
-    override fun lockModelFromFragmentAdapterIndex(indexOfFragment: Int) {
-        multiModel?.presenter?.lockModel(indexOfFragment)
     }
 
     override fun goBackToMainActivity() {
@@ -109,8 +108,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (intent.hasExtra("indexInJson")) {
             val indexInJson = intent.extras.getInt("indexInJson")
             val image = intent.extras.getByteArray("image")
-            presenter.startModels(indexInJson, image)
-            presenter.disableModelsIfNotBought(presenter.interactor.listOfGenerators)
+            presenter.createMultiModels(indexInJson, image)
         } else {
             displayGeneratorsOnHomePage(buyGenerators)
         }
@@ -136,9 +134,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         startActivity(intentFor<CameraActivity>("indexInJson" to indexInJson))
     }
 
-    override fun startMultipleModels(controlArray: Array<Control>, image: ByteArray?, path: String, generators: List<Generator>?, itemId: Int) {
-        multiModel = MultiModels.newInstance(generators, itemId, path, presenter.file)
-        supportFragmentManager.beginTransaction().replace(R.id.container, multiModel).commit()
+    override fun startMultipleModels(multiModels: MultiModels) {
+        supportFragmentManager.beginTransaction().replace(R.id.container, multiModels).commit()
     }
 
     override fun displayBackButton() {

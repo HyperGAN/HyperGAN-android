@@ -41,7 +41,6 @@ class MultiModelAdapter(fm: FragmentManager?, val generators: Array<Generator>, 
     }
 
     fun lockModelFromIndex(indexOfFragment: Int) {
-
         modelFragments[indexOfFragment].lockModel()
     }
 
