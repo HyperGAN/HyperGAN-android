@@ -26,7 +26,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     var billingHelper: IabHelper = IabHelper(context, context.getString(R.string.API_KEY))
     val googleSignInClient = GoogleSignIn(context)
 
-    var listOfGenerators: List<Generator>? = null
+    var listOfGenerators: List<Generator>? = listOf()
     var modelDownloader = ModelDownloader(FirebaseStorage.getInstance().reference)
 
     init {
@@ -60,8 +60,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
         launch(UI) {
             val productId = listOfGenerators?.get(itemId)?.google_play_id
             productId?.let {
-                val hasBoughtItem = hasBoughtItem(it).await()
-                if (hasBoughtItem) {
+                if (hasBoughtItem(it).await()) {
                     presenter?.startModel(itemId)
                 } else {
                     buyProduct(it)
@@ -81,12 +80,12 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     }
 
     fun query(query: Boolean, skus: MutableList<String>, moreSubsSkus: List<String>?): Deferred<Inventory> {
-        if (billingHelper.isConnected) {
-            return async(UI) {
+        return if (billingHelper.isConnected) {
+            async(UI) {
                 billingHelper.queryInventory(true, skus, null)
             }
         } else {
-            return async(UI) { Inventory() }
+            async(UI) { Inventory() }
         }
     }
 
