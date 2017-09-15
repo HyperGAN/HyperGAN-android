@@ -13,6 +13,7 @@ import hypr.a255bits.com.hypr.Network.ModelDownloader
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import hypr.a255bits.com.hypr.Util.InAppBilling.Inventory
+import io.realm.Realm
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
@@ -24,6 +25,7 @@ import java.io.File
 class MainInteractor(val context: Context) : MainMvp.interactor {
 
     var presenter: MainPresenter? = null
+    val realm by lazy{ Realm.getDefaultInstance()}
 
     var inappBillingEnabled = false
     var billingHelper: IabHelper = IabHelper(context, context.getString(R.string.API_KEY))
@@ -45,8 +47,12 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
         if (inappBillingEnabled) {
             startInAppBilling()
         }
+        Realm.init(context)
     }
 
+    override fun closeDb() {
+        realm.close()
+    }
     private fun startInAppBilling() {
         billingHelper.startSetup { result ->
             if (!result.isSuccess) {

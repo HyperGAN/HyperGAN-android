@@ -5,7 +5,7 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-class ModelApi: ModelService{
+class ModelApi() : ModelService{
     private val BASE_URL = "https://gist.githubusercontent.com"
     val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)

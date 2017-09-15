@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 apply plugin: "kotlin-kapt"
+apply plugin: 'realm-android'
 
 
 android {
@@ -38,6 +39,9 @@ android {
     }
 }
 
+realm{
+    syncEnabled = true
+}
 dependencies {
     implementation 'com.android.support:support-v4:25.4.0'
     compile fileTree(include: ['*.jar'], dir: 'libs')

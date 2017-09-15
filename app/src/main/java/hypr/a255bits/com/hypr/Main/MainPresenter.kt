@@ -10,6 +10,7 @@ import hypr.a255bits.com.hypr.Util.Analytics
 import hypr.a255bits.com.hypr.Util.AnalyticsEvent
 import hypr.a255bits.com.hypr.Util.ImageSaver
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
+import io.realm.Realm
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import java.io.File
@@ -132,5 +133,9 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             analytics.logEvent(AnalyticsEvent.CHOOSE_HOME_NAV_OPTION)
         }
         analytics.logEvent(AnalyticsEvent.CHOOSE_SIDE_NAV_OPTION)
+    }
+
+    fun onStop() {
+        interactor.closeDb()
     }
 }
