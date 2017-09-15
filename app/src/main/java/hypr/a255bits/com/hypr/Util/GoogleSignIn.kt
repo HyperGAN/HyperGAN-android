@@ -5,9 +5,6 @@ import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.GoogleApiClient
 
-/**
- * Created by tedho on 9/13/2017.
- */
 
 class GoogleSignIn(val context: Context){
 val gso: GoogleSignInOptions by lazy {

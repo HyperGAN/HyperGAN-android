@@ -6,9 +6,6 @@ import android.graphics.Matrix
 import com.google.android.gms.vision.face.Face
 import com.google.android.gms.vision.face.Landmark
 
-/**
- * Created by tedho on 8/25/2017.
- */
 class GeneratorFacePosition{
     private val XOFFSET_PERCENT = 0.91
     private val YOFFSET_PERCENT = 0.52
