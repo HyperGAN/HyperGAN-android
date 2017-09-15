@@ -35,7 +35,7 @@ interface MainMvp {
         fun createGeneratorLoader(itemId: File, itemId1: Int)
         fun stopInAppBilling()
         fun  signInToGoogle(googleSignInClient: GoogleApiClient)
-        fun  buyModel(skus: String, billingHelper: IabHelper?, generatorIndex: Int)
+        fun  buyModel(skus: String, generatorIndex: Int)
         fun attemptToStartModel(itemId: Int)
         fun onNavigationItemSelected(item: MenuItem)
         fun disableModelsIfNotBought(listOfGenerators: List<Generator>?)

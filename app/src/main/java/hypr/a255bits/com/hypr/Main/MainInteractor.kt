@@ -74,7 +74,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
             val skus = mutableListOf(productId)
             val inventory = query(true, skus, null).await()
             if (!inventory.hasPurchase(productId)) {
-                presenter?.buyModel(productId, billingHelper, 0)
+                presenter?.buyModel(productId, 0)
             }
         }
     }
@@ -110,7 +110,6 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     private fun showDownloadProgress(bytesTransferred: Long, totalByteCount: Long) {
         val percent: Float = (bytesTransferred * 100.0f) / totalByteCount
         EventBus.getDefault().post(percent)
-
     }
 
     override fun getGeneratorsFromNetwork(): Deferred<List<Generator>?> {
@@ -122,7 +121,6 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
             }.await()
             this@MainInteractor.listOfGenerators = listOfGenerators
             listOfGenerators
-
         }
     }
 }

@@ -10,7 +10,6 @@ import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.Analytics
 import hypr.a255bits.com.hypr.Util.AnalyticsEvent
 import hypr.a255bits.com.hypr.Util.ImageSaver
-import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabResult
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
@@ -19,6 +18,8 @@ import java.io.File
 
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter {
 
+    val ZERO_PERCENT: Float = -0.0f
+    val SIGN_INTO_GOOGLE_RESULT: Int = 12
     val file = File(context.filesDir, "optimized_weight_conv.pb")
     private val DOWNLOAD_COMPLETE: Float = 100.0f
     var buyGenerators: MutableList<BuyGenerator> = mutableListOf()
@@ -47,30 +48,27 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun createGeneratorLoader(file: File, itemId: Int) {
         if (!file.exists()) {
             val pbFilePointer = interactor.getModelFromFirebase(file, "optimized_weight_conv.pb")
-            pbFilePointer?.let { interactor.showProgressOfFirebaseDownload(it) }
             pbFilePointer?.addOnSuccessListener { taskSnapshot ->
                 analytics.logEvent(AnalyticsEvent.GENERATOR_DOWNLOAD)
-                view.startCameraActivity(itemId)
             }
-        } else {
-            view.startCameraActivity(itemId)
         }
+        view.startCameraActivity(itemId)
     }
 
     override fun disableModelsIfNotBought(listOfGenerators: List<Generator>?) {
         launch(UI) {
             listOfGenerators?.forEachWithIndex { index, generator ->
-                val isModelBought = interactor.hasBoughtItem(generator.google_play_id).await()
-                if (!isModelBought) {
+                val isModelBought = interactor.hasBoughtItem(generator.google_play_id)
+                if (!isModelBought.await()) {
                     multiModel?.presenter?.lockModel(index)
                 }
             }
         }
     }
 
-    override fun buyModel(skus: String, billingHelper: IabHelper?, generatorIndex: Int) {
+    override fun buyModel(skus: String, generatorIndex: Int) {
         if (interactor.googleSignInClient.client.isConnected) {
-            view.buyModelPopup(skus, billingHelper, generatorIndex)
+            view.buyModelPopup(skus, interactor.billingHelper, generatorIndex)
         } else {
             signInToGoogle(interactor.googleSignInClient.client)
         }

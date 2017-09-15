@@ -41,8 +41,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     val presenter by lazy { MainPresenter(this, interactor, applicationContext) }
     private var modelSubMenu: SubMenu? = null
     var progressDownloadingModel: ProgressDialog? = null
-    private val SIGN_INTO_GOOGLE_RESULT: Int = 12
-    val ZERO_PERCENT: Float = -0.0f
     private var spinner: Spinner? = null
 
 
@@ -88,12 +86,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     fun signinToGoogle(googleSignInClient: GoogleApiClient) {
         val signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleSignInClient)
-        startActivityForResult(signInIntent, SIGN_INTO_GOOGLE_RESULT)
+        startActivityForResult(signInIntent, presenter.SIGN_INTO_GOOGLE_RESULT)
 
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == SIGN_INTO_GOOGLE_RESULT && resultCode == Activity.RESULT_OK) {
+        if (requestCode == presenter.SIGN_INTO_GOOGLE_RESULT && resultCode == Activity.RESULT_OK) {
         }
     }
 
@@ -165,7 +163,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         println("percent: $progressPercent")
         when {
             presenter.isDownloadComplete(progressPercent.toFloat()) -> presenter.downloadingModelFinished()
-            progressPercent.toFloat() == ZERO_PERCENT -> {
+            progressPercent.toFloat() == presenter.ZERO_PERCENT -> {
             }
             else -> progressDownloadingModel?.progress = progressPercent.toInt()
         }
@@ -187,7 +185,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @Subscribe
     fun unlockModel(generatorIndex: java.lang.Integer) {
-        presenter.buyModel(presenter.interactor.listOfGenerators?.get(generatorIndex.toInt())?.google_play_id!!, presenter.interactor.billingHelper, generatorIndex.toInt())
+        presenter.buyModel(presenter.interactor.listOfGenerators?.get(generatorIndex.toInt())?.google_play_id!!, generatorIndex.toInt())
     }
 
     override fun closeDownloadingModelDialog() {
