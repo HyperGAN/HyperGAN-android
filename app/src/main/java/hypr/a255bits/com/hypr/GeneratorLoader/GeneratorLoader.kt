@@ -54,6 +54,22 @@ class GeneratorLoader {
         return pixelsInBitmap
     }
 
+    fun sample(z:FloatArray, slider:Float, direction: FloatArray): IntArray {        
+        this.inference.feed("concat", z, *z_dims_array)
+        this.inference.feed("direction", direction, *z_dims_array)
+
+        val dims = longArrayOf(1.toLong(),1.toLong())
+        this.inference.feed("slider", floatArrayOf(slider), *dims)
+        this.inference.run(arrayOf("add_21"))
+        //inference.readNodeFloat(OUTPUT_NODE, resu)
+
+        //inference.run(..)
+        this.inference.fetch("add_21", this.raw)
+
+        val pixelsInBitmap = manipulatePixelsInBitmap()
+        return pixelsInBitmap
+    }
+
     fun mask(bitmap: Bitmap): FloatArray {
         feedInput(bitmap)
         val floatValues = FloatArray(width * height)
