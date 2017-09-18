@@ -22,7 +22,6 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.pawegio.kandroid.start
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
-import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.MultiModels.MultiModels
 import hypr.a255bits.com.hypr.R
@@ -42,8 +41,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     val presenter by lazy { MainPresenter(this, interactor, applicationContext) }
     private var modelSubMenu: SubMenu? = null
     var progressDownloadingModel: ProgressDialog? = null
-    private val SIGN_INTO_GOOGLE_RESULT: Int = 12
-    val ZERO_PERCENT: Float = -0.0f
     private var spinner: Spinner? = null
 
 
@@ -52,6 +49,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.activity_main2)
         setSupportActionBar(toolbar)
         presenter.addModelsToNavBar()
+        presenter.isModelFragmentDisplayed = intent.hasExtra("indexInJson")
+        if (presenter.isModelFragmentDisplayed) {
+            presenter.indexInJson = intent.extras.getInt("indexInJson")
+            presenter.image = intent.extras.getByteArray("image")
+        }
 //        setupDrawer(toolbar)
 
     }
@@ -61,13 +63,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return super.onOptionsItemSelected(item)
     }
 
-    override fun buyModelPopup(skus: String, billingHelper: IabHelper?) {
+    override fun buyModelPopup(skus: String, billingHelper: IabHelper?, generatorIndex: Int) {
         billingHelper?.launchPurchaseFlow(this, skus, 1001, { result, info ->
-            if (result.isSuccess) {
-                println("success")
-            } else {
-                println("buy error: $result")
-            }
+            presenter.handlePurchase(result, generatorIndex)
         }, "")
     }
 
@@ -75,9 +73,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         alert {
             message = "Would you like to sign into Google?"
             title = "Sign in to Google"
-            okButton {
-                signinToGoogle(googleSignInClient)
-            }
+            okButton { signinToGoogle(googleSignInClient) }
             cancelButton { dialog ->
                 dialog.dismiss()
             }
@@ -90,23 +86,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     fun signinToGoogle(googleSignInClient: GoogleApiClient) {
         val signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleSignInClient)
-        startActivityForResult(signInIntent, SIGN_INTO_GOOGLE_RESULT)
+        startActivityForResult(signInIntent, presenter.SIGN_INTO_GOOGLE_RESULT)
 
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == SIGN_INTO_GOOGLE_RESULT && resultCode == Activity.RESULT_OK) {
-            presenter.isLoggedIntoGoogle = true
-        }
-    }
-
-    override fun startModelOnImage(buyGenerators: MutableList<BuyGenerator>) {
-        if (intent.hasExtra("indexInJson")) {
-            val indexInJson = intent.extras.getInt("indexInJson")
-            val image = intent.extras.getByteArray("image")
-            presenter.startModel(indexInJson, image)
-        } else {
-            displayGeneratorsOnHomePage(buyGenerators)
+        if (requestCode == presenter.SIGN_INTO_GOOGLE_RESULT && resultCode == Activity.RESULT_OK) {
         }
     }
 
@@ -122,19 +107,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer.setDrawerListener(toggle)
         toggle.syncState()
         navigationView.setNavigationItemSelectedListener(this)
-        val navMenu = navigationView?.menu
-        modelSubMenu = navMenu?.addSubMenu("Models")
+        modelSubMenu = navigationView.menu?.addSubMenu("Models")
     }
 
     override fun startCameraActivity(indexInJson: Int) {
         startActivity(intentFor<CameraActivity>("indexInJson" to indexInJson))
     }
 
-    override fun applyModelToImage(controlArray: Array<Control>, image: ByteArray?, path: String, generators: List<Generator>?, itemId: Int) {
-        val fragment: Fragment = MultiModels.newInstance(generators, itemId, path, presenter.file)
-        supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
+    override fun startMultipleModels(multiModels: MultiModels) {
+        supportFragmentManager.beginTransaction().replace(R.id.container, multiModels).commit()
     }
-    override fun displayBackButton(){
+
+    override fun displayBackButton() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
@@ -170,7 +154,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     @Subscribe
-    fun startIntent(intent: Intent){
+    fun startIntent(intent: Intent) {
         startActivity(intent)
     }
 
@@ -179,17 +163,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         println("percent: $progressPercent")
         when {
             presenter.isDownloadComplete(progressPercent.toFloat()) -> presenter.downloadingModelFinished()
-            progressPercent.toFloat() == ZERO_PERCENT -> {
+            progressPercent.toFloat() == presenter.ZERO_PERCENT -> {
             }
             else -> progressDownloadingModel?.progress = progressPercent.toInt()
         }
     }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun openCamera(index: java.lang.Integer) {
-        startCameraActivity(index.toInt())
-    }
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun addControlNamesToToolbar(controlNames: List<String?>?) {
@@ -203,6 +181,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             spinner?.adapter = adapter
             toolbar.addView(spinner)
         }
+    }
+
+    @Subscribe
+    fun unlockModel(generatorIndex: java.lang.Integer) {
+        presenter.buyModel(presenter.interactor.listOfGenerators?.get(generatorIndex.toInt())?.google_play_id!!, generatorIndex.toInt())
     }
 
     override fun closeDownloadingModelDialog() {

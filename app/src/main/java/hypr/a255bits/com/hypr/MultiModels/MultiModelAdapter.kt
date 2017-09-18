@@ -11,12 +11,15 @@ import java.io.File
 
 
 class MultiModelAdapter(fm: FragmentManager?, val generators: Array<Generator>, val image: String?, val file: File) : FragmentPagerAdapter(fm) {
+    val modelFragments = mutableListOf<ModelFragment>()
     init{
        addControlNamesToToolbar(generators[0])
     }
     override fun getItem(position: Int): Fragment? {
         val generator = generators[position]
-        return createFragment(generator)
+        val modelFragment = createFragment(generator, position)
+        modelFragment?.let { modelFragments.add(it) }
+        return modelFragment
     }
 
     fun addControlNamesToToolbar(generator: Generator) {
@@ -24,9 +27,9 @@ class MultiModelAdapter(fm: FragmentManager?, val generators: Array<Generator>, 
         EventBus.getDefault().post(controlNames)
     }
 
-    fun createFragment(generator: Generator): ModelFragment? {
+    fun createFragment(generator: Generator, position: Int): ModelFragment? {
         val controlArray: Array<Control>? = generator.generator?.viewer?.controls?.toTypedArray()
-        return image?.let { ModelFragment.newInstance(controlArray, it, file) }
+        return image?.let { ModelFragment.newInstance(controlArray, it, file, position) }
     }
 
     override fun getPageTitle(position: Int): CharSequence {
@@ -35,6 +38,14 @@ class MultiModelAdapter(fm: FragmentManager?, val generators: Array<Generator>, 
 
     override fun getCount(): Int {
         return generators.size
+    }
+
+    fun lockModelFromIndex(indexOfFragment: Int) {
+        modelFragments[indexOfFragment].lockModel()
+    }
+
+    fun  unlockModelFromIndex(indexOfFragment: Int) {
+        modelFragments[indexOfFragment].unLockModel()
     }
 
 }
