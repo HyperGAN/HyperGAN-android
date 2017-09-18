@@ -129,10 +129,10 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
 
     }
 
-    override fun getGeneratorsFromNetwork(): Deferred<List<Generator>?> {
+    override fun getGeneratorsFromNetwork(applicationContext: Context): Deferred<List<Generator>?> {
         return async(UI) {
             val modelApi = ModelApi()
-            val listOfGenerators = modelApi.listOfModels().await()
+            val listOfGenerators = bg{modelApi.listOfModels(applicationContext)}.await()
             this@MainInteractor.listOfGenerators = listOfGenerators
             listOfGenerators
 

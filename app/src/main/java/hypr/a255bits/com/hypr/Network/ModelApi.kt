@@ -1,57 +1,50 @@
 package hypr.a255bits.com.hypr.Network
 
+import android.content.Context
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import hypr.a255bits.com.hypr.Generator.Generator
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
+import java.io.File
 import java.lang.reflect.Type
 
 class ModelApi {
     private val BASE_URL = "https://gist.githubusercontent.com"
     val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create())
+            .addConverterFactory(ScalarsConverterFactory.create())
             .build()
     val service: ModelService? = retrofit.create(ModelService::class.java)
-    val generatorFile = createTempFile("generatorJson", "json")
+    val generatorFileName = "generatorJson.json"
 
-    fun listOfModels(): Deferred<List<Generator>?> {
+    fun listOfModels(context: Context): List<Generator>? {
         val type: Type = Types.newParameterizedType(List::class.java, Generator::class.java)
         val adapter: JsonAdapter<List<Generator>> = Moshi.Builder().build().adapter(type)
-        return if (cachedFileExists()) {
-            getCachedGenerator(adapter)
+        val cachedFile = File(context.cacheDir, generatorFileName)
+        return if (cachedFile.exists()) {
+            getCachedGenerator(adapter, cachedFile)
         } else {
-            getGeneratorFromNetwork(adapter)
+            getGeneratorFromNetwork(adapter, cachedFile)
         }
     }
 
-    private fun getGeneratorFromNetwork(adapter: JsonAdapter<List<Generator>>): Deferred<List<Generator>?> {
-        val call = service?.listOfModels()
-        return async(UI) {
-            adapter.fromJson(call?.execute()?.body())
-        }
+    private fun getGeneratorFromNetwork(adapter: JsonAdapter<List<Generator>>, cachedFile: File): List<Generator>? {
+        val jsonString: String? = service?.listOfModels()?.execute()?.body().toString()
+        val json = adapter.fromJson(jsonString)
+        cacheGenerators(jsonString!!, cachedFile)
+        return json
     }
 
-    private fun getCachedGenerator(adapter: JsonAdapter<List<Generator>>): Deferred<List<Generator>?> {
-        val text = generatorFile.readText()
-        return async(UI) {
-            adapter.fromJson(text)
-        }
+    private fun getCachedGenerator(adapter: JsonAdapter<List<Generator>>, cachedFile: File): List<Generator>? {
+        val cachedFileRead = cachedFile.readText()
+        return adapter.fromJson(cachedFileRead)
     }
 
-    private fun cacheGenerators(generatorJson: String) {
-        generatorFile.bufferedWriter().use { out ->
+    private fun cacheGenerators(generatorJson: String, cachedFile: File) {
+        cachedFile.bufferedWriter().use { out ->
             generatorJson.forEach { text -> out.write(text.toString()) }
         }
     }
-
-    private fun cachedFileExists(): Boolean {
-        return generatorFile.exists()
-    }
-
 }
