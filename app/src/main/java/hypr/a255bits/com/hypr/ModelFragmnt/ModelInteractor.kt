@@ -18,16 +18,6 @@ import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorFacePosition
 class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
     val faceDetection = FaceDetection(context)
 
-    val detector: FaceDetector by lazy {
-        FaceDetector.Builder(context)
-                .setTrackingEnabled(false)
-                .setLandmarkType(FaceDetector.ALL_LANDMARKS)
-                .build()
-    }
-    val generatorFaceResizer = GeneratorFacePosition()
-    var leftOfFace = 0.0f
-    var topOfFace = 0.0f
-
     override fun checkIfPermissionGranted(permission: String): Boolean {
         var isPermissionGranted = true
         fromApi(23) {

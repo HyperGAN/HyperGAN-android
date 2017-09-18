@@ -21,7 +21,7 @@ class Generator() : Parcelable {
     var priceInCents: Int? = null
 
     @Json(name = "google_play_id")
-    var google_play_id: String? = null
+    var google_play_id: String = ""
 
     constructor(source: Parcel) : this()
 

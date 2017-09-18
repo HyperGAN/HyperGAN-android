@@ -5,4 +5,19 @@
     tools:context="hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment">
 
     <include layout="@layout/activity_main" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/lockLayout"
+        android:visibility="invisible"
+        android:background="#BF000000">
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_lock"
+            />
+    </RelativeLayout>
+
 </RelativeLayout>

@@ -12,6 +12,8 @@ interface MultiMvp{
     }
     interface presenter{
         fun  startModelsList(generators: Array<Generator>?, fragmentManager: FragmentManager, image: String?, file: File)
+        fun lockModel(indexOfFragment: Int)
 
+        fun unlockModel(indexOfFragment: Int)
     }
 }

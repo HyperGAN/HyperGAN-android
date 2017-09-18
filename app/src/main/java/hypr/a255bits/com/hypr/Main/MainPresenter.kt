@@ -4,26 +4,41 @@ import android.content.Context
 import android.view.MenuItem
 import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
-import hypr.a255bits.com.hypr.Generator.Control
+import hypr.a255bits.com.hypr.Generator.Generator
+import hypr.a255bits.com.hypr.MultiModels.MultiModels
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.Analytics
 import hypr.a255bits.com.hypr.Util.AnalyticsEvent
 import hypr.a255bits.com.hypr.Util.ImageSaver
-import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
+import hypr.a255bits.com.hypr.Util.InAppBilling.IabResult
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
+import org.jetbrains.anko.collections.forEachWithIndex
 import java.io.File
 
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter {
 
+    val ZERO_PERCENT: Float = 0.0f
+    val SIGN_INTO_GOOGLE_RESULT: Int = 12
     val file = File(context.filesDir, "optimized_weight_conv.pb")
     private val DOWNLOAD_COMPLETE: Float = 100.0f
-    var isLoggedIntoGoogle: Boolean = false
     var buyGenerators: MutableList<BuyGenerator> = mutableListOf()
     val analytics by lazy { Analytics(context) }
+    var multiModel: MultiModels? = null
+    var isModelFragmentDisplayed: Boolean = false
+    var indexInJson: Int? = null
+    var image: ByteArray? = null
 
     init {
         interactor.presenter = this
+    }
+
+    override fun handlePurchase(result: IabResult, generatorIndex: Int) {
+        if (result.isSuccess) {
+            multiModel?.presenter?.unlockModel(generatorIndex)
+        } else {
+            println("buy error: $result")
+        }
     }
 
     override fun signInToGoogle(googleSignInClient: GoogleApiClient) {
@@ -33,21 +48,29 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun createGeneratorLoader(file: File, itemId: Int) {
         if (!file.exists()) {
             val pbFilePointer = interactor.getModelFromFirebase(file, "optimized_weight_conv.pb")
-            pbFilePointer?.let { interactor.showProgressOfFirebaseDownload(it) }
             pbFilePointer?.addOnSuccessListener { taskSnapshot ->
                 analytics.logEvent(AnalyticsEvent.GENERATOR_DOWNLOAD)
-                view.startCameraActivity(itemId)
             }
-        } else {
-            view.startCameraActivity(itemId)
+        }
+        view.startCameraActivity(itemId)
+    }
+
+    override fun disableModelsIfNotBought(listOfGenerators: List<Generator>?) {
+        launch(UI) {
+            listOfGenerators?.forEachWithIndex { index, generator ->
+                val isModelBought = interactor.hasBoughtItem(generator.google_play_id)
+                if (!isModelBought.await()) {
+                    multiModel?.presenter?.lockModel(index)
+                }
+            }
         }
     }
 
-    override fun buyModel(skus: String, billingHelper: IabHelper?) {
-        if (isLoggedIntoGoogle) {
-            view.buyModelPopup(skus, billingHelper)
+    override fun buyModel(skus: String, generatorIndex: Int) {
+        if (interactor.googleSignInClient.client.isConnected) {
+            view.buyModelPopup(skus, interactor.billingHelper, generatorIndex)
         } else {
-            signInToGoogle(interactor.googleSignInClient)
+            signInToGoogle(interactor.googleSignInClient.client)
         }
     }
 
@@ -67,10 +90,6 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         val generator = interactor.listOfGenerators?.get(itemId)
         if (generator != null) {
             createGeneratorLoader(file, itemId)
-//            view.displayModelDownloadProgress()
-//            val file = File.createTempFile("optimized_weight_conv", "pb")
-//            val filePointer = interactor.getModelFromFirebase(file, "optimized_weight_conv.pb")
-//            interactor.showProgressOfFirebaseDownload(filePointer)
         }
     }
 
@@ -78,16 +97,19 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         interactor.attemptToStartModel(itemId)
     }
 
-    override fun startModel(itemId: Int, image: ByteArray?) {
+    override fun createMultiModels(itemId: Int, image: ByteArray?) {
         val generator = interactor.listOfGenerators?.get(itemId)
         if (generator != null) {
-            val controlArray: Array<Control>? = generator.generator?.viewer?.controls?.toTypedArray()
-            controlArray?.let {
-                val imageLocation = saveImageSoOtherFragmentCanViewIt(image)
-                view.applyModelToImage(it, image, imageLocation.path, interactor.listOfGenerators, itemId)
-                view.displayBackButton()
-            }
+            val imageLocation = saveImageSoOtherFragmentCanViewIt(image)
+            displayMultiModels(itemId, imageLocation.path, interactor.listOfGenerators)
         }
+        disableModelsIfNotBought(interactor.listOfGenerators)
+    }
+
+    private fun displayMultiModels(itemId: Int, imageLocationPath: String, listOfGenerators: List<Generator>?) {
+        multiModel = MultiModels.newInstance(listOfGenerators, itemId, imageLocationPath, file)
+        view.startMultipleModels(multiModel!!)
+        view.displayBackButton()
     }
 
     fun saveImageSoOtherFragmentCanViewIt(image: ByteArray?): File {
@@ -109,28 +131,36 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun addModelsToNavBar(applicationContext: Context) {
         launch(UI) {
             val generators = interactor.getGeneratorsFromNetwork(applicationContext).await()
+            saveGeneratorInfo(generators)
             buyGenerators = mutableListOf()
             generators?.forEachIndexed { index, generator ->
                 view.addModelsToNavBar(generator, index)
-                saveGeneratorInfo(generator.name)
+                if (isModelFragmentDisplayed) {
+                    indexInJson?.let { createMultiModels(it, image) }
+                } else {
+                    view.displayGeneratorsOnHomePage(buyGenerators)
+                }
             }
-            view.startModelOnImage(buyGenerators)
         }
     }
 
-    private fun saveGeneratorInfo(name: String) {
-        val buyGenerator = BuyGenerator(name)
-        buyGenerators.add(buyGenerator)
+    private fun saveGeneratorInfo(generators: List<Generator>?) {
+        buyGenerators = mutableListOf()
+        generators?.forEachIndexed { index, generator ->
+            val buyGenerator = BuyGenerator(generator.name)
+            buyGenerators.add(buyGenerator)
+        }
     }
 
     override fun onNavigationItemSelected(item: MenuItem) {
         if (item.itemId in 0..100) {
-            attemptToStartModel(item.itemId)
-
+//            attemptToStartModel(item.itemId)
         } else if (item.itemId == R.id.homeButton) {
             view.displayGeneratorsOnHomePage(buyGenerators)
             analytics.logEvent(AnalyticsEvent.CHOOSE_HOME_NAV_OPTION)
         }
         analytics.logEvent(AnalyticsEvent.CHOOSE_SIDE_NAV_OPTION)
     }
+
+
 }

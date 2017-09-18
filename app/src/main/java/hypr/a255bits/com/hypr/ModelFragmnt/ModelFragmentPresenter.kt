@@ -44,6 +44,8 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     var baseImage: Bitmap? = null
     var mask: FloatArray? = null
     var encoded: FloatArray? = null
+    var  generatorIndex: Int? = null
+
     override fun disconnectFaceDetector() {
         interactor.faceDetection.release()
     }
@@ -174,6 +176,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         }
 
     }
+
 
 
 }

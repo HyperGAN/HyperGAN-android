@@ -2,15 +2,13 @@ package hypr.a255bits.com.hypr.Main
 
 import android.content.Context
 import android.util.Log
-import com.google.android.gms.auth.api.Auth
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.storage.FileDownloadTask
 import com.google.firebase.storage.FirebaseStorage
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.Network.ModelApi
 import hypr.a255bits.com.hypr.Network.ModelDownloader
 import hypr.a255bits.com.hypr.R
+import hypr.a255bits.com.hypr.Util.GoogleSignIn
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import hypr.a255bits.com.hypr.Util.InAppBilling.Inventory
 import kotlinx.coroutines.experimental.Deferred
@@ -25,49 +23,35 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
 
     var presenter: MainPresenter? = null
 
-    var inappBillingEnabled = false
     var billingHelper: IabHelper = IabHelper(context, context.getString(R.string.API_KEY))
-    val gso: GoogleSignInOptions by lazy {
-        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build()
-    }
-    val googleSignInClient: GoogleApiClient by lazy {
-        GoogleApiClient.Builder(context)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build()
-    }
+    val googleSignInClient = GoogleSignIn(context)
 
-    var listOfGenerators: List<Generator>? = null
+    var listOfGenerators: List<Generator>? = listOf()
     var modelDownloader = ModelDownloader(FirebaseStorage.getInstance().reference)
 
     init {
-        if (inappBillingEnabled) {
-            startInAppBilling()
-        }
+        googleSignInClient.client.connect()
+        startInAppBilling()
     }
 
     private fun startInAppBilling() {
         billingHelper.startSetup { result ->
             if (!result.isSuccess) {
-                Log.d("MainInteractor", "Problem setting up In-app Billing: $result")
-                presenter?.isLoggedIntoGoogle = false
-                presenter?.signInToGoogle(googleSignInClient)
             } else {
-                presenter?.isLoggedIntoGoogle = true
+                Log.d("MainInteractor", "Problem setting up In-app Billing: $result")
             }
         }
     }
 
     override fun hasBoughtItem(itemId: String): Deferred<Boolean> {
-        if (inappBillingEnabled) {
-            return async(UI) {
+        return if (billingHelper.isConnected) {
+            async(UI) {
                 val inventory = query(true, mutableListOf(itemId), null).await()
-                inventory.hasPurchase(itemId)
+                return@async inventory.hasPurchase(itemId)
             }
         } else {
-            return async(UI) {
-                true
+            async(UI) {
+                return@async true
             }
         }
     }
@@ -76,8 +60,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
         launch(UI) {
             val productId = listOfGenerators?.get(itemId)?.google_play_id
             productId?.let {
-                val hasBoughtItem = hasBoughtItem(it).await()
-                if (hasBoughtItem) {
+                if (hasBoughtItem(it).await()) {
                     presenter?.startModel(itemId)
                 } else {
                     buyProduct(it)
@@ -87,22 +70,22 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     }
 
     suspend fun buyProduct(productId: String) {
-        if(inappBillingEnabled) {
+        if (billingHelper.isConnected) {
             val skus = mutableListOf(productId)
             val inventory = query(true, skus, null).await()
             if (!inventory.hasPurchase(productId)) {
-                presenter?.buyModel(productId, billingHelper)
+                presenter?.buyModel(productId, 0)
             }
         }
     }
 
     fun query(query: Boolean, skus: MutableList<String>, moreSubsSkus: List<String>?): Deferred<Inventory> {
-        if(inappBillingEnabled) {
-            return async(UI) {
+        return if (billingHelper.isConnected) {
+            async(UI) {
                 billingHelper.queryInventory(true, skus, null)
             }
         } else {
-            return async(UI) { Inventory() }
+            async(UI) { Inventory() }
         }
     }
 
@@ -113,7 +96,8 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     override fun getModelFromFirebase(saveLocation: File, filenameInFirebase: String): FileDownloadTask? {
         val firebaseGeneratorPath = listOfGenerators?.get(0)?.model_url
         return firebaseGeneratorPath?.let {
-            modelDownloader.getFile(saveLocation, it) }
+            modelDownloader.getFile(saveLocation, it)
+        }
 
     }
 
@@ -126,7 +110,6 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     private fun showDownloadProgress(bytesTransferred: Long, totalByteCount: Long) {
         val percent: Float = (bytesTransferred * 100.0f) / totalByteCount
         EventBus.getDefault().post(percent)
-
     }
 
     override fun getGeneratorsFromNetwork(applicationContext: Context): Deferred<List<Generator>?> {
@@ -135,7 +118,6 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
             val listOfGenerators = bg{modelApi.listOfModels(applicationContext)}.await()
             this@MainInteractor.listOfGenerators = listOfGenerators
             listOfGenerators
-
         }
     }
 }

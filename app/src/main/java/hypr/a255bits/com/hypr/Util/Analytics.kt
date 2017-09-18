@@ -4,10 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 
-/**
- * Created by tedho on 9/7/2017.
- */
-
 class Analytics(val context: Context){
     val analytics = FirebaseAnalytics.getInstance(context)
 
