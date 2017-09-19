@@ -14,8 +14,7 @@ import kotlinx.android.synthetic.main.fragment_model.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import org.greenrobot.eventbus.EventBus
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
 import java.io.File
 
 
@@ -24,7 +23,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     var pbFile: File? = null
     val interactor by lazy { ModelInteractor(context) }
     val presenter by lazy { ModelFragmentPresenter(this, interactor, context, pbFile) }
-    var direction: FloatArray? =  null
+    var direction: FloatArray? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +46,8 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         lockLayout.visibility = View.VISIBLE
         imageTransitionSeekBar.isEnabled = false
     }
-    override fun unLockModel(){
+
+    override fun unLockModel() {
         lockLayout.visibility = View.INVISIBLE
         imageTransitionSeekBar.isEnabled = true
 
@@ -64,7 +64,12 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
             presenter.startCameraActivity()
         }
         lockLayout.setOnClickListener {
-            EventBus.getDefault().post(presenter.generatorIndex)
+            activity.alert {
+                message = "Would you like to buy this model?"
+                title = "Hypr"
+                positiveButton("Buy", {EventBus.getDefault().post(presenter.generatorIndex)})
+                cancelButton { dialog -> dialog.dismiss() }
+            }.show()
         }
     }
 
