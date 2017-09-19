@@ -128,14 +128,18 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
 
-    override fun addModelsToNavBar() {
+    override fun addModelsToNavBar(applicationContext: Context) {
         launch(UI) {
-            val generators = interactor.getGeneratorsFromNetwork()
-            saveGeneratorInfo(generators.await())
-            if (isModelFragmentDisplayed) {
-                indexInJson?.let { createMultiModels(it, image) }
-            } else {
-                view.displayGeneratorsOnHomePage(buyGenerators)
+            val generators = interactor.getGeneratorsFromNetwork(applicationContext).await()
+            saveGeneratorInfo(generators)
+            buyGenerators = mutableListOf()
+            generators?.forEachIndexed { index, generator ->
+                view.addModelsToNavBar(generator, index)
+                if (isModelFragmentDisplayed) {
+                    indexInJson?.let { createMultiModels(it, image) }
+                } else {
+                    view.displayGeneratorsOnHomePage(buyGenerators)
+                }
             }
         }
     }

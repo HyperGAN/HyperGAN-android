@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
         setSupportActionBar(toolbar)
-        presenter.addModelsToNavBar()
+        presenter.addModelsToNavBar(applicationContext)
         presenter.isModelFragmentDisplayed = intent.hasExtra("indexInJson")
         if (presenter.isModelFragmentDisplayed) {
             presenter.indexInJson = intent.extras.getInt("indexInJson")
