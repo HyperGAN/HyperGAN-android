@@ -70,9 +70,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun popupSigninGoogle(googleSignInClient: GoogleApiClient) {
-        alert {
-            message = "Would you like to sign into Google?"
-            title = "Sign in to Google"
+        alert("Would you like to sign into Google?", "sign into Google") {
             okButton { signinToGoogle(googleSignInClient) }
             cancelButton { dialog ->
                 dialog.dismiss()
