@@ -22,7 +22,6 @@ interface ModelFragmentMVP{
         fun disconnectFaceDetector()
         fun saveImageDisplayedToPhone(context: Context): Deferred<Boolean>?
         fun transformImage(normalImage: Bitmap?)
-        fun  convertToNegative1To1(progress: Int): Double
         fun  changePixelToBitmap(transformedImage: IntArray): Bitmap?
         fun sampleImage(image: Bitmap): Deferred<Bitmap>
         fun onRequestPermissionResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray)

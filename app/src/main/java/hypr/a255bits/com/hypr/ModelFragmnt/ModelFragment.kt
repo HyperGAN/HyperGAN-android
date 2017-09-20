@@ -9,6 +9,7 @@ import com.pawegio.kandroid.onProgressChanged
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.R
+import hypr.a255bits.com.hypr.Util.negative1To1
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_model.*
 import kotlinx.coroutines.experimental.android.UI
@@ -91,8 +92,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     private fun displayImageTransitionSeekbarProgress() {
         imageTransitionSeekBar.onProgressChanged { progress, _ ->
-            val ganValue: Double = presenter.convertToNegative1To1(progress)
-            changeGanImageFromSlider(ganValue)
+            changeGanImageFromSlider(progress.negative1To1())
         }
     }
 

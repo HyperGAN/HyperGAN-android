@@ -8,10 +8,7 @@ import android.view.MenuItem
 import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorLoader
 import hypr.a255bits.com.hypr.R
-import hypr.a255bits.com.hypr.Util.Analytics
-import hypr.a255bits.com.hypr.Util.AnalyticsEvent
-import hypr.a255bits.com.hypr.Util.BitmapManipulator
-import hypr.a255bits.com.hypr.Util.ImageSaver
+import hypr.a255bits.com.hypr.Util.*
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
@@ -68,13 +65,8 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         }
     }
 
-    override fun convertToNegative1To1(progress: Int): Double {
-        return ((progress - 100) / 100.00)
-    }
-
     override fun randomizeModel(progress: Int) {
-        val ganValue: Double = convertToNegative1To1(progress)
-        view.changeGanImageFromSlider(ganValue)
+        view.changeGanImageFromSlider(progress.negative1To1())
     }
     override fun findFacesInImage(imageWithFaces: Bitmap, context: Context) {
         try {
