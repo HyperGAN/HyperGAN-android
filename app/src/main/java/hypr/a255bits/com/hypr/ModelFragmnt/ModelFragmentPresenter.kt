@@ -72,12 +72,6 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         return ((progress - 100) / 100.00)
     }
 
-
-    override fun joinFaceWithImage(transformedImage: Bitmap): Bitmap? {
-//        return imageWithFaces?.let { interactor.joinImageWithFace(it, transformedImage) }
-        return null
-    }
-
     override fun randomizeModel(progress: Int) {
         val ganValue: Double = convertToNegative1To1(progress)
         view.changeGanImageFromSlider(ganValue)

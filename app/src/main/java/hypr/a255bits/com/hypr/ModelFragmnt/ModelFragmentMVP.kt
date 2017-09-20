@@ -30,7 +30,6 @@ interface ModelFragmentMVP{
         fun displayTitleSpinner()
         fun  readImageToBytes(imagePath: String?)
         fun convertByteArrayImageToBitmap(): Deferred<Bitmap?>
-        fun  joinFaceWithImage(transformedImage: Bitmap): Bitmap?
         fun randomizeModel(progress: Int)
     }
     interface interactor{
