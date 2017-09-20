@@ -18,8 +18,7 @@ import java.util.*
 
 class ImageSaver {
 
-    fun saveImageToInternalStorage(focusedImageBitmap: Bitmap?, context: Context, folderName: String = "hyprimages"): Deferred<Boolean> {
-        return async(UI) {
+    fun saveImageToInternalStorage(focusedImageBitmap: Bitmap?, context: Context, folderName: String = "hyprimages"): Boolean {
 
             val root = Environment.getExternalStoragePublicDirectory(folderName).toString()
             val myDir = File(root)
@@ -41,8 +40,7 @@ class ImageSaver {
             }
             val intent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file))
             context.sendBroadcast(Intent(intent))
-            true
-        }
+            return true
     }
 
     fun saveImageToFile(file: File, image: ByteArray?) {

@@ -20,7 +20,7 @@ interface ModelFragmentMVP{
     interface presenter{
         fun findFacesInImage(imageWithFaces: Bitmap, context: Context)
         fun disconnectFaceDetector()
-        fun saveImageDisplayedToPhone(context: Context): Deferred<Boolean>?
+        fun saveImageDisplayedToPhone(context: Context): Boolean
         fun transformImage(normalImage: Bitmap?)
         fun  changePixelToBitmap(transformedImage: IntArray): Bitmap?
         fun sampleImage(image: Bitmap): Bitmap

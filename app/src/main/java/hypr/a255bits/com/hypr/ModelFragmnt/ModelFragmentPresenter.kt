@@ -24,8 +24,10 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     init {
         val cont = context
         launch(UI) {
-            bg { loadGenerator(pbFile, cont.assets) }.await()
-            val imageBitmap = bg { convertByteArrayImageToBitmap() }
+            val imageBitmap = bg {
+                loadGenerator(pbFile, cont.assets)
+                convertByteArrayImageToBitmap()
+            }
             transformImage(imageBitmap.await())
         }
     }
@@ -71,12 +73,14 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
 
     override fun findFacesInImage(imageWithFaces: Bitmap, context: Context) {
         try {
+            launch(UI){
             val croppedFaces: MutableList<Bitmap> = interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)
             if (isFacesDetected(croppedFaces)) {
                 view.displayFocusedImage(croppedFaces[0])
             } else {
                 view.displayFocusedImage(imageWithFaces)
             }
+        }
         } catch (exception: IOException) {
             view.showError(exception.localizedMessage)
         }
@@ -86,8 +90,8 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         return !listOfFaces.isEmpty()
     }
 
-    override fun saveImageDisplayedToPhone(context: Context): Deferred<Boolean>? {
-        var isSaved: Deferred<Boolean>? = null
+    override fun saveImageDisplayedToPhone(context: Context): Boolean {
+        var isSaved = false
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             val bitmap = imageFromGallery?.let { changePixelToBitmap(it) }
             isSaved = ImageSaver().saveImageToInternalStorage(bitmap, context)
@@ -127,7 +131,10 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
             if (requestCode == SHARE_IMAGE_PERMISSION_REQUEST) {
                 shareImageToOtherApps()
             } else if (requestCode == SAVE_IMAGE_PERMISSION_REQUEST) {
-                saveImageDisplayedToPhone(context)
+                val con = context
+                launch(UI) {
+                    bg { saveImageDisplayedToPhone(con) }.await()
+                }
             }
         }
     }

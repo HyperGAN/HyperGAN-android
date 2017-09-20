@@ -59,8 +59,8 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun disableModelsIfNotBought(listOfGenerators: List<Generator>?) {
         launch(UI) {
             listOfGenerators?.forEachWithIndex { index, generator ->
-                val isModelBought = interactor.hasBoughtItem(generator.google_play_id)
-                if (!bg{isModelBought}.await()) {
+                val isModelBought = bg { interactor.hasBoughtItem(generator.google_play_id) }
+                if (!isModelBought.await()) {
                     multiModel?.presenter?.lockModel(index)
                 }
             }
