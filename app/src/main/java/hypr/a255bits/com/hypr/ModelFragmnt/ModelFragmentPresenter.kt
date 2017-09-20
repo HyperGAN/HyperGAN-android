@@ -34,7 +34,6 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     }
 
     val analytics = Analytics(context)
-    var imageWithFaces: Bitmap? = null
     var imageFromGallery: IntArray? = null
     val SHARE_IMAGE_PERMISSION_REQUEST = 10
     val SAVE_IMAGE_PERMISSION_REQUEST: Int = 11
@@ -45,6 +44,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     var mask: FloatArray? = null
     var encoded: FloatArray? = null
     var  generatorIndex: Int? = null
+    var direction: FloatArray? = null
 
     override fun disconnectFaceDetector() {
         interactor.faceDetection.release()

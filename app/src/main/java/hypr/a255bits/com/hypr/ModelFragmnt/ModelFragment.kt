@@ -23,7 +23,6 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     var pbFile: File? = null
     val interactor by lazy { ModelInteractor(context) }
     val presenter by lazy { ModelFragmentPresenter(this, interactor, context, pbFile) }
-    var direction: FloatArray? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,18 +55,30 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         displayImageTransitionSeekbarProgress()
+        randomizeModelClickListener()
+        chooseImageFromGalleryButtonClickListener()
+        lockLayoutClickListener()
+    }
+
+    private fun randomizeModelClickListener() {
         randomizeModel.setOnClickListener {
-            direction = presenter.generatorLoader.random_z()
+            presenter.direction = presenter.generatorLoader.random_z()
             presenter.randomizeModel(imageTransitionSeekBar.progress)
         }
+    }
+
+    private fun chooseImageFromGalleryButtonClickListener() {
         chooseImageFromGalleryButton.setOnClickListener {
             presenter.startCameraActivity()
         }
+    }
+
+    private fun lockLayoutClickListener() {
         lockLayout.setOnClickListener {
             activity.alert {
                 message = "Would you like to buy this model?"
                 title = "Hypr"
-                positiveButton("Buy", {EventBus.getDefault().post(presenter.generatorIndex)})
+                positiveButton("Buy", { EventBus.getDefault().post(presenter.generatorIndex) })
                 cancelButton { dialog -> dialog.dismiss() }
             }.show()
         }
@@ -87,7 +98,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     override fun changeGanImageFromSlider(ganValue: Double) {
         presenter.encoded?.let {
-            val direction = this.direction ?: presenter.generatorLoader.random_z()
+            val direction = presenter.direction ?: presenter.generatorLoader.random_z()
             val ganImage = presenter.generatorLoader.sample(it, ganValue.toFloat(), presenter.mask, direction, presenter.baseImage!!)
 
             focusedImage.setImageBitmap(presenter.generatorLoader.manipulateBitmap(presenter.generatorLoader.width, presenter.generatorLoader.height, ganImage))
