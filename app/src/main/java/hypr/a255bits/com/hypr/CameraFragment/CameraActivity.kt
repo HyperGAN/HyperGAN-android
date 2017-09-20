@@ -10,8 +10,11 @@ import android.view.MenuItem
 import android.view.View
 import com.flurgle.camerakit.CameraListener
 import com.flurgle.camerakit.CameraView
+import com.pawegio.kandroid.alarmManager
+import com.pawegio.kandroid.startForResult
 import hypr.a255bits.com.hypr.Main.MainActivity
 import hypr.a255bits.com.hypr.R
+import hypr.a255bits.com.hypr.Util.onPictureTaken
 import kotlinx.android.synthetic.main.activity_camera.*
 import org.jetbrains.anko.clearTop
 import org.jetbrains.anko.intentFor
@@ -30,7 +33,7 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
         indexInJson = intent.extras.getInt("indexInJson")
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         takePictureListener(cameraView)
-        takePicture.setOnClickListener {presenter.captureImage()}
+        takePicture.setOnClickListener { presenter.captureImage() }
     }
 
 
@@ -41,13 +44,9 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
     override fun takePicture() {
         cameraView.captureImage()
     }
+
     private fun takePictureListener(cameraView: CameraView) {
-        cameraView.setCameraListener(object : CameraListener() {
-            override fun onPictureTaken(jpeg: ByteArray?) {
-                super.onPictureTaken(jpeg)
-                presenter.sendPictureToModel(jpeg)
-            }
-        })
+        cameraView.onPictureTaken { jpeg -> presenter.sendPictureToModel(jpeg) }
     }
 
     override fun navigateUpActivity() {

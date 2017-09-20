@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.*
+import com.pawegio.kandroid.inflateLayout
 import com.pawegio.kandroid.onProgressChanged
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator.Control
@@ -77,9 +78,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     private fun lockLayoutClickListener() {
         lockLayout.setOnClickListener {
-            activity.alert {
-                message = "Would you like to buy this model?"
-                title = "Hypr"
+            activity.alert("Would you like to buy this model?", "Hypr") {
                 positiveButton("Buy", { EventBus.getDefault().post(presenter.generatorIndex) })
                 cancelButton { dialog -> dialog.dismiss() }
             }.show()

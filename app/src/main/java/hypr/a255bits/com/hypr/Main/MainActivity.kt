@@ -128,7 +128,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun displayModelDownloadProgress() {
         progressDownloadingModel = progressDialog("Downloading Model") {
-            setMessage("It's downloading..")
             setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
             max = 100
         }
@@ -173,7 +172,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val adapter: SpinnerAdapter = ArrayAdapter<String>(this, R.layout.spinner_dropdown_item, controlNames)
         spinner.let { toolbar.removeView(it) }
         if (controlNames!!.isNotEmpty()) {
-
             this.spinner = Spinner(this)
             spinner?.background?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
             spinner?.adapter = adapter
