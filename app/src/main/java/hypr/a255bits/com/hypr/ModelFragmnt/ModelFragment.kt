@@ -83,7 +83,8 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun changeGanImageFromSlider(ganValue: Double) {
         presenter.encoded?.let {
             val direction = this.direction ?: presenter.generatorLoader.random_z()
-            val ganImage = presenter.generatorLoader.sample(it, ganValue.toFloat(), presenter.mask, direction, presenter.baseImage!!)
+//            val ganImage = presenter.generatorLoader.sample(it, ganValue.toFloat(), presenter.mask, direction, presenter.baseImage!!)
+            val ganImage = presenter.generatorLoader.sampleRandom(it, ganValue.toFloat(), direction)
 
             focusedImage.setImageBitmap(presenter.generatorLoader.manipulateBitmap(presenter.generatorLoader.width, presenter.generatorLoader.height, ganImage))
         }
