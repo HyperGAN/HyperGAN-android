@@ -16,6 +16,7 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.*
+import org.jetbrains.anko.coroutines.experimental.bg
 import java.io.File
 
 
@@ -126,8 +127,8 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     override fun displayFocusedImage(imageFromGallery: Bitmap) {
         launch(UI) {
-            val transformedImage = presenter.sampleImage(imageFromGallery).await()
-            focusedImage.setImageBitmap(transformedImage)
+            val transformedImage = bg { presenter.sampleImage(imageFromGallery) }
+            focusedImage.setImageBitmap(transformedImage.await())
         }
     }
 

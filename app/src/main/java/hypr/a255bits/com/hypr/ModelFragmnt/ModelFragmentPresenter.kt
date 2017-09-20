@@ -24,8 +24,8 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     init {
         val cont = context
         launch(UI) {
-            loadGenerator(pbFile, cont.assets).await()
-            val imageBitmap = convertByteArrayImageToBitmap()
+            bg { loadGenerator(pbFile, cont.assets) }.await()
+            val imageBitmap = bg { convertByteArrayImageToBitmap() }
             transformImage(imageBitmap.await())
         }
     }
@@ -40,7 +40,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     var baseImage: Bitmap? = null
     var mask: FloatArray? = null
     var encoded: FloatArray? = null
-    var  generatorIndex: Int? = null
+    var generatorIndex: Int? = null
     var direction: FloatArray? = null
 
     override fun disconnectFaceDetector() {
@@ -68,6 +68,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     override fun randomizeModel(progress: Int) {
         view.changeGanImageFromSlider(progress.negative1To1())
     }
+
     override fun findFacesInImage(imageWithFaces: Bitmap, context: Context) {
         try {
             val croppedFaces: MutableList<Bitmap> = interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)
@@ -100,25 +101,21 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         normalImage?.let { findFacesInImage(it, context) }
     }
 
-    fun loadGenerator(pbFile: File?, assets: AssetManager): Deferred<Unit?> {
-        return async(UI) {
-            pbFile?.let { generatorLoader.load(assets, it) }
-        }
+    fun loadGenerator(pbFile: File?, assets: AssetManager) {
+        pbFile?.let { generatorLoader.load(assets, it) }
     }
 
-    override fun sampleImage(image: Bitmap): Deferred<Bitmap> {
-        return async(UI) {
-            val scaled = Bitmap.createScaledBitmap(image, 256, 256, false)
-            baseImage = scaled
+    override fun sampleImage(image: Bitmap): Bitmap {
+        val scaled = Bitmap.createScaledBitmap(image, 256, 256, false)
+        baseImage = scaled
 
-            encoded = generatorLoader.encode(scaled)
+        encoded = generatorLoader.encode(scaled)
 
-            mask = generatorLoader.mask(scaled)
-            val direction = generatorLoader.random_z()
-            val transformedImage = generatorLoader.sample(encoded!!, 0.0f, mask, direction, scaled!!)
-            imageFromGallery = transformedImage
-            return@async generatorLoader.manipulateBitmap(generatorLoader.width, generatorLoader.height, transformedImage)
-        }
+        mask = generatorLoader.mask(scaled)
+        val direction = generatorLoader.random_z()
+        val transformedImage = generatorLoader.sample(encoded!!, 0.0f, mask, direction, scaled!!)
+        imageFromGallery = transformedImage
+        return generatorLoader.manipulateBitmap(generatorLoader.width, generatorLoader.height, transformedImage)
     }
 
     override fun changePixelToBitmap(transformedImage: IntArray): Bitmap? {
@@ -156,13 +153,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         view.startCameraActivity()
     }
 
-    override fun convertByteArrayImageToBitmap(): Deferred<Bitmap?> {
-        return async(UI) {
-            byteArrayImage?.let { BitmapManipulator().createBitmapFromByteArray(it) }
-        }
-
+    override fun convertByteArrayImageToBitmap(): Bitmap? {
+        return byteArrayImage?.let { BitmapManipulator().createBitmapFromByteArray(it) }
     }
-
-
-
 }

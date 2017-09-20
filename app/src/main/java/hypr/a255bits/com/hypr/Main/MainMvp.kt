@@ -50,7 +50,7 @@ interface MainMvp {
         fun getModelFromFirebase(saveLocation: File, filenameInFirebase: String): FileDownloadTask?
         fun showProgressOfFirebaseDownload(firebaseDownloader: FileDownloadTask)
         fun stopInAppBilling()
-        fun hasBoughtItem(itemId: String): Deferred<Boolean>
+        fun hasBoughtItem(itemId: String): Boolean
         fun attemptToStartModel(itemId: Int)
     }
 

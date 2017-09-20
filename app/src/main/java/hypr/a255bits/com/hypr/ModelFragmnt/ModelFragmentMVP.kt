@@ -23,12 +23,12 @@ interface ModelFragmentMVP{
         fun saveImageDisplayedToPhone(context: Context): Deferred<Boolean>?
         fun transformImage(normalImage: Bitmap?)
         fun  changePixelToBitmap(transformedImage: IntArray): Bitmap?
-        fun sampleImage(image: Bitmap): Deferred<Bitmap>
+        fun sampleImage(image: Bitmap): Bitmap
         fun onRequestPermissionResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray)
         fun  onOptionsItemSelected(item: MenuItem, context: Context)
         fun displayTitleSpinner()
         fun  readImageToBytes(imagePath: String?)
-        fun convertByteArrayImageToBitmap(): Deferred<Bitmap?>
+        fun convertByteArrayImageToBitmap(): Bitmap?
         fun randomizeModel(progress: Int)
     }
     interface interactor{
