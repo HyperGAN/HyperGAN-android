@@ -54,7 +54,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     }
 
     override fun readImageToBytes(imagePath: String?) {
-        byteArrayImage = File(imagePath).readBytes()
+        byteArrayImage = imagePath?.let {  File(it).readBytes()}
     }
 
     fun shareImageToOtherApps() {

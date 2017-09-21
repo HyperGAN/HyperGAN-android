@@ -3,7 +3,6 @@ package hypr.a255bits.com.hypr.MultiModels
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -65,7 +64,7 @@ class MultiModels : Fragment(), MultiMvp.view {
         private val PATH_TO_IMAGE: String? = "pathtoImage"
         private val PATH_TO_GENERATOR: String? = "pathtoGenerator"
 
-        fun newInstance(generators: List<Generator>?, indexOfGenerator: Int, pathToImage: String, generatorPath: File): MultiModels {
+        fun newInstance(generators: List<Generator>?, indexOfGenerator: Int, pathToImage: String?, generatorPath: File): MultiModels {
             val fragment = MultiModels()
             val args = Bundle()
             args.putParcelableArray(GENERATORS, generators?.toTypedArray())

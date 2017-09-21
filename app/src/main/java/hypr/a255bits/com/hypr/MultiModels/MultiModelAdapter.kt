@@ -29,7 +29,7 @@ class MultiModelAdapter(fm: FragmentManager?, val generators: Array<Generator>, 
 
     fun createFragment(generator: Generator, position: Int): ModelFragment? {
         val controlArray: Array<Control>? = generator.generator?.viewer?.controls?.toTypedArray()
-        return image?.let { ModelFragment.newInstance(controlArray, it, file, position) }
+        return ModelFragment.newInstance(controlArray, image, file, position)
     }
 
     override fun getPageTitle(position: Int): CharSequence {

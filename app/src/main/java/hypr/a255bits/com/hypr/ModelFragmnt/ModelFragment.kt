@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.*
-import com.pawegio.kandroid.inflateLayout
 import com.pawegio.kandroid.onProgressChanged
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator.Control
@@ -38,10 +37,9 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val view = inflater!!.inflate(R.layout.fragment_model, container, false)
         presenter.displayTitleSpinner()
         setHasOptionsMenu(true)
-        return view
+        return inflater!!.inflate(R.layout.fragment_model, container, false)
     }
 
     override fun lockModel() {
@@ -153,7 +151,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         private val GENERATOR_INDEX = "generatorPosition"
 
 
-        fun newInstance(modelControls: Array<Control>?, image: String, pbFile: File, generatorIndex: Int): ModelFragment {
+        fun newInstance(modelControls: Array<Control>?, image: String?, pbFile: File, generatorIndex: Int): ModelFragment {
             val fragment = ModelFragment()
             val args = Bundle()
             args.putString(IMAGE_PARAM, image)
