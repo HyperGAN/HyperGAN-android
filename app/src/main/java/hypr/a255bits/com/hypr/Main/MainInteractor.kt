@@ -43,24 +43,20 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
         }
     }
 
-    override fun hasBoughtItem(itemId: String): Deferred<Boolean> {
-        return if (billingHelper.isConnected) {
-            async(UI) {
-                val inventory = query(true, mutableListOf(itemId), null).await()
-                return@async inventory.hasPurchase(itemId)
-            }
-        } else {
-            async(UI) {
-                return@async true
-            }
+    override fun hasBoughtItem(itemId: String): Boolean {
+        var hasBoughtItem = true
+        if (billingHelper.isConnected) {
+            val inventory = query(true, mutableListOf(itemId), null)
+            hasBoughtItem = inventory.hasPurchase(itemId)
         }
+        return hasBoughtItem
     }
 
     override fun attemptToStartModel(itemId: Int) {
         launch(UI) {
             val productId = listOfGenerators?.get(itemId)?.google_play_id
             productId?.let {
-                if (hasBoughtItem(it).await()) {
+                if (bg { hasBoughtItem(it) }.await()) {
                     presenter?.startModel(itemId)
                 } else {
                     buyProduct(it)
@@ -72,20 +68,18 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     suspend fun buyProduct(productId: String) {
         if (billingHelper.isConnected) {
             val skus = mutableListOf(productId)
-            val inventory = query(true, skus, null).await()
+            val inventory = bg { query(true, skus, null) }.await()
             if (!inventory.hasPurchase(productId)) {
                 presenter?.buyModel(productId, 0)
             }
         }
     }
 
-    fun query(query: Boolean, skus: MutableList<String>, moreSubsSkus: List<String>?): Deferred<Inventory> {
+    fun query(query: Boolean, skus: MutableList<String>, moreSubsSkus: List<String>?): Inventory {
         return if (billingHelper.isConnected) {
-            async(UI) {
-                billingHelper.queryInventory(true, skus, null)
-            }
+            billingHelper.queryInventory(true, skus, null)
         } else {
-            async(UI) { Inventory() }
+            Inventory()
         }
     }
 
@@ -115,9 +109,9 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     override fun getGeneratorsFromNetwork(applicationContext: Context): Deferred<List<Generator>?> {
         return async(UI) {
             val modelApi = ModelApi()
-            val listOfGenerators = bg{modelApi.listOfModels(applicationContext)}.await()
+            val listOfGenerators = bg { modelApi.listOfModels(applicationContext) }.await()
             this@MainInteractor.listOfGenerators = listOfGenerators
-            listOfGenerators
+            return@async listOfGenerators
         }
     }
 }

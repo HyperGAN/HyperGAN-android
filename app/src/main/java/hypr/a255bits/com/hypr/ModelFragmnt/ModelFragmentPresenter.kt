@@ -8,10 +8,7 @@ import android.view.MenuItem
 import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorLoader
 import hypr.a255bits.com.hypr.R
-import hypr.a255bits.com.hypr.Util.Analytics
-import hypr.a255bits.com.hypr.Util.AnalyticsEvent
-import hypr.a255bits.com.hypr.Util.BitmapManipulator
-import hypr.a255bits.com.hypr.Util.ImageSaver
+import hypr.a255bits.com.hypr.Util.*
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
@@ -27,14 +24,15 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     init {
         val cont = context
         launch(UI) {
-            loadGenerator(pbFile, cont.assets).await()
-            val imageBitmap = convertByteArrayImageToBitmap()
+            val imageBitmap = bg {
+                loadGenerator(pbFile, cont.assets)
+                convertByteArrayImageToBitmap()
+            }
             transformImage(imageBitmap.await())
         }
     }
 
     val analytics = Analytics(context)
-    var imageWithFaces: Bitmap? = null
     var imageFromGallery: IntArray? = null
     val SHARE_IMAGE_PERMISSION_REQUEST = 10
     val SAVE_IMAGE_PERMISSION_REQUEST: Int = 11
@@ -44,7 +42,8 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     var baseImage: Bitmap? = null
     var mask: FloatArray? = null
     var encoded: FloatArray? = null
-    var  generatorIndex: Int? = null
+    var generatorIndex: Int? = null
+    var direction: FloatArray? = null
 
     override fun disconnectFaceDetector() {
         interactor.faceDetection.release()
@@ -68,28 +67,20 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         }
     }
 
-    override fun convertToNegative1To1(progress: Int): Double {
-        return ((progress - 100) / 100.00)
-    }
-
-
-    override fun joinFaceWithImage(transformedImage: Bitmap): Bitmap? {
-//        return imageWithFaces?.let { interactor.joinImageWithFace(it, transformedImage) }
-        return null
-    }
-
     override fun randomizeModel(progress: Int) {
-        val ganValue: Double = convertToNegative1To1(progress)
-        view.changeGanImageFromSlider(ganValue)
+        view.changeGanImageFromSlider(progress.negative1To1())
     }
+
     override fun findFacesInImage(imageWithFaces: Bitmap, context: Context) {
         try {
+            launch(UI){
             val croppedFaces: MutableList<Bitmap> = interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)
             if (isFacesDetected(croppedFaces)) {
                 view.displayFocusedImage(croppedFaces[0])
             } else {
                 view.displayFocusedImage(imageWithFaces)
             }
+        }
         } catch (exception: IOException) {
             view.showError(exception.localizedMessage)
         }
@@ -99,8 +90,8 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         return !listOfFaces.isEmpty()
     }
 
-    override fun saveImageDisplayedToPhone(context: Context): Deferred<Boolean>? {
-        var isSaved: Deferred<Boolean>? = null
+    override fun saveImageDisplayedToPhone(context: Context): Boolean {
+        var isSaved = false
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             val bitmap = imageFromGallery?.let { changePixelToBitmap(it) }
             isSaved = ImageSaver().saveImageToInternalStorage(bitmap, context)
@@ -114,25 +105,21 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         normalImage?.let { findFacesInImage(it, context) }
     }
 
-    fun loadGenerator(pbFile: File?, assets: AssetManager): Deferred<Unit?> {
-        return async(UI) {
-            pbFile?.let { generatorLoader.load(assets, it) }
-        }
+    fun loadGenerator(pbFile: File?, assets: AssetManager) {
+        pbFile?.let { generatorLoader.load(assets, it) }
     }
 
-    override fun sampleImage(image: Bitmap): Deferred<Bitmap> {
-        return async(UI) {
-            val scaled = Bitmap.createScaledBitmap(image, 256, 256, false)
-            baseImage = scaled
+    override fun sampleImage(image: Bitmap): Bitmap {
+        val scaled = Bitmap.createScaledBitmap(image, 256, 256, false)
+        baseImage = scaled
 
-            encoded = generatorLoader.encode(scaled)
+        encoded = generatorLoader.encode(scaled)
 
-            mask = generatorLoader.mask(scaled)
-            val direction = generatorLoader.random_z()
-            val transformedImage = generatorLoader.sample(encoded!!, 0.0f, mask, direction, scaled!!)
-            imageFromGallery = transformedImage
-            return@async generatorLoader.manipulateBitmap(generatorLoader.width, generatorLoader.height, transformedImage)
-        }
+        mask = generatorLoader.mask(scaled)
+        val direction = generatorLoader.random_z()
+        val transformedImage = generatorLoader.sample(encoded!!, 0.0f, mask, direction, scaled!!)
+        imageFromGallery = transformedImage
+        return generatorLoader.manipulateBitmap(generatorLoader.width, generatorLoader.height, transformedImage)
     }
 
     override fun changePixelToBitmap(transformedImage: IntArray): Bitmap? {
@@ -144,7 +131,10 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
             if (requestCode == SHARE_IMAGE_PERMISSION_REQUEST) {
                 shareImageToOtherApps()
             } else if (requestCode == SAVE_IMAGE_PERMISSION_REQUEST) {
-                saveImageDisplayedToPhone(context)
+                val con = context
+                launch(UI) {
+                    bg { saveImageDisplayedToPhone(con) }.await()
+                }
             }
         }
     }
@@ -170,13 +160,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         view.startCameraActivity()
     }
 
-    override fun convertByteArrayImageToBitmap(): Deferred<Bitmap?> {
-        return async(UI) {
-            byteArrayImage?.let { BitmapManipulator().createBitmapFromByteArray(it) }
-        }
-
+    override fun convertByteArrayImageToBitmap(): Bitmap? {
+        return byteArrayImage?.let { BitmapManipulator().createBitmapFromByteArray(it) }
     }
-
-
-
 }

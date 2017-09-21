@@ -5,17 +5,19 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.*
+import com.pawegio.kandroid.inflateLayout
 import com.pawegio.kandroid.onProgressChanged
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.R
+import hypr.a255bits.com.hypr.Util.negative1To1
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_model.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import org.greenrobot.eventbus.EventBus
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
+import org.jetbrains.anko.coroutines.experimental.bg
 import java.io.File
 
 
@@ -24,7 +26,6 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     var pbFile: File? = null
     val interactor by lazy { ModelInteractor(context) }
     val presenter by lazy { ModelFragmentPresenter(this, interactor, context, pbFile) }
-    var direction: FloatArray? =  null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +48,8 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         lockLayout.visibility = View.VISIBLE
         imageTransitionSeekBar.isEnabled = false
     }
-    override fun unLockModel(){
+
+    override fun unLockModel() {
         lockLayout.visibility = View.INVISIBLE
         imageTransitionSeekBar.isEnabled = true
 
@@ -56,15 +58,30 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         displayImageTransitionSeekbarProgress()
+        randomizeModelClickListener()
+        chooseImageFromGalleryButtonClickListener()
+        lockLayoutClickListener()
+    }
+
+    private fun randomizeModelClickListener() {
         randomizeModel.setOnClickListener {
-            direction = presenter.generatorLoader.random_z()
+            presenter.direction = presenter.generatorLoader.random_z()
             presenter.randomizeModel(imageTransitionSeekBar.progress)
         }
+    }
+
+    private fun chooseImageFromGalleryButtonClickListener() {
         chooseImageFromGalleryButton.setOnClickListener {
             presenter.startCameraActivity()
         }
+    }
+
+    private fun lockLayoutClickListener() {
         lockLayout.setOnClickListener {
-            EventBus.getDefault().post(presenter.generatorIndex)
+            activity.alert("Would you like to buy this model?", "Hypr") {
+                positiveButton("Buy", { EventBus.getDefault().post(presenter.generatorIndex) })
+                cancelButton { dialog -> dialog.dismiss() }
+            }.show()
         }
     }
 
@@ -75,17 +92,18 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     private fun displayImageTransitionSeekbarProgress() {
         imageTransitionSeekBar.onProgressChanged { progress, _ ->
-            val ganValue: Double = presenter.convertToNegative1To1(progress)
-            changeGanImageFromSlider(ganValue)
+            changeGanImageFromSlider(progress.negative1To1())
         }
     }
 
     override fun changeGanImageFromSlider(ganValue: Double) {
         presenter.encoded?.let {
-            val direction = this.direction ?: presenter.generatorLoader.random_z()
-            val ganImage = presenter.generatorLoader.sample(it, ganValue.toFloat(), presenter.mask, direction, presenter.baseImage!!)
-
-            focusedImage.setImageBitmap(presenter.generatorLoader.manipulateBitmap(presenter.generatorLoader.width, presenter.generatorLoader.height, ganImage))
+            launch(UI) {
+                val direction = presenter.direction ?: presenter.generatorLoader.random_z()
+                val ganImage = presenter.generatorLoader.sample(it, ganValue.toFloat(), presenter.mask, direction, presenter.baseImage!!)
+                val manipulatedBitmap = bg{presenter.generatorLoader.manipulateBitmap(presenter.generatorLoader.width, presenter.generatorLoader.height, ganImage)}
+                focusedImage.setImageBitmap(manipulatedBitmap.await())
+            }
         }
     }
 
@@ -110,8 +128,8 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     override fun displayFocusedImage(imageFromGallery: Bitmap) {
         launch(UI) {
-            val transformedImage = presenter.sampleImage(imageFromGallery).await()
-            focusedImage.setImageBitmap(transformedImage)
+            val transformedImage = bg { presenter.sampleImage(imageFromGallery) }
+            focusedImage.setImageBitmap(transformedImage.await())
         }
     }
 

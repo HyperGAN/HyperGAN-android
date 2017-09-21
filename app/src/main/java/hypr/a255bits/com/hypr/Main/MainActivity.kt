@@ -70,9 +70,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun popupSigninGoogle(googleSignInClient: GoogleApiClient) {
-        alert {
-            message = "Would you like to sign into Google?"
-            title = "Sign in to Google"
+        alert("Would you like to sign into Google?", "sign into Google") {
             okButton { signinToGoogle(googleSignInClient) }
             cancelButton { dialog ->
                 dialog.dismiss()
@@ -130,7 +128,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun displayModelDownloadProgress() {
         progressDownloadingModel = progressDialog("Downloading Model") {
-            setMessage("It's downloading..")
             setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
             max = 100
         }
@@ -175,7 +172,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val adapter: SpinnerAdapter = ArrayAdapter<String>(this, R.layout.spinner_dropdown_item, controlNames)
         spinner.let { toolbar.removeView(it) }
         if (controlNames!!.isNotEmpty()) {
-
             this.spinner = Spinner(this)
             spinner?.background?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
             spinner?.adapter = adapter

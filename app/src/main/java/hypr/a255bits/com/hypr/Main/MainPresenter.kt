@@ -14,6 +14,7 @@ import hypr.a255bits.com.hypr.Util.InAppBilling.IabResult
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.collections.forEachWithIndex
+import org.jetbrains.anko.coroutines.experimental.bg
 import java.io.File
 
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter {
@@ -58,7 +59,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun disableModelsIfNotBought(listOfGenerators: List<Generator>?) {
         launch(UI) {
             listOfGenerators?.forEachWithIndex { index, generator ->
-                val isModelBought = interactor.hasBoughtItem(generator.google_play_id)
+                val isModelBought = bg { interactor.hasBoughtItem(generator.google_play_id) }
                 if (!isModelBought.await()) {
                     multiModel?.presenter?.lockModel(index)
                 }

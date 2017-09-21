@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.R
+import hypr.a255bits.com.hypr.Util.onPageSelected
 import kotlinx.android.synthetic.main.fragment_multi_models.*
 import java.io.File
 
@@ -16,8 +17,8 @@ import java.io.File
 class MultiModels : Fragment(), MultiMvp.view {
 
     private var generators: Array<Generator>? = null
-    private var indexOfGenerator: String? = null
-    private var  pathToGenerator: String? = null
+    private var indexOfGenerator: Int? = null
+    private var pathToGenerator: String? = null
     private var image: String? = null
     val presenter: MultiPresenter by lazy { MultiPresenter(this) }
 
@@ -26,7 +27,7 @@ class MultiModels : Fragment(), MultiMvp.view {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
             generators = arguments.getParcelableArray(GENERATORS) as Array<Generator>?
-            indexOfGenerator = arguments.getString(INDEX_OF_GENERATOR_IN_USE)
+            indexOfGenerator = arguments.getInt(INDEX_OF_GENERATOR_IN_USE)
             image = arguments.getString(PATH_TO_IMAGE)
             pathToGenerator = arguments.getString(PATH_TO_GENERATOR)
         }
@@ -44,18 +45,9 @@ class MultiModels : Fragment(), MultiMvp.view {
 
     override fun startModelList(adapter: MultiModelAdapter?) {
         viewpager.adapter = adapter
-        viewpager.addOnPageChangeListener(object: ViewPager.OnPageChangeListener{
-            override fun onPageScrollStateChanged(state: Int) {
-            }
-
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-            }
-
-            override fun onPageSelected(position: Int) {
-                adapter?.addControlNamesToToolbar(adapter.generators[position])
-            }
-
-        })
+        viewpager.onPageSelected { position ->
+            adapter?.addControlNamesToToolbar(adapter.generators[position])
+        }
         sliding_tabs.setupWithViewPager(viewpager)
     }
 
