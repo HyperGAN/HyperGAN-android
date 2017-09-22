@@ -102,10 +102,6 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         }
     }
 
-    override fun attemptToStartModel(itemId: Int) {
-        interactor.attemptToStartModel(itemId)
-    }
-
     override fun createMultiModels(itemId: Int, image: ByteArray?) {
         val generator = interactor.listOfGenerators?.get(itemId)
         if (generator != null) {
@@ -144,11 +140,12 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             buyGenerators = mutableListOf()
             generators?.forEachIndexed { index, generator ->
                 view.addModelsToNavBar(generator, index)
-                if (isModelFragmentDisplayed) {
-                    indexInJson?.let { createMultiModels(it, image) }
-                } else {
-                    view.displayGeneratorsOnHomePage(buyGenerators)
-                }
+
+            }
+            if (isModelFragmentDisplayed) {
+                indexInJson?.let { createMultiModels(it, image) }
+            } else {
+                view.displayGeneratorsOnHomePage(buyGenerators)
             }
         }
     }

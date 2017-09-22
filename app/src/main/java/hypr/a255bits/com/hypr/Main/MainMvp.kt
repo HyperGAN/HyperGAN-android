@@ -37,7 +37,6 @@ interface MainMvp {
         fun stopInAppBilling()
         fun  signInToGoogle(googleSignInClient: GoogleApiClient)
         fun  buyModel(skus: String, generatorIndex: Int)
-        fun attemptToStartModel(itemId: Int)
         fun onNavigationItemSelected(item: MenuItem)
         fun disableModelsIfNotBought(listOfGenerators: List<Generator>?)
         fun onOptionsItemSelected(item: MenuItem?)
@@ -51,7 +50,6 @@ interface MainMvp {
         fun showProgressOfFirebaseDownload(firebaseDownloader: FileDownloadTask)
         fun stopInAppBilling()
         fun hasBoughtItem(itemId: String): Boolean
-        fun attemptToStartModel(itemId: Int)
     }
 
 }

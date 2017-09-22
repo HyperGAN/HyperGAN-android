@@ -14,7 +14,6 @@ import hypr.a255bits.com.hypr.Util.InAppBilling.Inventory
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.coroutines.experimental.bg
 import java.io.File
@@ -50,19 +49,6 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
             hasBoughtItem = inventory.hasPurchase(itemId)
         }
         return hasBoughtItem
-    }
-
-    override fun attemptToStartModel(itemId: Int) {
-        launch(UI) {
-            val productId = listOfGenerators?.get(itemId)?.google_play_id
-            productId?.let {
-                if (bg { hasBoughtItem(it) }.await()) {
-                    presenter?.startModel(itemId)
-                } else {
-                    buyProduct(it)
-                }
-            }
-        }
     }
 
     suspend fun buyProduct(productId: String) {
