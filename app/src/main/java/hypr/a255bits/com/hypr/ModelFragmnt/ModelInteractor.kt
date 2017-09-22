@@ -42,12 +42,8 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
 
     @Throws(IOException::class)
     override fun getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context): MutableList<Bitmap> {
-        val faceLocations: SparseArray<Face>? = getFaceLocations(imageWithFaces, context)
+        val faceLocations: SparseArray<Face>? = faceDetection.getFaceLocations(imageWithFaces, context)
         return faceDetection.getListOfFaces(faceLocations, imageWithFaces)
     }
 
-    @Throws(IOException::class)
-    private fun getFaceLocations(imageWithFaces: Bitmap, context: Context): SparseArray<Face>? {
-        return faceDetection.getFaceLocations(imageWithFaces, context)
-    }
 }

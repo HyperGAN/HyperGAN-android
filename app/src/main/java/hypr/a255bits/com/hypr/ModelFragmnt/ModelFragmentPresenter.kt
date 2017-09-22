@@ -9,9 +9,7 @@ import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorLoader
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.*
-import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.toast
@@ -54,7 +52,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     }
 
     override fun readImageToBytes(imagePath: String?) {
-        byteArrayImage = imagePath?.let {  File(it).readBytes()}
+        byteArrayImage = imagePath?.let { File(it).readBytes() }
     }
 
     fun shareImageToOtherApps() {
@@ -71,16 +69,20 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         view.changeGanImageFromSlider(progress.negative1To1())
     }
 
-    override fun findFacesInImage(imageWithFaces: Bitmap, context: Context) {
+    override fun findFacesInImage(imageWithFaces: Bitmap?, context: Context) {
         try {
-            launch(UI){
-            val croppedFaces: MutableList<Bitmap> = interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)
-            if (isFacesDetected(croppedFaces)) {
-                view.displayFocusedImage(croppedFaces[0])
-            } else {
-                view.displayFocusedImage(imageWithFaces)
+            launch(UI) {
+                if (imageWithFaces == null) {
+                    view.displayFocusedImage(imageWithFaces)
+                } else {
+                    val croppedFaces: MutableList<Bitmap> = interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)
+                    if (isFacesDetected(croppedFaces)) {
+                        view.displayFocusedImage(croppedFaces[0])
+                    } else {
+                        view.displayFocusedImage(imageWithFaces)
+                    }
+                }
             }
-        }
         } catch (exception: IOException) {
             view.showError(exception.localizedMessage)
         }
@@ -102,22 +104,30 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     }
 
     override fun transformImage(normalImage: Bitmap?) {
-        normalImage?.let { findFacesInImage(it, context) }
+        findFacesInImage(normalImage, context)
     }
 
     fun loadGenerator(pbFile: File?, assets: AssetManager) {
         pbFile?.let { generatorLoader.load(assets, it) }
     }
 
-    override fun sampleImage(image: Bitmap): Bitmap {
-        val scaled = Bitmap.createScaledBitmap(image, 256, 256, false)
-        baseImage = scaled
-
-        encoded = generatorLoader.encode(scaled)
-
-        mask = generatorLoader.mask(scaled)
+    override fun sampleImage(image: Bitmap?): Bitmap {
+        val transformedImage: IntArray?
         val direction = generatorLoader.random_z()
-        val transformedImage = generatorLoader.sample(encoded!!, 0.0f, mask, direction, scaled!!)
+
+        if (image != null) {
+            val scaled = Bitmap.createScaledBitmap(image, 256, 256, false)
+            encoded = generatorLoader.encode(scaled)
+
+            mask = generatorLoader.mask(scaled)
+            transformedImage = generatorLoader.sample(encoded!!, 0.0f, mask, direction, scaled!!)
+        } else {
+            val scaled = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888)
+            encoded = generatorLoader.encode(scaled)
+
+            baseImage = scaled
+            transformedImage = generatorLoader.sampleRandom(encoded!!, 0.0f, direction)
+        }
         imageFromGallery = transformedImage
         return generatorLoader.manipulateBitmap(generatorLoader.width, generatorLoader.height, transformedImage)
     }

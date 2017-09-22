@@ -124,7 +124,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         context.toast(errorMesssage)
     }
 
-    override fun displayFocusedImage(imageFromGallery: Bitmap) {
+    override fun displayFocusedImage(imageFromGallery: Bitmap?) {
         launch(UI) {
             val transformedImage = bg { presenter.sampleImage(imageFromGallery) }
             focusedImage.setImageBitmap(transformedImage.await())

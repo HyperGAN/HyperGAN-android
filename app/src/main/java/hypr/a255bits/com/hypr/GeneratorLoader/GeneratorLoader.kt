@@ -65,6 +65,32 @@ class GeneratorLoader {
         return floatValues
     }
 
+    fun sampleRandom(z: FloatArray, slider: Float, direction: FloatArray): IntArray {
+        val scaled = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888)
+        val mask = mask(scaled)
+        feedInput(scaled)
+        mask.forEachIndexed{ index, item->
+            mask[index] = 0.0f
+        }
+
+        this.inference.feed("concat", z, *z_dims_array)
+        this.inference.feed("direction", direction, *z_dims_array)
+
+        val maskDims = longArrayOf(1, width.toLong(), height.toLong(), 1)
+        this.inference.feed("Tanh_1", mask, *maskDims)
+
+        val dims = longArrayOf(1.toLong(), 1.toLong())
+        this.inference.feed("slider", floatArrayOf(slider), *dims)
+        this.inference.run(arrayOf("add_21"))
+        //inference.readNodeFloat(OUTPUT_NODE, resu)
+
+        //inference.run(..)
+        this.inference.fetch("add_21", this.raw)
+
+        val pixelsInBitmap = manipulatePixelsInBitmap()
+        return pixelsInBitmap
+    }
+
     fun get_z(z:FloatArray, slider:Float, direction:FloatArray): FloatArray {
         val floatValues = FloatArray(z_dims)
 
