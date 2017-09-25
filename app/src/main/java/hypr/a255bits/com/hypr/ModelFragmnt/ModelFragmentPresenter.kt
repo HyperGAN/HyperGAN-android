@@ -7,7 +7,6 @@ import android.graphics.Bitmap
 import android.view.MenuItem
 import hypr.a255bits.com.hypr.Generator.Control
 import hypr.a255bits.com.hypr.GeneratorLoader.EasyGeneratorLoader
-import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorLoader
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.*
 import kotlinx.coroutines.experimental.android.UI
@@ -43,10 +42,6 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
 
     override fun disconnectFaceDetector() {
         interactor.faceDetection.release()
-    }
-
-    override fun displayTitleSpinner() {
-
     }
 
     override fun readImageToBytes(imagePath: String?) {

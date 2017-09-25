@@ -37,7 +37,6 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        presenter.displayTitleSpinner()
         setHasOptionsMenu(true)
         return inflater!!.inflate(R.layout.fragment_model, container, false)
     }
