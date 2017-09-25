@@ -117,15 +117,16 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
 
         if (image != null) {
             val scaled = Bitmap.createScaledBitmap(image, 256, 256, false)
+            baseImage = scaled
             encoded = generatorLoader.encode(scaled)
 
             mask = generatorLoader.mask(scaled)
             transformedImage = generatorLoader.sample(encoded!!, 0.0f, mask, direction, scaled!!)
         } else {
             val scaled = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888)
+            baseImage = scaled
             encoded = generatorLoader.encode(scaled)
 
-            baseImage = scaled
             transformedImage = generatorLoader.sampleRandom(encoded!!, 0.0f, direction)
         }
         imageFromGallery = transformedImage
@@ -141,9 +142,9 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
             if (requestCode == SHARE_IMAGE_PERMISSION_REQUEST) {
                 shareImageToOtherApps()
             } else if (requestCode == SAVE_IMAGE_PERMISSION_REQUEST) {
-                val con = context
+                val coroutineContext = context
                 launch(UI) {
-                    bg { saveImageDisplayedToPhone(con) }.await()
+                    bg { saveImageDisplayedToPhone(coroutineContext) }.await()
                 }
             }
         }
