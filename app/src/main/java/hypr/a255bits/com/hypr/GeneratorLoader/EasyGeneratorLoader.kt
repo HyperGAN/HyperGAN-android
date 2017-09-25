@@ -2,10 +2,6 @@ package hypr.a255bits.com.hypr.GeneratorLoader
 
 import android.graphics.Bitmap
 
-/**
- * Created by tedho on 9/25/2017.
- */
-
 class EasyGeneratorLoader: GeneratorLoader(){
     var baseImage: Bitmap? = null
     var encoded: FloatArray? = null
