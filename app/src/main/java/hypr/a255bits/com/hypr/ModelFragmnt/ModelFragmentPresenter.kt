@@ -112,25 +112,31 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     }
 
     override fun sampleImage(image: Bitmap?): Bitmap {
-        val transformedImage: IntArray?
         val direction = generatorLoader.random_z()
-
-        if (image != null) {
-            val scaled = Bitmap.createScaledBitmap(image, 256, 256, false)
-            baseImage = scaled
-            encoded = generatorLoader.encode(scaled)
-
-            mask = generatorLoader.mask(scaled)
-            transformedImage = generatorLoader.sample(encoded!!, 0.0f, mask, direction, scaled!!)
+        val transformedImage = if (image != null) {
+            sampleImageWithImage(image, direction)
         } else {
-            val scaled = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888)
-            baseImage = scaled
-            encoded = generatorLoader.encode(scaled)
+            sampleImageWithoutImage(direction)
 
-            transformedImage = generatorLoader.sampleRandom(encoded!!, 0.0f, direction)
         }
         imageFromGallery = transformedImage
         return generatorLoader.manipulateBitmap(generatorLoader.width, generatorLoader.height, transformedImage)
+    }
+
+    private fun sampleImageWithImage(image: Bitmap?, direction: FloatArray): IntArray {
+        val scaled = Bitmap.createScaledBitmap(image, 256, 256, false)
+        baseImage = scaled
+        encoded = generatorLoader.encode(scaled)
+
+        mask = generatorLoader.mask(scaled)
+        return generatorLoader.sample(encoded!!, 0.0f, mask, direction, scaled)
+    }
+
+    private fun sampleImageWithoutImage(direction: FloatArray): IntArray {
+        val scaled = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888)
+        baseImage = scaled
+        encoded = generatorLoader.encode(scaled)
+        return generatorLoader.sampleRandom(encoded!!, 0.0f, direction)
     }
 
     override fun changePixelToBitmap(transformedImage: IntArray): Bitmap? {
