@@ -6,8 +6,8 @@ import android.preference.PreferenceManager
 
 class SettingsHelper(context: Context) {
     val FIRST_TIME_OPENED = "firstTimeOpened"
-    val preference = PreferenceManager.getDefaultSharedPreferences(context)
-    val editor = PreferenceManager.getDefaultSharedPreferences(context)
+    val preference: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+    val editor: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     fun isFirstTimeOpenedApp(): Boolean{
         return preference.getBoolean(FIRST_TIME_OPENED, true)

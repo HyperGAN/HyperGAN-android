@@ -15,8 +15,11 @@ import kotlinx.android.synthetic.main.fragment_model.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import org.greenrobot.eventbus.EventBus
-import org.jetbrains.anko.*
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.cancelButton
 import org.jetbrains.anko.coroutines.experimental.bg
+import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.toast
 import java.io.File
 
 

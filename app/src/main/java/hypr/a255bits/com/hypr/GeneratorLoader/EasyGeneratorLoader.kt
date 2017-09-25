@@ -17,10 +17,11 @@ class EasyGeneratorLoader: GeneratorLoader(){
         return this.sample(encoded!!, 0.0f, mask, direction, scaled)
     }
     fun sampleImageWithoutImage(): IntArray {
-        val direction = this.random_z()
         val scaled = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888)
+        mask = this.mask(scaled)
+        val direction = this.random_z()
         baseImage = scaled
         encoded = this.encode(scaled)
-        return this.sampleRandom(encoded!!, 0.0f, direction)
+        return this.sampleRandom(encoded!!, 0.0f, direction, mask!!, scaled)
     }
 }

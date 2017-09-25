@@ -8,10 +8,7 @@ import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.View
-import com.flurgle.camerakit.CameraListener
 import com.flurgle.camerakit.CameraView
-import com.pawegio.kandroid.alarmManager
-import com.pawegio.kandroid.startForResult
 import hypr.a255bits.com.hypr.Main.MainActivity
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.onPictureTaken

@@ -50,8 +50,7 @@ open class GeneratorLoader {
         //inference.run(..)
         this.inference.fetch("add_21", this.raw)
 
-        val pixelsInBitmap = manipulatePixelsInBitmap()
-        return pixelsInBitmap
+        return manipulatePixelsInBitmap()
     }
 
     fun mask(bitmap: Bitmap): FloatArray {
@@ -65,9 +64,7 @@ open class GeneratorLoader {
         return floatValues
     }
 
-    fun sampleRandom(z: FloatArray, slider: Float, direction: FloatArray): IntArray {
-        val scaled = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888)
-        val mask = mask(scaled)
+    fun sampleRandom(z: FloatArray, slider: Float, direction: FloatArray, mask: FloatArray, scaled: Bitmap): IntArray {
         feedInput(scaled)
         mask.forEachIndexed{ index, item->
             mask[index] = 0.0f
@@ -87,8 +84,7 @@ open class GeneratorLoader {
         //inference.run(..)
         this.inference.fetch("add_21", this.raw)
 
-        val pixelsInBitmap = manipulatePixelsInBitmap()
-        return pixelsInBitmap
+        return manipulatePixelsInBitmap()
     }
 
     fun get_z(z:FloatArray, slider:Float, direction:FloatArray): FloatArray {
@@ -125,7 +121,7 @@ open class GeneratorLoader {
 
         this.inference.run(arrayOf("Tanh"))
 
-        val z: FloatArray = FloatArray(z_dims)
+        val z = FloatArray(z_dims)
 
         this.inference.fetch("Tanh", z)
 
@@ -134,7 +130,7 @@ open class GeneratorLoader {
     fun random_z(): FloatArray {
         this.inference.run(arrayOf("random_z"))
 
-        val z: FloatArray = FloatArray(z_dims)
+        val z = FloatArray(z_dims)
 
         this.inference.fetch("random_z", z)
 
