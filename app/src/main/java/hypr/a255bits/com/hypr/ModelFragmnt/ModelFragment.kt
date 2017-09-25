@@ -63,7 +63,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     private fun randomizeModelClickListener() {
         randomizeModel.setOnClickListener {
-            presenter.direction = presenter.generatorLoader.random_z()
+            presenter.direction = presenter.easyGenerator.random_z()
             presenter.randomizeModel(imageTransitionSeekBar.progress)
         }
     }
@@ -95,12 +95,14 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     override fun changeGanImageFromSlider(ganValue: Double) {
-            launch(UI) {
-                val direction = presenter.direction ?: presenter.generatorLoader.random_z()
-                val ganImage = presenter.generatorLoader.sample(presenter.encoded!!, ganValue.toFloat(), presenter.mask, direction, presenter.baseImage!!)
-                val manipulatedBitmap = bg{presenter.generatorLoader.manipulateBitmap(presenter.generatorLoader.width, presenter.generatorLoader.height, ganImage)}
+        launch(UI) {
+            with(presenter) {
+                val direction = direction ?: easyGenerator.random_z()
+                val ganImage = easyGenerator.sample(easyGenerator.encoded!!, ganValue.toFloat(), easyGenerator.mask, direction, easyGenerator.baseImage!!)
+                val manipulatedBitmap = bg { easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, ganImage) }
                 focusedImage.setImageBitmap(manipulatedBitmap.await())
             }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

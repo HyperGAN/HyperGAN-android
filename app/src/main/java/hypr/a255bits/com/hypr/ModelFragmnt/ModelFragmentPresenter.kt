@@ -6,6 +6,7 @@ import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.view.MenuItem
 import hypr.a255bits.com.hypr.Generator.Control
+import hypr.a255bits.com.hypr.GeneratorLoader.EasyGeneratorLoader
 import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorLoader
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.*
@@ -34,12 +35,9 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     var imageFromGallery: IntArray? = null
     val SHARE_IMAGE_PERMISSION_REQUEST = 10
     val SAVE_IMAGE_PERMISSION_REQUEST: Int = 11
-    val generatorLoader = GeneratorLoader()
+    val easyGenerator = EasyGeneratorLoader()
     var modelUrl: Array<Control>? = null
     var byteArrayImage: ByteArray? = null
-    var baseImage: Bitmap? = null
-    var mask: FloatArray? = null
-    var encoded: FloatArray? = null
     var generatorIndex: Int? = null
     var direction: FloatArray? = null
 
@@ -108,39 +106,21 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     }
 
     fun loadGenerator(pbFile: File?, assets: AssetManager) {
-        pbFile?.let { generatorLoader.load(assets, it) }
+        pbFile?.let { easyGenerator.load(assets, it) }
     }
 
     override fun sampleImage(image: Bitmap?): Bitmap {
-        val direction = generatorLoader.random_z()
         val transformedImage = if (image != null) {
-            sampleImageWithImage(image, direction)
+            easyGenerator.sampleImageWithImage(image)
         } else {
-            sampleImageWithoutImage(direction)
-
+            easyGenerator.sampleImageWithoutImage()
         }
         imageFromGallery = transformedImage
-        return generatorLoader.manipulateBitmap(generatorLoader.width, generatorLoader.height, transformedImage)
-    }
-
-    private fun sampleImageWithImage(image: Bitmap?, direction: FloatArray): IntArray {
-        val scaled = Bitmap.createScaledBitmap(image, 256, 256, false)
-        baseImage = scaled
-        encoded = generatorLoader.encode(scaled)
-
-        mask = generatorLoader.mask(scaled)
-        return generatorLoader.sample(encoded!!, 0.0f, mask, direction, scaled)
-    }
-
-    private fun sampleImageWithoutImage(direction: FloatArray): IntArray {
-        val scaled = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888)
-        baseImage = scaled
-        encoded = generatorLoader.encode(scaled)
-        return generatorLoader.sampleRandom(encoded!!, 0.0f, direction)
+        return easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, transformedImage)
     }
 
     override fun changePixelToBitmap(transformedImage: IntArray): Bitmap? {
-        return generatorLoader.manipulateBitmap(generatorLoader.width, generatorLoader.height, transformedImage)
+        return easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, transformedImage)
     }
 
     override fun onRequestPermissionResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

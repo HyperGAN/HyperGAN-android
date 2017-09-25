@@ -6,7 +6,7 @@ import android.util.Log
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface
 import java.io.File
 
-class GeneratorLoader {
+open class GeneratorLoader {
     lateinit var inference: TensorFlowInferenceInterface
     val PB_FILE_PATH: String = "file:///android_asset/generators/optimized_weight_conv.pb"
 
