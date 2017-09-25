@@ -108,13 +108,13 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             val imageLocation = saveImageSoOtherFragmentCanViewIt(image)
             displayMultiModels(itemId, imageLocation.path, interactor.listOfGenerators)
         }
-        disableModelsIfNotBought(interactor.listOfGenerators)
     }
 
     private fun displayMultiModels(itemId: Int, imageLocationPath: String?, listOfGenerators: List<Generator>?) {
         multiModel = MultiModels.newInstance(listOfGenerators, itemId, imageLocationPath, file)
         view.startMultipleModels(multiModel!!)
 //        view.displayBackButton()
+        disableModelsIfNotBought(interactor.listOfGenerators)
     }
 
     fun saveImageSoOtherFragmentCanViewIt(image: ByteArray?): File {
