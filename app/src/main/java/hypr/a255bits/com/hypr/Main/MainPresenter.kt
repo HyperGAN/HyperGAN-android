@@ -17,9 +17,6 @@ import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.collections.forEachWithIndex
 import org.jetbrains.anko.coroutines.experimental.bg
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
 
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter {
 

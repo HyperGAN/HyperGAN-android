@@ -25,7 +25,7 @@ open class GeneratorLoader {
 
     fun load(assets: AssetManager, file: File){
         System.loadLibrary("tensorflow_inference")
-        this.inference = TensorFlowInferenceInterface(assets, PB_FILE_PATH)
+        this.inference = TensorFlowInferenceInterface(assets, file.absolutePath)
         //this.inference = TensorFlowInferenceInterface(assets, file.absolutePath)
 
     }
