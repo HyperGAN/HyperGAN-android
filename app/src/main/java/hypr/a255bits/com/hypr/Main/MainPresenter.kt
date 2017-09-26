@@ -25,7 +25,9 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     val ZERO_PERCENT: Float = 0.0f
     val SIGN_INTO_GOOGLE_RESULT: Int = 12
-    val modelFileNames = listOf<String>("expression.pb", "halloween.pb").map { File(context.filesDir, it).absolutePath }
+    val modelFileNames = listOf<String>("expression-model.pb", "halloween-model.pb").map {
+        File(context.filesDir, it).absolutePath
+    }
 
     private val DOWNLOAD_COMPLETE: Float = 100.0f
     var buyGenerators: MutableList<BuyGenerator> = mutableListOf()
