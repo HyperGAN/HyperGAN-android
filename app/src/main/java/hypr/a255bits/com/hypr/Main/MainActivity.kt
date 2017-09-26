@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         presenter.isModelFragmentDisplayed = intent.hasExtra("indexInJson")
         if (presenter.isModelFragmentDisplayed) {
             presenter.indexInJson = intent.extras.getInt("indexInJson")
-            presenter.image = intent.extras.getByteArray("image")
+            presenter.image = intent.extras.getString("image")
         }
 //        setupDrawer(toolbar)
 

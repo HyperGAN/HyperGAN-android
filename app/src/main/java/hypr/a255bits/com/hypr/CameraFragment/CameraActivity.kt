@@ -11,10 +11,12 @@ import android.view.View
 import com.flurgle.camerakit.CameraView
 import hypr.a255bits.com.hypr.Main.MainActivity
 import hypr.a255bits.com.hypr.R
+import hypr.a255bits.com.hypr.Util.ImageSaver
 import hypr.a255bits.com.hypr.Util.onPictureTaken
 import kotlinx.android.synthetic.main.activity_camera.*
 import org.jetbrains.anko.clearTop
 import org.jetbrains.anko.intentFor
+import java.io.File
 
 class CameraActivity : AppCompatActivity(), CameraMVP.view {
 
@@ -82,7 +84,14 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
     }
 
     override fun sendImageToModel(image: ByteArray?) {
+        val file = saveImageSoOtherFragmentCanViewIt(image)
         startActivity(intentFor<MainActivity>
-        ("indexInJson" to indexInJson, "image" to image).clearTop())
+        ("indexInJson" to indexInJson, "image" to file.path).clearTop())
+    }
+    fun saveImageSoOtherFragmentCanViewIt(image: ByteArray?): File {
+        val file = File.createTempFile("image", "png")
+        ImageSaver().saveImageToFile(file, image)
+        return file
+
     }
 }
