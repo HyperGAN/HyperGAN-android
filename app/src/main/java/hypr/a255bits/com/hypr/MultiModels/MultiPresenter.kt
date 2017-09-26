@@ -8,8 +8,8 @@ import java.io.File
 class MultiPresenter(val view: MultiMvp.view): MultiMvp.presenter{
 
     var adapter: MultiModelAdapter? = null
-    override fun startModelsList(generators: Array<Generator>?, fragmentManager: FragmentManager, image: String?, file: File) {
-        adapter = generators?.let { MultiModelAdapter(fragmentManager, it, image, file) }
+    override fun startModelsList(generators: Array<Generator>?, fragmentManager: FragmentManager, image: String?, paths: Array<String?>) {
+        adapter = generators?.let { MultiModelAdapter(fragmentManager, it, image, File(paths[0])) }
         view.startModelList(adapter)
     }
 

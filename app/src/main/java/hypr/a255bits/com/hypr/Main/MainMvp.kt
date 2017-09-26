@@ -33,7 +33,7 @@ interface MainMvp {
         fun downloadingModelFinished()
         fun startModel(itemId: Int)
         fun createMultiModels(itemId: Int, image: ByteArray?)
-        fun createGeneratorLoader(itemId: File, itemId1: Int)
+        fun createGeneratorLoader(file: String, itemId1: Int)
         fun stopInAppBilling()
         fun  signInToGoogle(googleSignInClient: GoogleApiClient)
         fun  buyModel(skus: String, generatorIndex: Int)
