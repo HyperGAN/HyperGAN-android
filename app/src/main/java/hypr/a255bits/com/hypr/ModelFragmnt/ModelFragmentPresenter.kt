@@ -6,12 +6,10 @@ import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.view.MenuItem
 import hypr.a255bits.com.hypr.Generator.Control
-import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorLoader
+import hypr.a255bits.com.hypr.GeneratorLoader.EasyGeneratorLoader
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.*
-import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.toast
@@ -36,12 +34,9 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     var imageFromGallery: IntArray? = null
     val SHARE_IMAGE_PERMISSION_REQUEST = 10
     val SAVE_IMAGE_PERMISSION_REQUEST: Int = 11
-    val generatorLoader = GeneratorLoader()
+    val easyGenerator = EasyGeneratorLoader()
     var modelUrl: Array<Control>? = null
     var byteArrayImage: ByteArray? = null
-    var baseImage: Bitmap? = null
-    var mask: FloatArray? = null
-    var encoded: FloatArray? = null
     var generatorIndex: Int? = null
     var direction: FloatArray? = null
 
@@ -49,12 +44,8 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         interactor.faceDetection.release()
     }
 
-    override fun displayTitleSpinner() {
-
-    }
-
     override fun readImageToBytes(imagePath: String?) {
-        byteArrayImage = File(imagePath).readBytes()
+        byteArrayImage = imagePath?.let { File(it).readBytes() }
     }
 
     fun shareImageToOtherApps() {
@@ -71,16 +62,20 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         view.changeGanImageFromSlider(progress.negative1To1())
     }
 
-    override fun findFacesInImage(imageWithFaces: Bitmap, context: Context) {
+    override fun findFacesInImage(imageWithFaces: Bitmap?, context: Context) {
         try {
-            launch(UI){
-            val croppedFaces: MutableList<Bitmap> = interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)
-            if (isFacesDetected(croppedFaces)) {
-                view.displayFocusedImage(croppedFaces[0])
-            } else {
-                view.displayFocusedImage(imageWithFaces)
+            launch(UI) {
+                if (imageWithFaces == null) {
+                    view.displayFocusedImage(imageWithFaces)
+                } else {
+                    val croppedFaces: MutableList<Bitmap> = interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)
+                    if (isFacesDetected(croppedFaces)) {
+                        view.displayFocusedImage(croppedFaces[0])
+                    } else {
+                        view.displayFocusedImage(imageWithFaces)
+                    }
+                }
             }
-        }
         } catch (exception: IOException) {
             view.showError(exception.localizedMessage)
         }
@@ -102,28 +97,25 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     }
 
     override fun transformImage(normalImage: Bitmap?) {
-        normalImage?.let { findFacesInImage(it, context) }
+        findFacesInImage(normalImage, context)
     }
 
     fun loadGenerator(pbFile: File?, assets: AssetManager) {
-        pbFile?.let { generatorLoader.load(assets, it) }
+        pbFile?.let { easyGenerator.load(assets, it) }
     }
 
-    override fun sampleImage(image: Bitmap): Bitmap {
-        val scaled = Bitmap.createScaledBitmap(image, 256, 256, false)
-        baseImage = scaled
-
-        encoded = generatorLoader.encode(scaled)
-
-        mask = generatorLoader.mask(scaled)
-        val direction = generatorLoader.random_z()
-        val transformedImage = generatorLoader.sample(encoded!!, 0.0f, mask, direction, scaled!!)
+    override fun sampleImage(image: Bitmap?): Bitmap {
+        val transformedImage = if (image != null) {
+            easyGenerator.sampleImageWithImage(image)
+        } else {
+            easyGenerator.sampleImageWithoutImage()
+        }
         imageFromGallery = transformedImage
-        return generatorLoader.manipulateBitmap(generatorLoader.width, generatorLoader.height, transformedImage)
+        return easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, transformedImage)
     }
 
     override fun changePixelToBitmap(transformedImage: IntArray): Bitmap? {
-        return generatorLoader.manipulateBitmap(generatorLoader.width, generatorLoader.height, transformedImage)
+        return easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, transformedImage)
     }
 
     override fun onRequestPermissionResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -131,9 +123,9 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
             if (requestCode == SHARE_IMAGE_PERMISSION_REQUEST) {
                 shareImageToOtherApps()
             } else if (requestCode == SAVE_IMAGE_PERMISSION_REQUEST) {
-                val con = context
+                val coroutineContext = context
                 launch(UI) {
-                    bg { saveImageDisplayedToPhone(con) }.await()
+                    bg { saveImageDisplayedToPhone(coroutineContext) }.await()
                 }
             }
         }

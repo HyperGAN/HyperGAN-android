@@ -31,8 +31,7 @@ class GeneratorFacePosition{
         val bitmap:Bitmap =Bitmap.createBitmap(bitmapWithPadding, x1+offsetX, y1+offsetY, w, h)
         val maxSize:Int = intArrayOf(bitmap.height, bitmap.width).min()!!
 
-        val scaledBitmap = getResizedBitmap(bitmap, maxSize, maxSize)
-        return scaledBitmap
+        return getResizedBitmap(bitmap, maxSize, maxSize)
     }
 
     private fun  placePaddingAroundBitmap(imageWithFaces: Bitmap, offsetX: Int, offsetY: Int): Bitmap {
@@ -40,7 +39,7 @@ class GeneratorFacePosition{
         val wpad = imageWithFaces.width + offsetX*2
 
         val padded:Bitmap =Bitmap.createBitmap(wpad, hpad, Bitmap.Config.ARGB_8888)
-        val canvas:Canvas = Canvas(padded)
+        val canvas = Canvas(padded)
         canvas.drawBitmap(imageWithFaces, offsetX.toFloat(), offsetY.toFloat(), null)
         return padded
     }

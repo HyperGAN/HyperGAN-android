@@ -18,6 +18,5 @@ interface CameraMVP{
         fun onOptionsItemSelected(item: MenuItem?)
         fun displayGallery()
     }
-    interface interactor{
-    }
+    interface interactor
 }

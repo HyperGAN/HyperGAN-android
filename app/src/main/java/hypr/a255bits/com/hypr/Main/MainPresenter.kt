@@ -11,6 +11,7 @@ import hypr.a255bits.com.hypr.Util.Analytics
 import hypr.a255bits.com.hypr.Util.AnalyticsEvent
 import hypr.a255bits.com.hypr.Util.ImageSaver
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabResult
+import hypr.a255bits.com.hypr.Util.SettingsHelper
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.collections.forEachWithIndex
@@ -29,6 +30,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     var isModelFragmentDisplayed: Boolean = false
     var indexInJson: Int? = null
     var image: ByteArray? = null
+    val settingsHelper = SettingsHelper(context)
 
     init {
         interactor.presenter = this
@@ -53,7 +55,13 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
                 analytics.logEvent(AnalyticsEvent.GENERATOR_DOWNLOAD)
             }
         }
-        view.startCameraActivity(itemId)
+
+        if (settingsHelper.isFirstTimeOpenedApp()) {
+            displayMultiModels(itemId, null, interactor.listOfGenerators)
+            settingsHelper.setAppOpenedAlready()
+        } else {
+            view.startCameraActivity(itemId)
+        }
     }
 
     override fun disableModelsIfNotBought(listOfGenerators: List<Generator>?) {
@@ -94,23 +102,19 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         }
     }
 
-    override fun attemptToStartModel(itemId: Int) {
-        interactor.attemptToStartModel(itemId)
-    }
-
     override fun createMultiModels(itemId: Int, image: ByteArray?) {
         val generator = interactor.listOfGenerators?.get(itemId)
         if (generator != null) {
             val imageLocation = saveImageSoOtherFragmentCanViewIt(image)
             displayMultiModels(itemId, imageLocation.path, interactor.listOfGenerators)
         }
-        disableModelsIfNotBought(interactor.listOfGenerators)
     }
 
-    private fun displayMultiModels(itemId: Int, imageLocationPath: String, listOfGenerators: List<Generator>?) {
+    private fun displayMultiModels(itemId: Int, imageLocationPath: String?, listOfGenerators: List<Generator>?) {
         multiModel = MultiModels.newInstance(listOfGenerators, itemId, imageLocationPath, file)
         view.startMultipleModels(multiModel!!)
-        view.displayBackButton()
+//        view.displayBackButton()
+        disableModelsIfNotBought(interactor.listOfGenerators)
     }
 
     fun saveImageSoOtherFragmentCanViewIt(image: ByteArray?): File {
@@ -136,11 +140,12 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             buyGenerators = mutableListOf()
             generators?.forEachIndexed { index, generator ->
                 view.addModelsToNavBar(generator, index)
-                if (isModelFragmentDisplayed) {
-                    indexInJson?.let { createMultiModels(it, image) }
-                } else {
-                    view.displayGeneratorsOnHomePage(buyGenerators)
-                }
+
+            }
+            if (isModelFragmentDisplayed) {
+                indexInJson?.let { createMultiModels(it, image) }
+            } else {
+                view.displayGeneratorsOnHomePage(buyGenerators)
             }
         }
     }

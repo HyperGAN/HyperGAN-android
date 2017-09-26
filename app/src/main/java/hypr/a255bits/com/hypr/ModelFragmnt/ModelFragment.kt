@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.*
-import com.pawegio.kandroid.inflateLayout
 import com.pawegio.kandroid.onProgressChanged
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator.Control
@@ -16,8 +15,11 @@ import kotlinx.android.synthetic.main.fragment_model.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import org.greenrobot.eventbus.EventBus
-import org.jetbrains.anko.*
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.cancelButton
 import org.jetbrains.anko.coroutines.experimental.bg
+import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.toast
 import java.io.File
 
 
@@ -38,10 +40,8 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val view = inflater!!.inflate(R.layout.fragment_model, container, false)
-        presenter.displayTitleSpinner()
         setHasOptionsMenu(true)
-        return view
+        return inflater!!.inflate(R.layout.fragment_model, container, false)
     }
 
     override fun lockModel() {
@@ -65,7 +65,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     private fun randomizeModelClickListener() {
         randomizeModel.setOnClickListener {
-            presenter.direction = presenter.generatorLoader.random_z()
+            presenter.direction = presenter.easyGenerator.random_z()
             presenter.randomizeModel(imageTransitionSeekBar.progress)
         }
     }
@@ -97,11 +97,11 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     override fun changeGanImageFromSlider(ganValue: Double) {
-        presenter.encoded?.let {
-            launch(UI) {
-                val direction = presenter.direction ?: presenter.generatorLoader.random_z()
-                val ganImage = presenter.generatorLoader.sample(it, ganValue.toFloat(), presenter.mask, direction, presenter.baseImage!!)
-                val manipulatedBitmap = bg{presenter.generatorLoader.manipulateBitmap(presenter.generatorLoader.width, presenter.generatorLoader.height, ganImage)}
+        launch(UI) {
+            with(presenter) {
+                val direction = direction ?: easyGenerator.random_z()
+                val ganImage = easyGenerator.sample(easyGenerator.encoded!!, ganValue.toFloat(), easyGenerator.mask, direction, easyGenerator.baseImage!!)
+                val manipulatedBitmap = bg { easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, ganImage) }
                 focusedImage.setImageBitmap(manipulatedBitmap.await())
             }
         }
@@ -126,7 +126,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         context.toast(errorMesssage)
     }
 
-    override fun displayFocusedImage(imageFromGallery: Bitmap) {
+    override fun displayFocusedImage(imageFromGallery: Bitmap?) {
         launch(UI) {
             val transformedImage = bg { presenter.sampleImage(imageFromGallery) }
             focusedImage.setImageBitmap(transformedImage.await())
@@ -153,7 +153,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         private val GENERATOR_INDEX = "generatorPosition"
 
 
-        fun newInstance(modelControls: Array<Control>?, image: String, pbFile: File, generatorIndex: Int): ModelFragment {
+        fun newInstance(modelControls: Array<Control>?, image: String?, pbFile: File, generatorIndex: Int): ModelFragment {
             val fragment = ModelFragment()
             val args = Bundle()
             args.putString(IMAGE_PARAM, image)

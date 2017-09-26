@@ -8,11 +8,9 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.SparseArray
 import com.google.android.gms.vision.face.Face
-import com.google.android.gms.vision.face.FaceDetector
 import com.pawegio.kandroid.fromApi
 import hypr.a255bits.com.hypr.Util.FaceDetection
 import java.io.IOException
-import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorFacePosition
 
 
 class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
@@ -42,12 +40,8 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
 
     @Throws(IOException::class)
     override fun getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context): MutableList<Bitmap> {
-        val faceLocations: SparseArray<Face>? = getFaceLocations(imageWithFaces, context)
+        val faceLocations: SparseArray<Face>? = faceDetection.getFaceLocations(imageWithFaces, context)
         return faceDetection.getListOfFaces(faceLocations, imageWithFaces)
     }
 
-    @Throws(IOException::class)
-    private fun getFaceLocations(imageWithFaces: Bitmap, context: Context): SparseArray<Face>? {
-        return faceDetection.getFaceLocations(imageWithFaces, context)
-    }
 }

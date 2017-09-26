@@ -6,7 +6,7 @@ import android.util.Log
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface
 import java.io.File
 
-class GeneratorLoader {
+open class GeneratorLoader {
     lateinit var inference: TensorFlowInferenceInterface
     val PB_FILE_PATH: String = "file:///android_asset/generators/optimized_weight_conv.pb"
 
@@ -50,8 +50,7 @@ class GeneratorLoader {
         //inference.run(..)
         this.inference.fetch("add_21", this.raw)
 
-        val pixelsInBitmap = manipulatePixelsInBitmap()
-        return pixelsInBitmap
+        return manipulatePixelsInBitmap()
     }
 
     fun mask(bitmap: Bitmap): FloatArray {
@@ -63,6 +62,29 @@ class GeneratorLoader {
         this.inference.fetch("Tanh_4", floatValues)
 
         return floatValues
+    }
+
+    fun sampleRandom(z: FloatArray, slider: Float, direction: FloatArray, mask: FloatArray, scaled: Bitmap): IntArray {
+        feedInput(scaled)
+        mask.forEachIndexed{ index, item->
+            mask[index] = 0.0f
+        }
+
+        this.inference.feed("concat", z, *z_dims_array)
+        this.inference.feed("direction", direction, *z_dims_array)
+
+        val maskDims = longArrayOf(1, width.toLong(), height.toLong(), 1)
+        this.inference.feed("Tanh_1", mask, *maskDims)
+
+        val dims = longArrayOf(1.toLong(), 1.toLong())
+        this.inference.feed("slider", floatArrayOf(slider), *dims)
+        this.inference.run(arrayOf("add_21"))
+        //inference.readNodeFloat(OUTPUT_NODE, resu)
+
+        //inference.run(..)
+        this.inference.fetch("add_21", this.raw)
+
+        return manipulatePixelsInBitmap()
     }
 
     fun get_z(z:FloatArray, slider:Float, direction:FloatArray): FloatArray {
@@ -99,7 +121,7 @@ class GeneratorLoader {
 
         this.inference.run(arrayOf("Tanh"))
 
-        val z: FloatArray = FloatArray(z_dims)
+        val z = FloatArray(z_dims)
 
         this.inference.fetch("Tanh", z)
 
@@ -108,7 +130,7 @@ class GeneratorLoader {
     fun random_z(): FloatArray {
         this.inference.run(arrayOf("random_z"))
 
-        val z: FloatArray = FloatArray(z_dims)
+        val z = FloatArray(z_dims)
 
         this.inference.fetch("random_z", z)
 
