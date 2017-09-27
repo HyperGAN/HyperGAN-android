@@ -21,7 +21,7 @@ import java.io.InputStream
 open class GeneratorTest {
 
     @get:Rule open val mActivityTestRule = ActivityTestRule(MainActivity::class.java)
-    private val generator = GeneratorLoader()
+    private val generator = GeneratorLoader(generator.viewer, generator.input, generator.output)
     private val IMAGES_TO_TRANSFER_FOLDERNAME = "beforeImages"
 
     @Test

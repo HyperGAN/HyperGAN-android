@@ -3,10 +3,13 @@ package hypr.a255bits.com.hypr.GeneratorLoader
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.util.Log
+import hypr.a255bits.com.hypr.Generator.Input
+import hypr.a255bits.com.hypr.Generator.Output
+import hypr.a255bits.com.hypr.Generator.Viewer
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface
 import java.io.File
 
-open class GeneratorLoader { //generator constructor parameter TODO
+open class GeneratorLoader(viewer: Viewer?, input: Input?, output: Output?) { //generator constructor parameter TODO
     lateinit var inference: TensorFlowInferenceInterface
     val PB_FILE_PATH: String = "file:///android_asset/generators/optimized_weight_conv.pb" // TODO generator['model_url']
 

@@ -8,7 +8,7 @@ import java.io.File
 
 
 class GeneratorLoaderTest {
-    val generatorLoader = GeneratorLoader()
+    val generatorLoader = GeneratorLoader(generator.viewer, generator.input, generator.output)
 
 
     fun load_and_feed() {
