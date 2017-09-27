@@ -40,6 +40,10 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
         presenter.displayGallery()
     }
 
+    fun switchCameraClick(view: View){
+        cameraView.toggleFacing()
+    }
+
     override fun takePicture() {
         cameraView.captureImage()
     }

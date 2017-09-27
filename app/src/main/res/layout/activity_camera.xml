@@ -37,14 +37,25 @@
         app:titleTextColor="#ffffff" />
 
     <ImageButton
+        android:id="@+id/switchCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:padding="16dp"
+        android:src="@drawable/ic_switch_camera_black_24dp"
+        android:onClick="switchCameraClick"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+        app:layout_constraintEnd_toEndOf="@+id/toolbar"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
         android:id="@+id/takePicture"
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_marginBottom="8dp"
         android:src="@drawable/camera"
         android:background="@drawable/round_corner"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:padding="8dp"
         android:text="@string/take_picture"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -56,7 +67,7 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="8dp"
         android:background="@null"
-        android:padding="8dp"
+        android:padding="16dp"
         android:src="@drawable/ic_photo_library_white_30px"
         android:onClick="galleryButtonClick"
         app:layout_constraintBottom_toBottomOf="@+id/takePicture"
