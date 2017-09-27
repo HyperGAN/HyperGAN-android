@@ -6,13 +6,13 @@ import com.squareup.moshi.Json;
 public class Input {
 
     @Json(name = "type")
-    private String type;
+    private String type = "";
     @Json(name = "width")
-    private Integer width;
+    private Integer width = 0;
     @Json(name = "height")
-    private Integer height;
+    private Integer height = 0;
     @Json(name = "channels")
-    private Integer channels;
+    private Integer channels = 0;
 
     public String getType() {
         return type;
