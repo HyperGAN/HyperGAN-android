@@ -1,0 +1,64 @@
+[{ 
+  "name": "expression",
+  "file_size_in_bytes": 1024000000,
+  "model_url": "file:///android_asset/generators/file/expression-model.pb",
+  "google_play_id": "",
+  "generator" : {
+    "z_dims": [1, 8, 8, 160],
+    "viewer":{
+      "type": "FaceViewer",
+      "operation": "crop",
+     "controls":  [
+    {
+       "type": "Vector",
+       "direction": [0.3, 0.4, 0.6, 0.7, 0.8],
+       "name": "smile"
+    },
+    {
+       "type": "Vector",
+       "direction": [-0.3, -0.4, -0.6, -0.7, -0.8],
+       "name": "turn left"
+    }
+   ]
+    },
+    "input" : {
+      "type": "image",
+      "width": 256,
+      "height": 256,
+      "channels": 3
+    },
+    "output": {
+      "type": "image",
+      "width": 256,
+      "height": 256,
+      "channels" : 3
+    }
+  }
+},
+{
+  "name": "halloween",
+  "file_size_in_bytes": 2048000000,
+  "price_in_cents": 1499,
+  "model_url": "file:///android_asset/generators/file/halloween-model.pb",
+  "google_play_id": "com.halloween",
+  "generator" : {
+    "z_dims": [1, 8, 8, 160],
+    "viewer":{
+      "type": "FaceViewer",
+      "operation": "crop",
+      "controls":  []
+    },
+    "input" : {
+      "type": "image",
+      "width": 256,
+      "height": 256,
+      "channels": 3
+    },
+    "output": {
+      "type": "image",
+      "width": 256,
+      "height": 256,
+      "channels" : 3
+    }
+  }
+}]

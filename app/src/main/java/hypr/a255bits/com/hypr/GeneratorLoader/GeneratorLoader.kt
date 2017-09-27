@@ -6,15 +6,15 @@ import android.util.Log
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface
 import java.io.File
 
-open class GeneratorLoader {
+open class GeneratorLoader { //generator constructor parameter TODO
     lateinit var inference: TensorFlowInferenceInterface
     val PB_FILE_PATH: String = "file:///android_asset/generators/optimized_weight_conv.pb"
 
-    var channels = 3
-    var width = 256
-    var height = 256
-    var z_dims = 1 * 8 * 8 * 160
-    var z_dims_array = longArrayOf(1.toLong(), 8.toLong(), 8.toLong(), 160.toLong())
+    var channels = 3// TODO generator['output']['channels']3
+    var width = 256// TODO generator['output']['width']
+    var height = 256// TODO generator['output']['height']
+    var z_dims_array = longArrayOf(1.toLong(), 8.toLong(), 8.toLong(), 160.toLong()) // TODO generator['z_dims']
+    var z_dims = z_dims_array.fold(1.0, { mul, next -> mul * next })
 
     var raw: FloatArray = FloatArray(width * height * channels)
 
