@@ -8,13 +8,13 @@ import java.io.File
 
 open class GeneratorLoader { //generator constructor parameter TODO
     lateinit var inference: TensorFlowInferenceInterface
-    val PB_FILE_PATH: String = "file:///android_asset/generators/optimized_weight_conv.pb"
+    val PB_FILE_PATH: String = "file:///android_asset/generators/optimized_weight_conv.pb" // TODO generator['model_url']
 
     var channels = 3// TODO generator['output']['channels']3
     var width = 256// TODO generator['output']['width']
     var height = 256// TODO generator['output']['height']
     var z_dims_array = longArrayOf(1.toLong(), 8.toLong(), 8.toLong(), 160.toLong()) // TODO generator['z_dims']
-    var z_dims = z_dims_array.fold(1.0, { mul, next -> mul * next })
+    var z_dims:Long = z_dims_array.fold(1.toLong(), { mul, next -> mul * next })
 
     var raw: FloatArray = FloatArray(width * height * channels)
 
@@ -88,7 +88,7 @@ open class GeneratorLoader { //generator constructor parameter TODO
     }
 
     fun get_z(z:FloatArray, slider:Float, direction:FloatArray): FloatArray {
-        val floatValues = FloatArray(z_dims)
+        val floatValues = FloatArray(z_dims.toInt())
 
         this.inference.feed("concat", z, *z_dims_array)
 
@@ -121,7 +121,7 @@ open class GeneratorLoader { //generator constructor parameter TODO
 
         this.inference.run(arrayOf("Tanh"))
 
-        val z = FloatArray(z_dims)
+        val z = FloatArray(z_dims.toInt())
 
         this.inference.fetch("Tanh", z)
 
@@ -130,7 +130,7 @@ open class GeneratorLoader { //generator constructor parameter TODO
     fun random_z(): FloatArray {
         this.inference.run(arrayOf("random_z"))
 
-        val z = FloatArray(z_dims)
+        val z = FloatArray(z_dims.toInt())
 
         this.inference.fetch("random_z", z)
 
