@@ -32,8 +32,8 @@ interface MainMvp {
         fun isDownloadComplete(progressPercent: Float): Boolean
         fun downloadingModelFinished()
         fun startModel(itemId: Int)
-        fun createMultiModels(itemId: Int, image: ByteArray?)
-        fun createGeneratorLoader(file: String, itemId1: Int)
+        fun createMultiModels(itemId: Int, image: String?)
+        fun createGeneratorLoader(fileName: String, itemId: Int)
         fun stopInAppBilling()
         fun  signInToGoogle(googleSignInClient: GoogleApiClient)
         fun  buyModel(skus: String, generatorIndex: Int)

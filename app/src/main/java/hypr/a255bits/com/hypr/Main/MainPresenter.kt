@@ -32,7 +32,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     var multiModel: MultiModels? = null
     var isModelFragmentDisplayed: Boolean = false
     var indexInJson: Int? = null
-    var image: ByteArray? = null
+    var image: String? = null
     val settingsHelper = SettingsHelper(context)
 
     init {
@@ -106,11 +106,10 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         }
     }
 
-    override fun createMultiModels(itemId: Int, image: ByteArray?) {
+    override fun createMultiModels(itemId: Int, image: String?) {
         val generator = interactor.listOfGenerators?.get(itemId)
         if (generator != null) {
-            val imageLocation = saveImageSoOtherFragmentCanViewIt(image)
-            displayMultiModels(itemId, imageLocation.path, interactor.listOfGenerators)
+            displayMultiModels(itemId, image, interactor.listOfGenerators)
         }
     }
 
