@@ -3,7 +3,7 @@ package hypr.a255bits.com.hypr.GeneratorLoader
 import android.graphics.Bitmap
 import hypr.a255bits.com.hypr.Generator.Generator_
 
-class EasyGeneratorLoader(val generator: Generator_): GeneratorLoader(generator.viewer, generator.input, generator.output){//(generator:Generator) TODO
+class EasyGeneratorLoader(gen: Generator_): GeneratorLoader(gen){
     var baseImage: Bitmap? = null
     var encoded: FloatArray? = null
     var mask: FloatArray? = null
