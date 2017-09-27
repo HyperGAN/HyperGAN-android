@@ -11,7 +11,7 @@ import java.io.File
 
 open class GeneratorLoader(viewer: Viewer?, input: Input?, output: Output?) { //generator constructor parameter TODO
     lateinit var inference: TensorFlowInferenceInterface
-    val PB_FILE_PATH: String = "file:///android_asset/generators/optimized_weight_conv.pb" // TODO generator['model_url']
+    val PB_FILE_PATH: String = "file:///android_asset/generators/expression-model.pb" // TODO generator['model_url']
 
     var channels = 3// TODO generator['output']['channels']3
     var width = 256// TODO generator['output']['width']
@@ -28,7 +28,7 @@ open class GeneratorLoader(viewer: Viewer?, input: Input?, output: Output?) { //
 
     fun load(assets: AssetManager, file: File){
         System.loadLibrary("tensorflow_inference")
-        this.inference = TensorFlowInferenceInterface(assets, file.absolutePath)
+        this.inference = TensorFlowInferenceInterface(assets, PB_FILE_PATH)
         //this.inference = TensorFlowInferenceInterface(assets, file.absolutePath)
 
     }
