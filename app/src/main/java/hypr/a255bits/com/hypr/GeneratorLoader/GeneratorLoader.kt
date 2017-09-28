@@ -14,7 +14,8 @@ open class GeneratorLoader(val generator: Generator_) { //generator constructor 
     var channels = generator.input!!.channels
     var width = generator.input!!.width
     var height = generator.input!!.height
-    var z_dims:Long = generator.input!!.z_dims.fold(1.toLong(), { mul, next -> mul * next })
+    val z_dimsArray: LongArray = generator.input!!.z_dims!!.map { item -> item.toLong() }.toLongArray()
+    var z_dims:Long = z_dimsArray.fold(1.toLong(), { mul, next -> mul * next })
 
     var raw: FloatArray = FloatArray(width * height * channels)
 
@@ -26,7 +27,7 @@ open class GeneratorLoader(val generator: Generator_) { //generator constructor 
     fun load(assets: AssetManager, file: File){
         System.loadLibrary("tensorflow_inference")
         this.inference = TensorFlowInferenceInterface(assets, PB_FILE_PATH)
-        //this.inference = TensorFlowInferenceInterface(assets, file.absolutePath)
+//        this.inference = TensorFlowInferenceInterface(assets, file.absolutePath)
 
     }
 
@@ -35,8 +36,8 @@ open class GeneratorLoader(val generator: Generator_) { //generator constructor 
         feedInput(bitmap)
 
 
-        this.inference.feed("concat", z, *generator.input!!.z_dims)
-        this.inference.feed("direction", direction, *generator.input!!.z_dims)
+        this.inference.feed("concat", z, *z_dimsArray)
+        this.inference.feed("direction", direction, *z_dimsArray)
         Log.i("slider", "SLIDER VALUE "+slider)
 
         val maskDims = longArrayOf(1, width.toLong(),height.toLong(), 1)
@@ -70,8 +71,8 @@ open class GeneratorLoader(val generator: Generator_) { //generator constructor 
             mask[index] = 0.0f
         }
 
-        this.inference.feed("concat", z, *generator.input!!.z_dims)
-        this.inference.feed("direction", direction, *generator.input!!.z_dims)
+        this.inference.feed("concat", z, *z_dimsArray)
+        this.inference.feed("direction", direction, *z_dimsArray)
 
         val maskDims = longArrayOf(1, width.toLong(), height.toLong(), 1)
         this.inference.feed("Tanh_1", mask, *maskDims)
@@ -90,12 +91,12 @@ open class GeneratorLoader(val generator: Generator_) { //generator constructor 
     fun get_z(z:FloatArray, slider:Float, direction:FloatArray): FloatArray {
         val floatValues = FloatArray(z_dims.toInt())
 
-        this.inference.feed("concat", z, *generator.input!!.z_dims)
+        this.inference.feed("concat", z, *z_dimsArray)
 
         val dims = longArrayOf(1.toLong(),1.toLong())
         this.inference.feed("slider", floatArrayOf(slider), *dims)
 
-        this.inference.feed("direction", direction, *generator.input!!.z_dims)
+        this.inference.feed("direction", direction, *z_dimsArray)
 
         this.inference.run(arrayOf("add"))
 

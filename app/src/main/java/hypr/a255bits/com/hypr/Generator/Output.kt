@@ -5,17 +5,15 @@ import com.squareup.moshi.Json
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-class Input: Parcelable {
+class Output: Parcelable {
 
     @Json(name = "type")
-    var type = ""
+    var type: String? = null
     @Json(name = "width")
-    var width: Int = 0
+    var width: Int? = null
     @Json(name = "height")
-    var height: Int = 0
+    var height: Int? = null
     @Json(name = "channels")
-    var channels: Int = 0
-    @Json(name = "z_dims")
-    var z_dims: List<String>? = null
+    var channels: Int? = null
 
 }

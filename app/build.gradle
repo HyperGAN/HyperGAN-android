@@ -38,6 +38,10 @@ android {
     }
 }
 
+androidExtensions {
+    experimental = true
+}
+
 dependencies {
     implementation 'com.android.support:support-v4:25.4.0'
     compile fileTree(include: ['*.jar'], dir: 'libs')

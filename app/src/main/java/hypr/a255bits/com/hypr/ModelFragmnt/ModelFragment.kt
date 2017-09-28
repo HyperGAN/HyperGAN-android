@@ -7,7 +7,7 @@ import android.support.v4.app.Fragment
 import android.view.*
 import com.pawegio.kandroid.onProgressChanged
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
-import hypr.a255bits.com.hypr.Generator.Control
+import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.negative1To1
 import kotlinx.android.synthetic.main.activity_main.*
@@ -32,7 +32,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            presenter.modelUrl = arguments.getParcelableArray(MODEL_CONTROLS) as Array<Control>?
+            presenter.generator = arguments.getParcelable(MODEL_CONTROLS)
             presenter.readImageToBytes(arguments.getString(IMAGE_PARAM))
             presenter.generatorIndex = arguments.getInt(GENERATOR_INDEX)
         }
@@ -153,11 +153,11 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         private val GENERATOR_INDEX = "generatorPosition"
 
 
-        fun newInstance(modelControls: Array<Control>?, image: String?, pbFile: File, generatorIndex: Int): ModelFragment {
+        fun newInstance(generator: Generator, image: String?, pbFile: File, generatorIndex: Int): ModelFragment {
             val fragment = ModelFragment()
             val args = Bundle()
             args.putString(IMAGE_PARAM, image)
-            args.putParcelableArray(MODEL_CONTROLS, modelControls)
+            args.putParcelable(MODEL_CONTROLS, generator)
             args.putInt(GENERATOR_INDEX, generatorIndex)
             fragment.arguments = args
             fragment.pbFile = pbFile
