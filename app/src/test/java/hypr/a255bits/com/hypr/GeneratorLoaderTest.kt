@@ -2,13 +2,12 @@ package hypr.a255bits.com.hypr
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorLoader
 import org.junit.Test
 import java.io.File
 
 
 class GeneratorLoaderTest {
-    val generatorLoader = GeneratorLoader(generator.viewer, generator.input, generator.output)
+//    val generatorLoader = GeneratorLoader(generator.viewer, generator.input, generator.output)
 
 
     fun load_and_feed() {
