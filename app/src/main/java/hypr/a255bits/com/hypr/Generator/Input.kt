@@ -16,6 +16,6 @@ class Input: Parcelable {
     @Json(name = "channels")
     var channels: Int = 0
     @Json(name = "z_dims")
-    var z_dims: List<String>? = null
+    var z_dims: List<Int>? = null
 
 }
