@@ -15,7 +15,6 @@ interface CameraMVP{
     interface presenter{
         fun  sendPictureToModel(jpeg: ByteArray?)
         fun getImageFromImageFileLocation(imageLocation: Uri)
-        fun onOptionsItemSelected(item: MenuItem?)
         fun displayGallery()
     }
     interface interactor

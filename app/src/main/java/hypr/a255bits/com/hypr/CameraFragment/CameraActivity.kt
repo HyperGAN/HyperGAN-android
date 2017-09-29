@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
-import android.view.MenuItem
 import android.view.View
 import com.flurgle.camerakit.CameraView
 import hypr.a255bits.com.hypr.Main.MainActivity
@@ -30,7 +29,6 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
         setContentView(R.layout.activity_camera)
         setSupportActionBar(toolbar)
         indexInJson = intent.extras.getInt("indexInJson")
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         takePictureListener(cameraView)
         takePicture.setOnClickListener { presenter.captureImage() }
     }
@@ -79,12 +77,6 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
     override fun onPause() {
         super.onPause()
         cameraView.stop()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        presenter.onOptionsItemSelected(item)
-        return super.onOptionsItemSelected(item)
-
     }
 
     override fun sendImageToModel(image: ByteArray?) {
