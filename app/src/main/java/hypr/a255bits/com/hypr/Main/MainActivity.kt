@@ -26,6 +26,7 @@ import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.MultiModels.MultiModels
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
+import hypr.a255bits.com.hypr.Util.JsonReader
 import hypr.a255bits.com.hypr.WelcomeScreen.WelcomeScreen
 import kotlinx.android.synthetic.main.activity_main2.*
 import kotlinx.android.synthetic.main.app_bar_main2.*
@@ -54,6 +55,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             presenter.indexInJson = intent.extras.getInt("indexInJson")
             presenter.image = intent.extras.getString("image")
         }
+        val json = JsonReader().readJson(applicationContext)
+        println("json $json")
 //        setupDrawer(toolbar)
 
     }
