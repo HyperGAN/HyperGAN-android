@@ -137,10 +137,6 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             val generators = interactor.getGeneratorsFromNetwork(applicationContext).await()
             saveGeneratorInfo(generators)
             buyGenerators = mutableListOf()
-            generators?.forEachIndexed { index, generator ->
-                view.addModelsToNavBar(generator, index)
-
-            }
             if (isModelFragmentDisplayed) {
                 indexInJson?.let { createMultiModels(it, image) }
             } else {
