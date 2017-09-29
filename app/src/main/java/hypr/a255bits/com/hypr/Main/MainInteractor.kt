@@ -5,12 +5,12 @@ import android.util.Log
 import com.google.firebase.storage.FileDownloadTask
 import com.google.firebase.storage.FirebaseStorage
 import hypr.a255bits.com.hypr.Generator.Generator
-import hypr.a255bits.com.hypr.Network.ModelApi
 import hypr.a255bits.com.hypr.Network.ModelDownloader
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.GoogleSignIn
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import hypr.a255bits.com.hypr.Util.InAppBilling.Inventory
+import hypr.a255bits.com.hypr.Util.JsonReader
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
@@ -98,8 +98,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
 
     override fun getGeneratorsFromNetwork(applicationContext: Context): Deferred<List<Generator>?> {
         return async(UI) {
-            val modelApi = ModelApi()
-            val listOfGenerators = bg { modelApi.listOfModels(applicationContext) }.await()
+            val listOfGenerators = bg { JsonReader().getGeneratorsFromJson(applicationContext) }.await()
             this@MainInteractor.listOfGenerators = listOfGenerators
             return@async listOfGenerators
         }
