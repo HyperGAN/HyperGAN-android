@@ -17,7 +17,7 @@ class MultiModels : Fragment(), MultiMvp.view {
 
     private var generators: Array<Generator>? = null
     private var indexOfGenerator: Int? = null
-    private var pathToGenerator: String? = null
+    private var pathToGenerators: Array<String?> = arrayOf()
     private var image: String? = null
     val presenter: MultiPresenter by lazy { MultiPresenter(this) }
 
@@ -28,7 +28,7 @@ class MultiModels : Fragment(), MultiMvp.view {
             generators = arguments.getParcelableArray(GENERATORS) as Array<Generator>?
             indexOfGenerator = arguments.getInt(INDEX_OF_GENERATOR_IN_USE)
             image = arguments.getString(PATH_TO_IMAGE)
-            pathToGenerator = arguments.getString(PATH_TO_GENERATOR)
+            pathToGenerators = arguments.getStringArray(PATH_TO_GENERATORS)
         }
     }
 
@@ -39,7 +39,7 @@ class MultiModels : Fragment(), MultiMvp.view {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        presenter.startModelsList(generators, fragmentManager, image, File(pathToGenerator))
+        presenter.startModelsList(generators, fragmentManager, image, pathToGenerators)
     }
 
     override fun startModelList(adapter: MultiModelAdapter?) {
@@ -62,15 +62,16 @@ class MultiModels : Fragment(), MultiMvp.view {
         private val GENERATORS = "param1"
         private val INDEX_OF_GENERATOR_IN_USE = "param2"
         private val PATH_TO_IMAGE: String? = "pathtoImage"
-        private val PATH_TO_GENERATOR: String? = "pathtoGenerator"
+        private val PATH_TO_GENERATORS: String? = "pathtoGenerator"
 
-        fun newInstance(generators: List<Generator>?, indexOfGenerator: Int, pathToImage: String?, generatorPath: File): MultiModels {
+        fun newInstance(generators: List<Generator>?, indexOfGenerator: Int, pathToImage: String?, generatorPaths: Array<String>): MultiModels {
             val fragment = MultiModels()
             val args = Bundle()
             args.putParcelableArray(GENERATORS, generators?.toTypedArray())
             args.putInt(INDEX_OF_GENERATOR_IN_USE, indexOfGenerator)
             args.putString(PATH_TO_IMAGE, pathToImage)
-            args.putString(PATH_TO_GENERATOR, generatorPath.absolutePath)
+            args.putStringArray(PATH_TO_GENERATORS, generatorPaths)
+
             fragment.arguments = args
             return fragment
         }

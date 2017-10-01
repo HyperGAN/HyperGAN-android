@@ -1,8 +1,11 @@
 package hypr.a255bits.com.hypr.Generator
 
+import android.os.Parcelable
 import com.squareup.moshi.Json
+import kotlinx.android.parcel.Parcelize
 
-class Generator_ {
+@Parcelize
+class Generator_: Parcelable{
 
     @Json(name = "viewer")
     var viewer: Viewer? = null

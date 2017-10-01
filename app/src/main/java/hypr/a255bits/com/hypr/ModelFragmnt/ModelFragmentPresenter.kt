@@ -5,7 +5,7 @@ import android.content.pm.PackageManager
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.view.MenuItem
-import hypr.a255bits.com.hypr.Generator.Control
+import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.GeneratorLoader.EasyGeneratorLoader
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.*
@@ -15,6 +15,7 @@ import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.toast
 import java.io.File
 import java.io.IOException
+import kotlin.properties.Delegates
 
 
 class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: ModelInteractor, val context: Context, pbFile: File?) : ModelFragmentMVP.presenter {
@@ -34,8 +35,12 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     var imageFromGallery: IntArray? = null
     val SHARE_IMAGE_PERMISSION_REQUEST = 10
     val SAVE_IMAGE_PERMISSION_REQUEST: Int = 11
-    val easyGenerator = EasyGeneratorLoader()
-    var modelUrl: Array<Control>? = null
+    lateinit var easyGenerator: EasyGeneratorLoader
+    var generator: Generator by Delegates.observable(Generator()){
+        property, oldValue, newValue ->
+        newValue.generator?.let { easyGenerator = EasyGeneratorLoader(it) }
+        newValue
+    }
     var byteArrayImage: ByteArray? = null
     var generatorIndex: Int? = null
     var direction: FloatArray? = null

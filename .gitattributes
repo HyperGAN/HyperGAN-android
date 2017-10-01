@@ -1,1 +1,1 @@
-app/src/main/assets/generators/optimized_weight_conv.pb filter=lfs diff=lfs merge=lfs -text
+app/src/main/assets/generators/*.pb filter=lfs diff=lfs merge=lfs -text

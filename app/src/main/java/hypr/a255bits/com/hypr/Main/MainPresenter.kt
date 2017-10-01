@@ -22,7 +22,10 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     val ZERO_PERCENT: Float = 0.0f
     val SIGN_INTO_GOOGLE_RESULT: Int = 12
-    val file = File(context.filesDir, "optimized_weight_conv.pb")
+    val modelFileNames = listOf<String>("expression-model.pb", "halloween-model.pb").map {
+        File(context.filesDir, it).absolutePath
+    }
+
     private val DOWNLOAD_COMPLETE: Float = 100.0f
     var buyGenerators: MutableList<BuyGenerator> = mutableListOf()
     val analytics by lazy { Analytics(context) }
@@ -48,7 +51,8 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         view.popupSigninGoogle(googleSignInClient)
     }
 
-    override fun createGeneratorLoader(file: File, itemId: Int) {
+    override fun createGeneratorLoader(fileName: String, itemId: Int) {
+        val file = File(fileName)
         if (!file.exists()) {
             val pbFilePointer = interactor.getModelFromFirebase(file, "optimized_weight_conv.pb")
             pbFilePointer?.addOnSuccessListener { taskSnapshot ->
@@ -98,7 +102,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun startModel(itemId: Int) {
         val generator = interactor.listOfGenerators?.get(itemId)
         if (generator != null) {
-            createGeneratorLoader(file, itemId)
+            createGeneratorLoader(modelFileNames[0], itemId)
         }
     }
 
@@ -110,7 +114,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
     private fun displayMultiModels(itemId: Int, imageLocationPath: String?, listOfGenerators: List<Generator>?) {
-        multiModel = MultiModels.newInstance(listOfGenerators, itemId, imageLocationPath, file)
+        multiModel = MultiModels.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray())
         view.startMultipleModels(multiModel!!)
 //        view.displayBackButton()
         disableModelsIfNotBought(interactor.listOfGenerators)
