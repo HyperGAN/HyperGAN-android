@@ -2,7 +2,6 @@ package hypr.a255bits.com.hypr.CameraFragment
 
 import android.content.Context
 import android.net.Uri
-import android.view.MenuItem
 import hypr.a255bits.com.hypr.Util.Analytics
 import hypr.a255bits.com.hypr.Util.AnalyticsEvent
 import hypr.a255bits.com.hypr.Util.ImageSaver
@@ -17,12 +16,6 @@ class CameraPresenter(val view: CameraMVP.view, val context: Context) : CameraMV
         view.sendImageToModel(jpeg)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?) {
-
-        when (item?.itemId) {
-            android.R.id.home -> view.navigateUpActivity()
-        }
-    }
     override fun getImageFromImageFileLocation(imageLocation: Uri) {
         val imageFromGallery: ByteArray? = ImageSaver().uriToByteArray(imageLocation, context)
         view.sendImageToModel(imageFromGallery)
