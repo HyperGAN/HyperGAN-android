@@ -60,12 +60,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             }
         }
 
-        if (settingsHelper.isFirstTimeOpenedApp()) {
             displayMultiModels(itemId, null, interactor.listOfGenerators)
-            settingsHelper.setAppOpenedAlready()
-        } else {
-            view.startCameraActivity(itemId)
-        }
     }
 
     override fun disableModelsIfNotBought(listOfGenerators: List<Generator>?) {
