@@ -3,8 +3,6 @@ package hypr.a255bits.com.hypr.Main
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
@@ -12,9 +10,7 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.SubMenu
-import android.widget.ArrayAdapter
 import android.widget.Spinner
-import android.widget.SpinnerAdapter
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.common.api.GoogleApiClient
 import com.pawegio.kandroid.start
@@ -160,15 +156,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun addControlNamesToToolbar(controlNames: List<String?>?) {
-        toolbar.title = ""
-        val adapter: SpinnerAdapter = ArrayAdapter<String>(this, R.layout.spinner_dropdown_item, controlNames)
-        spinner.let { toolbar.removeView(it) }
-        if (controlNames!!.isNotEmpty()) {
-            this.spinner = Spinner(this)
-            spinner?.background?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
-            spinner?.adapter = adapter
-            toolbar.addView(spinner)
-        }
+//        toolbar.title = ""
+//        val adapter: SpinnerAdapter = ArrayAdapter<String>(this, R.layout.spinner_dropdown_item, controlNames)
+//        spinner.let { toolbar.removeView(it) }
+//        if (controlNames!!.isNotEmpty()) {
+//            this.spinner = Spinner(this)
+//            spinner?.background?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+//            spinner?.adapter = adapter
+//            toolbar.addView(spinner)
+//        }
     }
 
     @Subscribe

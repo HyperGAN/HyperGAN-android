@@ -74,7 +74,9 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     }
 
     override fun stopInAppBilling() {
-        billingHelper.dispose()
+        if(billingHelper.isConnected){
+            billingHelper.dispose()
+        }
     }
 
     override fun getModelFromFirebase(saveLocation: File, filenameInFirebase: String): FileDownloadTask? {
