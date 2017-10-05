@@ -101,6 +101,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
             with(presenter) {
                 val direction = direction ?: easyGenerator.random_z()
                 val ganImage = easyGenerator.sample(easyGenerator.encoded!!, ganValue.toFloat(), easyGenerator.mask, direction, easyGenerator.baseImage!!)
+                presenter.imageFromGallery = ganImage
                 val manipulatedBitmap = bg { easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, ganImage) }
                 focusedImage.setImageBitmap(manipulatedBitmap.await())
             }
