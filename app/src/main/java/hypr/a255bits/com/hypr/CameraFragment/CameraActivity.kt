@@ -55,7 +55,6 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
     }
 
     override fun displayGallery() {
-        presenter.shouldLoadCamera = false
         val intent = Intent(Intent.ACTION_PICK, galleryFileLocation)
         startActivityForResult(intent, RESULT_GET_IMAGE)
     }
@@ -69,9 +68,7 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
 
     override fun onResume() {
         super.onResume()
-        if (presenter.shouldLoadCamera) {
             cameraView.start()
-        }
     }
 
     override fun onPause() {
