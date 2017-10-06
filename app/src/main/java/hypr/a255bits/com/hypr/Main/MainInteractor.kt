@@ -75,7 +75,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
 
     override fun stopInAppBilling() {
         if(billingHelper.isConnected){
-            billingHelper.dispose()
+            billingHelper.disposeWhenFinished()
         }
     }
 
