@@ -43,15 +43,13 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     }
 
     override fun hasBoughtItem(itemId: String): Boolean {
-        var hasBoughtItem = true
-        if (billingHelper.isConnected) {
+        var hasBoughtItem = false
             if (itemId.isEmpty()) {
                 hasBoughtItem = true
             } else {
                 val inventory = query(true, mutableListOf(itemId), null)
                 hasBoughtItem = inventory.hasPurchase(itemId)
             }
-        }
         return hasBoughtItem
     }
 
