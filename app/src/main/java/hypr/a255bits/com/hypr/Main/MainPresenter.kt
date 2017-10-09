@@ -31,12 +31,19 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     val analytics by lazy { Analytics(context) }
     var multiModel: MultiModels? = null
     var isModelFragmentDisplayed: Boolean = false
-    var indexInJson: Int? = null
+    var indexInJson: Int? = 0
     var image: String? = null
     val settingsHelper = SettingsHelper(context)
 
     init {
         interactor.presenter = this
+        if(settingsHelper.isModelImageRestoreable()){
+            image = settingsHelper.getModelImagePath()
+        }
+    }
+
+    private fun restorePreviousUsedImage(file: File?) {
+        image = file?.path
     }
 
     override fun handlePurchase(result: IabResult, generatorIndex: Int) {
@@ -136,8 +143,8 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             val generators = interactor.getGeneratorsFromNetwork(applicationContext).await()
             saveGeneratorInfo(generators)
             buyGenerators = mutableListOf()
-            if (isModelFragmentDisplayed) {
-                indexInJson?.let { createMultiModels(it, image) }
+            if (image != null) {
+                image?.let { createMultiModels(indexInJson!!, it) }
             } else {
                 view.displayGeneratorsOnHomePage(buyGenerators)
             }
@@ -161,6 +168,5 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         }
         analytics.logEvent(AnalyticsEvent.CHOOSE_SIDE_NAV_OPTION)
     }
-
 
 }
