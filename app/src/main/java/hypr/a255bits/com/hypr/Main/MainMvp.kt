@@ -38,7 +38,6 @@ interface MainMvp {
         fun  signInToGoogle(googleSignInClient: GoogleApiClient)
         fun  buyModel(skus: String, generatorIndex: Int)
         fun onNavigationItemSelected(item: MenuItem)
-        fun disableModelsIfNotBought(listOfGenerators: List<Generator>?)
         fun onOptionsItemSelected(item: MenuItem?)
         fun handlePurchase(result: IabResult, generatorIndex: Int)
     }
