@@ -21,7 +21,7 @@
    ]
     },
     "input" : {
-      "z_dims": [1.0, 8.0, 8.0, 160.0],
+      "z_dims": [300],
       "type": "image",
       "width": 256,
       "height": 256,
@@ -38,6 +38,7 @@
 },
 { 
   "name": "halloween",
+  "mask_layers": 2,
   "file_size_in_bytes": 2048000000,
   "price_in_cents": 1499,
   "google_play_id": "com.halloween",
@@ -48,7 +49,7 @@
       "controls":  []
     },
     "input" : {
-      "z_dims": [1.0, 8.0, 8.0, 160.0],
+      "z_dims": [300],
       "type": "image",
       "width": 256,
       "height": 256,
