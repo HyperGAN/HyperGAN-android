@@ -35,8 +35,10 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
 
     private fun startInAppBilling() {
         billingHelper.startSetup { result ->
-            if (!result.isSuccess) {
+            if (result.isSuccess) {
+                billingHelper.isConnected = true
             } else {
+                billingHelper.isConnected = false
                 Log.d("MainInteractor", "Problem setting up In-app Billing: $result")
             }
         }
