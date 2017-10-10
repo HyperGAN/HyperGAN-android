@@ -42,6 +42,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             multiModel?.presenter?.unlockModel(generatorIndex)
         } else {
             println("buy error: $result")
+            view.popupSigninGoogle(interactor.googleSignInClient.client)
         }
     }
 
