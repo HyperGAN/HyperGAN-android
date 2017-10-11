@@ -1,6 +1,7 @@
 package hypr.a255bits.com.hypr.Main
 
 import android.content.Context
+import android.util.Log
 import android.view.MenuItem
 import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
@@ -41,8 +42,8 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         if (result.isSuccess) {
             multiModel?.presenter?.unlockModel(generatorIndex)
         } else {
-            println("buy error: $result")
             view.popupSigninGoogle(interactor.googleSignInClient.client)
+            Log.w("IabHelper", "$result")
         }
     }
 
