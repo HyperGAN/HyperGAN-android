@@ -35,32 +35,23 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
 
     private fun startInAppBilling() {
         billingHelper.startSetup { result ->
-            if (!result.isSuccess) {
+            if (result.isSuccess) {
+                billingHelper.isConnected = true
             } else {
-                Log.d("MainInteractor", "Problem setting up In-app Billing: $result")
+                billingHelper.isConnected = false
+                Log.d("IabHelper", "Problem setting up In-app Billing: $result")
             }
         }
     }
 
     override fun hasBoughtItem(itemId: String): Boolean {
-        var hasBoughtItem = false
-            if (itemId.isEmpty()) {
-                hasBoughtItem = true
-            } else {
-                val inventory = query(true, mutableListOf(itemId), null)
-                hasBoughtItem = inventory.hasPurchase(itemId)
-            }
-        return hasBoughtItem
-    }
-
-    suspend fun buyProduct(productId: String) {
-        if (billingHelper.isConnected) {
-            val skus = mutableListOf(productId)
-            val inventory = bg { query(true, skus, null) }.await()
-            if (!inventory.hasPurchase(productId)) {
-                presenter?.buyModel(productId, 0)
-            }
+        val hasBoughtItem = if (itemId.isEmpty()) {
+            true
+        } else {
+            val inventory = query(true, mutableListOf(itemId), null)
+            inventory.hasPurchase(itemId)
         }
+        return hasBoughtItem
     }
 
     fun query(query: Boolean, skus: MutableList<String>, moreSubsSkus: List<String>?): Inventory {
@@ -72,9 +63,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     }
 
     override fun stopInAppBilling() {
-        if(billingHelper.isConnected){
-            billingHelper.disposeWhenFinished()
-        }
+        billingHelper.disposeWhenFinished()
     }
 
     override fun getModelFromFirebase(saveLocation: File, filenameInFirebase: String): FileDownloadTask? {
