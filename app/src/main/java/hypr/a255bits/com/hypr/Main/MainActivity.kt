@@ -155,6 +155,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    fun lockModelIfNotBought(googlePlayId: HashMap<String, String>) {
+        val isModelBought = interactor.hasBoughtItem(googlePlayId["Generator"]!!)
+        if (!isModelBought) {
+            presenter.multiModel?.presenter?.lockModel(googlePlayId["Index"]?.toInt()!!)
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun addControlNamesToToolbar(controlNames: List<String?>?) {
 //        toolbar.title = ""
 //        val adapter: SpinnerAdapter = ArrayAdapter<String>(this, R.layout.spinner_dropdown_item, controlNames)
