@@ -20,7 +20,6 @@ import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.MultiModels.MultiModels
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
-import hypr.a255bits.com.hypr.Util.JsonReader
 import hypr.a255bits.com.hypr.WelcomeScreen.WelcomeScreen
 import kotlinx.android.synthetic.main.activity_main2.*
 import kotlinx.android.synthetic.main.app_bar_main2.*
@@ -44,16 +43,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.activity_main2)
         setSupportActionBar(toolbar)
         presenter.addModelsToNavBar(applicationContext)
+        getInfoFromCameraActivity()
+    }
+
+    private fun getInfoFromCameraActivity() {
         presenter.isModelFragmentDisplayed = intent.hasExtra("indexInJson")
         if (presenter.isModelFragmentDisplayed) {
             presenter.indexInJson = intent.extras.getInt("indexInJson")
             presenter.image = intent.extras.getString("image")
+            presenter.settingsHelper.setModelImagePath(presenter.image!!)
         }
-        val json = JsonReader().readJson(applicationContext)
-        println("json $json")
-//        setupDrawer(toolbar)
-
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         presenter.onOptionsItemSelected(item)
