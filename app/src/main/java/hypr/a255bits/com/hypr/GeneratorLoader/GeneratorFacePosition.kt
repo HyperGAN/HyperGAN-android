@@ -33,7 +33,7 @@ class GeneratorFacePosition {
 
         val bitmapWithPadding: Bitmap = placePaddingAroundBitmap(imageWithFaces, offsetX, offsetY)
 
-        val bitmap: Bitmap = Bitmap.createBitmap(bitmapWithPadding, x1 + offsetX, y1 + offsetY, w, h)
+        val bitmap: Bitmap = Bitmap.createBitmap(bitmapWithPadding, faceDimentions.left + offsetX, faceDimentions.top + offsetY, w, h)
         val maxSize: Int = intArrayOf(bitmap.height, bitmap.width).min()!!
 
         return getResizedBitmap(bitmap, maxSize, maxSize)
