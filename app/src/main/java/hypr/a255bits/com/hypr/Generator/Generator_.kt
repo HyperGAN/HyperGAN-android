@@ -13,4 +13,12 @@ class Generator_: Parcelable{
     var input: Input? = null
     @Json(name = "output")
     var output: Output? = null
+
+    @Json(name = "uses_mask")
+    var uses_mask: Boolean? = false
+    @Json(name = "mask_input_node")
+    var mask_input_node: String? = null
+
+    @Json(name = "z_output_node")
+    var z_output_node: String? = null
 }
