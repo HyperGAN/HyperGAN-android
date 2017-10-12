@@ -9,7 +9,7 @@ import java.io.File
 
 open class GeneratorLoader(val generator: Generator_) { //generator constructor parameter TODO
     lateinit var inference: TensorFlowInferenceInterface
-    val PB_FILE_PATH: String = "file:///android_asset/generators/halloween-model.pb" // TODO generator['model_url']
+    val PB_FILE_PATH: String = "file:///android_asset/generators/expression-model.pb" // TODO generator['model_url']
 
     var channels = generator.input!!.channels
     var width = generator.input!!.width
@@ -120,25 +120,22 @@ open class GeneratorLoader(val generator: Generator_) { //generator constructor 
         this.inference.feed("input", floatValues, *dims)
     }
     fun encode(bitmap: Bitmap): FloatArray {
-        //feedInput(bitmap)
+        feedInput(bitmap)
 
-        //this.inference.run(arrayOf(generator.z_output_node))
+        this.inference.run(arrayOf(generator.z_output_node))
 
         val z = FloatArray(z_dims.toInt())
 
-        //this.inference.fetch(generator.z_output_node, z)
+        this.inference.fetch(generator.z_output_node, z)
 
         return z
     }
     fun random_z(): FloatArray {
-        //feedInput(Bitmap.createBitmap(256,256, Bitmap.Config.ARGB_8888))
-        //this.inference.run(arrayOf("random_z"))
-        //this.inference.run(arrayOf(generator.z_output_node))
+        this.inference.run(arrayOf("random_z"))
 
         val z = FloatArray(z_dims.toInt())
 
-        //this.inference.fetch("random_z", z)
-        //this.inference.fetch(generator.z_output_node, z)
+        this.inference.fetch("random_z", z)
 
         return z
     }
