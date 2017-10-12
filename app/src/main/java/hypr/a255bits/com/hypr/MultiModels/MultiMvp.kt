@@ -2,7 +2,6 @@ package hypr.a255bits.com.hypr.MultiModels
 
 import android.support.v4.app.FragmentManager
 import hypr.a255bits.com.hypr.Generator.Generator
-import java.io.File
 
 
 interface MultiMvp{
