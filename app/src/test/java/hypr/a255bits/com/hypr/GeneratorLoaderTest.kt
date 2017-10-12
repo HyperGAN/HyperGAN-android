@@ -10,13 +10,6 @@ class GeneratorLoaderTest {
 //    val generatorLoader = GeneratorLoader(generator.viewer, generator.input, generator.output)
 
 
-    fun load_and_feed() {
-//        generatorLoader.load(activity.assets)
-//
-//        generatorLoader.sample(encoded)
-//        assertNotNull(generatorLoader)
-    }
-
     @Test
     fun testImagesDoneThrowErrorWithGenerator() {
         val file = File(javaClass.classLoader.getResource("image.jpg").toURI())

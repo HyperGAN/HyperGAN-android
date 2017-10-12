@@ -11,6 +11,4 @@ class Generator_: Parcelable{
     var viewer: Viewer? = null
     @Json(name = "input")
     var input: Input? = null
-    @Json(name = "output")
-    var output: Output? = null
 }

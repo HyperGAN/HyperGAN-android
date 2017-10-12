@@ -21,7 +21,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     val ZERO_PERCENT: Float = 0.0f
     val SIGN_INTO_GOOGLE_RESULT: Int = 12
-    val modelFileNames = listOf<String>("expression-model.pb", "halloween-model.pb").map {
+    val modelFileNames = listOf("expression-model.pb", "halloween-model.pb").map {
         File(context.filesDir, it).absolutePath
     }
 
@@ -39,10 +39,6 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         if(settingsHelper.isModelImageRestoreable()){
             image = settingsHelper.getModelImagePath()
         }
-    }
-
-    private fun restorePreviousUsedImage(file: File?) {
-        image = file?.path
     }
 
     override fun handlePurchase(result: IabResult, generatorIndex: Int) {
@@ -107,13 +103,6 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     private fun displayMultiModels(itemId: Int, imageLocationPath: String?, listOfGenerators: List<Generator>?) {
         multiModel = MultiModels.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray())
         view.startMultipleModels(multiModel!!)
-    }
-
-    fun saveImageSoOtherFragmentCanViewIt(image: ByteArray?): File {
-        val file = File.createTempFile("image", "png")
-        ImageSaver().saveImageToFile(file, image)
-        return file
-
     }
 
     override fun downloadingModelFinished() {

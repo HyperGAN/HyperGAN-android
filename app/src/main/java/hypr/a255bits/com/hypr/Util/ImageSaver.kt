@@ -45,12 +45,6 @@ class ImageSaver {
         fos.write(image)
     }
 
-    fun writeByteArrayToFile(fileLocation: String, imageInBytes: ByteArray?) {
-        val file = File(fileLocation)
-        file.createNewFile()
-        val fileOutput = FileOutputStream(file)
-        fileOutput.write(imageInBytes)
-    }
     private fun uriToBitmap(imageLocation: Uri, context: Context): Bitmap {
         return MediaStore.Images.Media.getBitmap(context.contentResolver, imageLocation)
     }

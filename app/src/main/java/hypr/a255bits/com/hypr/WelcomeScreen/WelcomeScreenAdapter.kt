@@ -28,7 +28,6 @@ class WelcomeScreenAdapter(val generators: Array<BuyGenerator>): RecyclerView.Ad
 
     class CustomViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         val title: TextView = view.nameOfCard
-        val buyButton: Button = view.buyButton
     }
 
 }

@@ -7,9 +7,6 @@ import hypr.a255bits.com.hypr.ModelFragmnt.ModelInteractor
 import org.junit.Test
 
 class FaceDetection{
-    val context: Context = mock()
-    val view: ModelFragmentMVP.view = mock()
-    val interactor: ModelInteractor = mock()
 
     @Test
     fun findingFacesCallsGoogleFaceApi(){

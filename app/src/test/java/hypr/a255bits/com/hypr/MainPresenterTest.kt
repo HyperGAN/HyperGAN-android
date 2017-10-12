@@ -13,7 +13,6 @@ class MainPresenterTest{
     val view: MainMvp.view = mock()
     val interactor: MainInteractor = mock()
     val context: Context = mock()
-    val presenter: MainPresenter = MainPresenter(view, interactor, context)
     @Test
     fun openCameraApp(){
         val file: File = getFileFromPath(this, "testfile")

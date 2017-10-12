@@ -1,7 +1,6 @@
 package hypr.a255bits.com.hypr.CameraFragment
 
 import android.net.Uri
-import android.view.MenuItem
 
 
 interface CameraMVP{

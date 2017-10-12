@@ -9,8 +9,6 @@ class Viewer: Parcelable {
 
     @Json(name = "type")
     var type: String? = null
-    @Json(name = "operation")
-    var operation: String? = null
     @Json(name = "controls")
     var controls: List<Control>? = null
 

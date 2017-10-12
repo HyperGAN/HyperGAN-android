@@ -5,7 +5,6 @@ import android.os.Parcelable
 
 
 data class BuyGenerator(val name: String) : Parcelable {
-    val itemBought = false
 
     constructor(source: Parcel) : this(
             source.readString()
@@ -17,11 +16,4 @@ data class BuyGenerator(val name: String) : Parcelable {
         writeString(name)
     }
 
-    companion object {
-        @JvmField
-        val CREATOR: Parcelable.Creator<BuyGenerator> = object : Parcelable.Creator<BuyGenerator> {
-            override fun createFromParcel(source: Parcel): BuyGenerator = BuyGenerator(source)
-            override fun newArray(size: Int): Array<BuyGenerator?> = arrayOfNulls(size)
-        }
-    }
 }

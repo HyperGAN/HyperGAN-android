@@ -13,7 +13,5 @@ class Output: Parcelable {
     var width: Int? = null
     @Json(name = "height")
     var height: Int? = null
-    @Json(name = "channels")
-    var channels: Int? = null
 
 }

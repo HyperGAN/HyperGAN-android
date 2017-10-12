@@ -47,10 +47,4 @@ class FaceDetection(val context: Context){
         }
         return croppedFaces
     }
-    private fun cropFaceOutOfBitmap(face: Face, imageWithFaces: Bitmap): Bitmap {
-        val centerOfFace = face.position
-        val x = centerOfFace.x.nonNegativeInt()
-        val y = centerOfFace.y.nonNegativeInt()
-        return BitmapManipulator().cropAreaOutOfBitmap(imageWithFaces,x,y,face.width.toInt(), face.height.toInt())
-    }
 }

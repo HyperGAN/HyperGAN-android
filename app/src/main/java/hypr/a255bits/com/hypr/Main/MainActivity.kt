@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     val presenter by lazy { MainPresenter(this, interactor, applicationContext) }
     private var modelSubMenu: SubMenu? = null
     var progressDownloadingModel: ProgressDialog? = null
-    private var spinner: Spinner? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -139,22 +138,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    @Subscribe
-    fun startIntent(intent: Intent) {
-        startActivity(intent)
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun showModelDownloadProgress(progressPercent: java.lang.Float) {
-        println("percent: $progressPercent")
-        when {
-            presenter.isDownloadComplete(progressPercent.toFloat()) -> presenter.downloadingModelFinished()
-            progressPercent.toFloat() == presenter.ZERO_PERCENT -> {
-            }
-            else -> progressDownloadingModel?.progress = progressPercent.toInt()
-        }
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun lockModelIfNotBought(googlePlayId: HashMap<String, String>) {
         val isModelBought = interactor.hasBoughtItem(googlePlayId["Generator"]!!)
@@ -174,11 +157,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //            spinner?.adapter = adapter
 //            toolbar.addView(spinner)
 //        }
-    }
-
-    @Subscribe
-    fun unlockModel(generatorIndex: java.lang.Integer) {
-        presenter.buyModel(presenter.interactor.listOfGenerators?.get(generatorIndex.toInt())?.google_play_id!!, generatorIndex.toInt())
     }
 
     override fun closeDownloadingModelDialog() {

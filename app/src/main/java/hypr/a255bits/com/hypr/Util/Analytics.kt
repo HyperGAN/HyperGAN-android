@@ -5,7 +5,7 @@ import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 
 class Analytics(val context: Context){
-    val analytics = FirebaseAnalytics.getInstance(context)
+    val analytics: FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
 
     fun logEvent(event: AnalyticsEvent){
         val bundle = Bundle()

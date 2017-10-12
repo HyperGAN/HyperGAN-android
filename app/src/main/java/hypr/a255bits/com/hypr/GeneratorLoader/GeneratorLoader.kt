@@ -88,22 +88,6 @@ open class GeneratorLoader(val generator: Generator_) { //generator constructor 
         return manipulatePixelsInBitmap()
     }
 
-    fun get_z(z:FloatArray, slider:Float, direction:FloatArray): FloatArray {
-        val floatValues = FloatArray(z_dims.toInt())
-
-        this.inference.feed("concat", z, *z_dimsArray)
-
-        val dims = longArrayOf(1.toLong(),1.toLong())
-        this.inference.feed("slider", floatArrayOf(slider), *dims)
-
-        this.inference.feed("direction", direction, *z_dimsArray)
-
-        this.inference.run(arrayOf("add"))
-
-        this.inference.fetch("add", floatValues)
-
-        return floatValues
-    }
     fun feedInput(bitmap: Bitmap) {
         val intValues = IntArray(width * height)
         val floatValues = FloatArray(width * height * channels)
