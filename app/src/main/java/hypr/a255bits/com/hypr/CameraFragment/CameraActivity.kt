@@ -6,9 +6,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
+import android.util.SparseArray
 import android.view.View
 import com.flurgle.camerakit.CameraView
+import com.google.android.gms.vision.face.Face
+import com.pawegio.kandroid.start
 import hypr.a255bits.com.hypr.Main.MainActivity
+import hypr.a255bits.com.hypr.MultiFaceSelection.MultiFaceSelection
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.ImageSaver
 import hypr.a255bits.com.hypr.Util.onPictureTaken
@@ -48,6 +52,11 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
 
     override fun takePicture() {
         cameraView.captureImage()
+    }
+
+    override fun startMultiFaceSelection(jpeg: ByteArray, facesDetected: SparseArray<Face>) {
+        intentFor<MultiFaceSelection>("image" to jpeg, "faceLocations" to facesDetected).start(applicationContext)
+
     }
 
     private fun takePictureListener(cameraView: CameraView) {
