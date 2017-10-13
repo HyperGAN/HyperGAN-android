@@ -15,6 +15,7 @@ import hypr.a255bits.com.hypr.Util.onPictureTaken
 import kotlinx.android.synthetic.main.activity_camera.*
 import org.jetbrains.anko.clearTop
 import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.longToast
 import java.io.File
 
 class CameraActivity : AppCompatActivity(), CameraMVP.view {
@@ -33,6 +34,9 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
         takePicture.setOnClickListener { presenter.captureImage() }
     }
 
+    override fun noFaceDetectedPopup() {
+        longToast("Please select an image with a face")
+    }
 
     fun galleryButtonClick(view: View) {
         presenter.displayGallery()

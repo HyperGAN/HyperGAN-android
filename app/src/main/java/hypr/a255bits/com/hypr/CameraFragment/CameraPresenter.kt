@@ -8,7 +8,6 @@ import hypr.a255bits.com.hypr.Util.Analytics
 import hypr.a255bits.com.hypr.Util.AnalyticsEvent
 import hypr.a255bits.com.hypr.Util.FaceDetection
 import hypr.a255bits.com.hypr.Util.ImageSaver
-import org.jetbrains.anko.longToast
 
 
 class CameraPresenter(val view: CameraMVP.view, val context: Context) : CameraMVP.presenter {
@@ -26,7 +25,7 @@ class CameraPresenter(val view: CameraMVP.view, val context: Context) : CameraMV
         if(bitmap?.let { faceDetection.getFaceLocations(it, context)?.get(0) } != null){
             view.sendImageToModel(jpeg)
         }else{
-            context.longToast("Please select an image with a face")
+            view.noFaceDetectedPopup()
         }
     }
 
