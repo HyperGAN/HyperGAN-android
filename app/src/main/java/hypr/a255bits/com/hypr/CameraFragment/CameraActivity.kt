@@ -2,14 +2,13 @@ package hypr.a255bits.com.hypr.CameraFragment
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.PointF
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
-import android.util.SparseArray
 import android.view.View
 import com.flurgle.camerakit.CameraView
-import com.google.android.gms.vision.face.Face
 import com.pawegio.kandroid.start
 import hypr.a255bits.com.hypr.Main.MainActivity
 import hypr.a255bits.com.hypr.MultiFaceSelection.MultiFaceSelection
@@ -54,7 +53,7 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
         cameraView.captureImage()
     }
 
-    override fun startMultiFaceSelection(jpeg: ByteArray, facesDetected: SparseArray<Face>) {
+    override fun startMultiFaceSelection(jpeg: ByteArray, facesDetected: MutableList<PointF>) {
         intentFor<MultiFaceSelection>("image" to jpeg, "faceLocations" to facesDetected).start(applicationContext)
 
     }

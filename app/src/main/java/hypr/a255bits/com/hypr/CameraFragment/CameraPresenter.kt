@@ -3,7 +3,9 @@ package hypr.a255bits.com.hypr.CameraFragment
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.PointF
 import android.net.Uri
+import collections.forEach
 import hypr.a255bits.com.hypr.Util.Analytics
 import hypr.a255bits.com.hypr.Util.AnalyticsEvent
 import hypr.a255bits.com.hypr.Util.FaceDetection
@@ -26,7 +28,11 @@ class CameraPresenter(val view: CameraMVP.view, val context: Context) : CameraMV
         if (facesDetected != null) {
             when {
                 facesDetected.get(0) != null -> view.sendImageToModel(jpeg)
-                facesDetected.size() > 1 -> {view.startMultiFaceSelection(jpeg, facesDetected)}
+                facesDetected.size() > 1 -> {
+                    val faceLocations = mutableListOf<PointF>()
+                    facesDetected.forEach { i, face ->  faceLocations.add(face.position)}
+                    view.startMultiFaceSelection(jpeg, faceLocations)
+                }
                 else -> view.noFaceDetectedPopup()
             }
         }

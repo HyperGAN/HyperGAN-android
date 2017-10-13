@@ -1,8 +1,7 @@
 package hypr.a255bits.com.hypr.CameraFragment
 
+import android.graphics.PointF
 import android.net.Uri
-import android.util.SparseArray
-import com.google.android.gms.vision.face.Face
 
 
 interface CameraMVP{
@@ -13,7 +12,7 @@ interface CameraMVP{
        fun navigateUpActivity()
        fun takePicture()
        fun noFaceDetectedPopup()
-       fun startMultiFaceSelection(jpeg: ByteArray, facesDetected: SparseArray<Face>)
+       fun startMultiFaceSelection(jpeg: ByteArray, facesDetected: MutableList<PointF>)
    }
     interface presenter{
         fun  sendPictureToModel(jpeg: ByteArray?)

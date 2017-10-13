@@ -1,5 +1,7 @@
 package hypr.a255bits.com.hypr.Util
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.support.v4.view.ViewPager
 import com.flurgle.camerakit.CameraListener
 import com.flurgle.camerakit.CameraView
@@ -29,4 +31,8 @@ inline fun CameraView.onPictureTaken(crossinline listener: (jpeg: ByteArray?) ->
            listener(jpeg)
        }
    })
+}
+
+fun ByteArray.toBitmap(): Bitmap? {
+    return BitmapFactory.decodeByteArray(this, 0, this.size)
 }
