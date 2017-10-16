@@ -27,12 +27,13 @@ class CameraPresenter(val view: CameraMVP.view, val context: Context) : CameraMV
         val facesDetected = bitmap?.let { faceDetection.getFaceLocations(it, context) }
         if (facesDetected != null) {
             when {
-                facesDetected.get(0) != null -> view.sendImageToModel(jpeg)
                 facesDetected.size() > 1 -> {
                     val faceLocations = mutableListOf<PointF>()
-                    facesDetected.forEach { i, face ->  faceLocations.add(face.position)}
+                    facesDetected.forEach { i, face -> faceLocations.add(face.position) }
                     view.startMultiFaceSelection(jpeg, faceLocations)
                 }
+                facesDetected.get(0) != null -> view.sendImageToModel(jpeg)
+
                 else -> view.noFaceDetectedPopup()
             }
         }

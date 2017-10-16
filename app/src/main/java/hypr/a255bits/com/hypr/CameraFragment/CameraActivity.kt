@@ -9,9 +9,7 @@ import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.flurgle.camerakit.CameraView
-import com.pawegio.kandroid.start
 import hypr.a255bits.com.hypr.Main.MainActivity
-import hypr.a255bits.com.hypr.MultiFaceSelection.MultiFaceSelection
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.ImageSaver
 import hypr.a255bits.com.hypr.Util.onPictureTaken
@@ -45,7 +43,7 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
         presenter.displayGallery()
     }
 
-    fun switchCameraClick(view: View){
+    fun switchCameraClick(view: View) {
         cameraView.toggleFacing()
     }
 
@@ -54,8 +52,11 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
     }
 
     override fun startMultiFaceSelection(jpeg: ByteArray, facesDetected: MutableList<PointF>) {
-        intentFor<MultiFaceSelection>("image" to jpeg, "faceLocations" to facesDetected).start(applicationContext)
-
+        val intent = Intent()
+        intent.putExtra("image", jpeg)
+        intent.putExtra("faceLocations", facesDetected.toTypedArray())
+        setResult(Activity.RESULT_OK, intent)
+        finish()
     }
 
     private fun takePictureListener(cameraView: CameraView) {
@@ -80,7 +81,7 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
 
     override fun onResume() {
         super.onResume()
-            cameraView.start()
+        cameraView.start()
     }
 
     override fun onPause() {
@@ -93,6 +94,7 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
         startActivity(intentFor<MainActivity>
         ("indexInJson" to indexInJson, "image" to file.path).clearTop())
     }
+
     fun saveImageSoOtherFragmentCanViewIt(image: ByteArray?): File {
         val file = File.createTempFile("image", "png")
         ImageSaver().saveImageToFile(file, image)

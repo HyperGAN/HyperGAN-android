@@ -18,7 +18,7 @@ import org.jetbrains.anko.collections.forEachWithIndex
 
 class MultiModels : Fragment(), MultiMvp.view {
 
-    private var generators: Array<Generator>? = null
+    private var generators: Array<Generator> = arrayOf()
     private var indexOfGenerator: Int? = null
     private var pathToGenerators: Array<String?> = arrayOf()
     private var image: String? = null
@@ -28,7 +28,7 @@ class MultiModels : Fragment(), MultiMvp.view {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            generators = arguments.getParcelableArray(GENERATORS) as Array<Generator>?
+            generators = arguments.getParcelableArray(GENERATORS) as Array<Generator>
             indexOfGenerator = arguments.getInt(INDEX_OF_GENERATOR_IN_USE)
             image = arguments.getString(PATH_TO_IMAGE)
             pathToGenerators = arguments.getStringArray(PATH_TO_GENERATORS)

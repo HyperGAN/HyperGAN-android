@@ -156,4 +156,8 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         analytics.logEvent(AnalyticsEvent.CHOOSE_SIDE_NAV_OPTION)
     }
 
+    fun stop() {
+        multiModel = null
+    }
+
 }
