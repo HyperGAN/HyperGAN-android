@@ -7,6 +7,8 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.widget.ImageView
 
+
+
 class DrawableImageView(context: Context?, attrs: AttributeSet?) : ImageView(context, attrs) {
     var bitmap: Bitmap? = null
     val paint = Paint()
@@ -20,28 +22,34 @@ class DrawableImageView(context: Context?, attrs: AttributeSet?) : ImageView(con
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        canvas?.drawBitmap(bitmap, 0.0f, 0.0f, paint)
+        val bit = scaleBitmap(bitmap!!)
+        val centreX = (width  - bit.width) /2
+        val centreY = (height - bit.height) /2
+        canvas?.drawBitmap(bit, centreX.toFloat(), centreY.toFloat(), paint)
     }
 
-    private fun resize(image: Bitmap, maxWidth: Int, maxHeight: Int): Bitmap {
-        var image = image
-        if (maxHeight > 0 && maxWidth > 0) {
-            val width = image.width
-            val height = image.height
-            val ratioBitmap = width.toFloat() / height.toFloat()
-            val ratioMax = maxWidth.toFloat() / maxHeight.toFloat()
+    private fun scaleBitmap(bm: Bitmap): Bitmap {
+        var bm = bm
+        var width = bm.width
+        var height = bm.height
 
-            var finalWidth = maxWidth
-            var finalHeight = maxHeight
-            if (ratioMax > 1) {
-                finalWidth = (maxHeight.toFloat() * ratioBitmap).toInt()
-            } else {
-                finalHeight = (maxWidth.toFloat() / ratioBitmap).toInt()
-            }
-            image = Bitmap.createScaledBitmap(image, finalWidth, finalHeight, true)
-            return image
+        if (width > height) {
+            // landscape
+            val ratio = width.toFloat() / this.width
+            width = this.width
+            height = (height / ratio).toInt()
+        } else if (height > width) {
+            // portrait
+            val ratio = height.toFloat() / this.height
+            height = this.height
+            width = (width / ratio).toInt()
         } else {
-            return image
+            // square
+            height = this.height
+            width = this.width
         }
+
+        bm = Bitmap.createScaledBitmap(bm, width, height, true)
+        return bm
     }
 }

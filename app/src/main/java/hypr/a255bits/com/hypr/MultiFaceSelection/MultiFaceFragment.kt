@@ -1,8 +1,7 @@
 package hypr.a255bits.com.hypr.MultiFaceSelection
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.PointF
+import android.graphics.*
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -34,12 +33,20 @@ class MultiFaceFragment : Fragment(), MultiFaceMVP.view{
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        presenter.displayImageWithFaces(imageOfPeoplesFaces)
+        val imageWithBoxesAroundFaces = presenter.addFaceBoxesToMultipleFacesImage(context, imageOfPeoplesFaces)
+        presenter.displayImageWithFaces(imageWithBoxesAroundFaces)
+    }
+
+    override fun addBoxAroundFace(rect: Rect, canvasImageWithFaces: Canvas) {
+        val paint = Paint()
+        paint.color = Color.RED
+        paint.style = Paint.Style.STROKE
+        paint.strokeWidth = 5.0f
+        canvasImageWithFaces.drawRect(rect, paint)
     }
 
     override fun displayImageWithFaces(imageOfPeople: Bitmap) {
         drawableImageView.bitmap = imageOfPeople
-
     }
     override fun onAttach(context: Context?) {
         super.onAttach(context)
