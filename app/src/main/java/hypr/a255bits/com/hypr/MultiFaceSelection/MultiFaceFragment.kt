@@ -41,7 +41,7 @@ class MultiFaceFragment : Fragment(), MultiFaceMVP.view{
         val paint = Paint()
         paint.color = Color.RED
         paint.style = Paint.Style.STROKE
-        paint.strokeWidth = 5.0f
+        paint.strokeWidth = 1.0f
         canvasImageWithFaces.drawRect(rect, paint)
     }
 

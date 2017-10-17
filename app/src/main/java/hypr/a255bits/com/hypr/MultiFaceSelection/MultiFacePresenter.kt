@@ -21,8 +21,10 @@ class MultiFacePresenter(val view: MultiFaceMVP.view) : MultiFaceMVP.presenter {
             val faceLocations = FaceDetection(context).getFaceLocations(imageOfPeoplesFaces, context)
             face = imageOfPeoplesFaces.copy(Bitmap.Config.ARGB_8888, true)
             val canvasImageWithFaces = Canvas(face)
-            faceLocations?.forEach { i, face ->
-                val rect = getFaceBoxLocationInImage(face)
+            faceLocations?.forEach { i, facrCoordinate ->
+                val rect = getFaceBoxLocationInImage(facrCoordinate)
+                println("faceLocation: ${facrCoordinate.position.y}:${facrCoordinate.position.x}")
+                println("rect: ${rect.centerY()}:${rect.centerX()}")
                 view.addBoxAroundFace(rect, canvasImageWithFaces)
             }
         }
@@ -31,10 +33,15 @@ class MultiFacePresenter(val view: MultiFaceMVP.view) : MultiFaceMVP.presenter {
 
     private fun getFaceBoxLocationInImage(face: Face): Rect {
         return with(face) {
-            val left: Int = (position.x - width).toInt()
-            val right: Int = (position.x + height).toInt()
-            val top: Int = (position.y - height).toInt()
-            val bottom: Int = (position.y + height).toInt()
+//            val left: Int = (position.x  - (width / 2)).toInt()
+//            val right: Int = (position.x - (height / 2)).toInt()
+//            val top: Int = (position.y - (height / 2)).toInt()
+//            val bottom: Int = (position.y - (height / 2)).toInt()
+
+            val left: Int = (position.x  - (0)).toInt()
+            val right: Int = (position.x + (width)).toInt()
+            val top: Int = (position.y - (0)).toInt()
+            val bottom: Int = (position.y + (height )).toInt()
             Rect(left, top, right, bottom)
         }
     }
