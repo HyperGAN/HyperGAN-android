@@ -26,6 +26,7 @@ class MultiFacePresenter(val view: MultiFaceMVP.view) : MultiFaceMVP.presenter {
                 println("faceLocation: ${facrCoordinate.position.y}:${facrCoordinate.position.x}")
                 println("rect: ${rect.centerY()}:${rect.centerX()}")
                 view.addBoxAroundFace(rect, canvasImageWithFaces)
+                view.addFaceLocationToImage(rect)
             }
         }
         return face

@@ -9,6 +9,7 @@ interface MultiFaceMVP{
     interface view{
         fun displayImageWithFaces(imageOfPeople: Bitmap)
         fun addBoxAroundFace(rect: Rect, canvasImageWithFaces: Canvas)
+        fun addFaceLocationToImage(rect: Rect)
 
     }
     interface presenter{

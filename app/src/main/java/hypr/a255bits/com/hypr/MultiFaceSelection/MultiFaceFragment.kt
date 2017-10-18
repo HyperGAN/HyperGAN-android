@@ -37,6 +37,10 @@ class MultiFaceFragment : Fragment(), MultiFaceMVP.view{
         presenter.displayImageWithFaces(imageWithBoxesAroundFaces)
     }
 
+    override fun addFaceLocationToImage(rect: Rect) {
+        drawableImageView.addFaceLocation(rect)
+    }
+
     override fun addBoxAroundFace(rect: Rect, canvasImageWithFaces: Canvas) {
         val paint = Paint()
         paint.color = Color.RED
