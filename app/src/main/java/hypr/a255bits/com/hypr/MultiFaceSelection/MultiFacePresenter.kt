@@ -7,7 +7,6 @@ import android.graphics.Rect
 import android.util.SparseArray
 import collections.forEach
 import com.google.android.gms.vision.face.Face
-import hypr.a255bits.com.hypr.Util.BitmapManipulator
 import hypr.a255bits.com.hypr.Util.FaceDetection
 import hypr.a255bits.com.hypr.Util.ImageSaver
 import hypr.a255bits.com.hypr.Util.toByteArray
@@ -65,11 +64,9 @@ class MultiFacePresenter(val view: MultiFaceMVP.view) : MultiFaceMVP.presenter {
         }
     }
 
-    override fun cropFaceFromImage(image: Bitmap, index: Int): Bitmap {
-        val key = faceCoordinates.keyAt(index)
-        with(faceCoordinates[key]){
-            return BitmapManipulator().cropAreaOutOfBitmap(image, position.x.toInt(), position.y.toInt(), width.toInt(), height.toInt())
-        }
+    override fun cropFaceFromImage(image: Bitmap, index: Int, context: Context): Bitmap {
+        val images = FaceDetection(context).getListOfFaces(faceCoordinates, image)
+        return images[index]
     }
 
 }

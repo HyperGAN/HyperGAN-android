@@ -17,7 +17,7 @@ interface MultiFaceMVP{
     interface presenter{
         fun displayImageWithFaces(image: Bitmap?)
         fun addFaceBoxesToMultipleFacesImage(faceLocations: Context, imageOfPeoplesFaces: Bitmap?): Bitmap?
-        fun cropFaceFromImage(image: Bitmap, bounds: Int): Bitmap
+        fun cropFaceFromImage(image: Bitmap, bounds: Int, context: Context): Bitmap
         fun sendCroppedFaceToMultiModel(croppedFace: Bitmap)
         fun saveImageSoOtherFragmentCanViewIt(image: ByteArray?): File
     }

@@ -44,7 +44,7 @@ class MultiFaceFragment : Fragment(), MultiFaceMVP.view, DrawableImageViewTouchI
     }
 
     override fun onBoundsTouch(image: Bitmap, index: Int) {
-        val croppedFace = presenter.cropFaceFromImage(presenter.imageOfPeoplesFaces!!, index)
+        val croppedFace = presenter.cropFaceFromImage(presenter.imageOfPeoplesFaces!!, index, context)
         presenter.sendCroppedFaceToMultiModel(croppedFace)
     }
     override fun sendImageToModel(file: File) {
