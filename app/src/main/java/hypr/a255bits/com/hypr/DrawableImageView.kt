@@ -8,16 +8,24 @@ import android.widget.ImageView
 import org.jetbrains.anko.toast
 
 
-class DrawableImageView(context: Context?, attrs: AttributeSet?) : ImageView(context, attrs) {
+open class DrawableImageView(context: Context?, attrs: AttributeSet?) : ImageView(context, attrs){
+
     var bitmap: Bitmap? = null
     val paint = Paint()
+    var scaledBitmap: Bitmap? = null
+    val oldFaceLocations = mutableListOf<Rect>()
     private val faceLocation = mutableListOf<Rect>()
     val touchPaint = Paint()
-
+    private var boundsListener: DrawableImageViewTouchInBoundsListener? = null
     init{
         touchPaint.color = Color.BLUE
         touchPaint.style = Paint.Style.STROKE
         touchPaint.strokeWidth = 1.5f
+    }
+
+
+    fun setBoundsTouchListener(boundsListener: DrawableImageViewTouchInBoundsListener){
+        this.boundsListener = boundsListener
     }
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val parentWidth = MeasureSpec.getSize(widthMeasureSpec)
@@ -28,17 +36,21 @@ class DrawableImageView(context: Context?, attrs: AttributeSet?) : ImageView(con
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        val bit = scaleBitmap(bitmap!!)
-        val centreX = (width - bit.width) / 2
-        val centreY = (height - bit.height) / 2
-        canvas?.drawBitmap(bit, centreX.toFloat(), centreY.toFloat(), paint)
-        scaleTouchInputBoxesToImagePosition(bit, centreX, centreY)
+        faceLocation.forEach { item ->
+            oldFaceLocations.add(Rect(item))
+        }
+        scaledBitmap = scaleBitmap(bitmap!!)
+        val centreX = (width - scaledBitmap!!.width) / 2
+        val centreY = (height - scaledBitmap!!.height) / 2
+        canvas?.drawBitmap(scaledBitmap, centreX.toFloat(), centreY.toFloat(), paint)
+        scaleTouchInputBoxesToImagePosition(scaledBitmap!!, centreX, centreY)
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        faceLocation.forEach { faceLocation ->
+        faceLocation.forEachIndexed() { i, faceLocation ->
             if(faceLocation.contains(event?.x!!.toInt(), event.y.toInt())){
                context.toast("inside bounds")
+                bitmap?.let { boundsListener?.onBoundsTouch(it, i) }
             }
         }
 
@@ -87,3 +99,6 @@ class DrawableImageView(context: Context?, attrs: AttributeSet?) : ImageView(con
         faceLocation.add(rect)
     }
 }
+interface DrawableImageViewTouchInBoundsListener{
+        fun onBoundsTouch(image: Bitmap, index: Int)
+    }

@@ -5,6 +5,8 @@ import android.graphics.BitmapFactory
 import android.support.v4.view.ViewPager
 import com.flurgle.camerakit.CameraListener
 import com.flurgle.camerakit.CameraView
+import java.io.ByteArrayOutputStream
+
 
 fun Float.nonNegativeInt(): Int {
     return intArrayOf(this.toInt(), 0).max()!!
@@ -35,4 +37,10 @@ inline fun CameraView.onPictureTaken(crossinline listener: (jpeg: ByteArray?) ->
 
 fun ByteArray.toBitmap(): Bitmap? {
     return BitmapFactory.decodeByteArray(this, 0, this.size)
+}
+
+fun Bitmap.toByteArray(): ByteArray{
+    val stream = ByteArrayOutputStream()
+    this.compress(Bitmap.CompressFormat.PNG, 100, stream)
+    return stream.toByteArray()
 }

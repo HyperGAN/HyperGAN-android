@@ -7,11 +7,16 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import hypr.a255bits.com.hypr.DrawableImageViewTouchInBoundsListener
+import hypr.a255bits.com.hypr.Main.MainActivity
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.toBitmap
 import kotlinx.android.synthetic.main.fragment_multi_face.*
+import org.jetbrains.anko.clearTop
+import org.jetbrains.anko.intentFor
+import java.io.File
 
-class MultiFaceFragment : Fragment(), MultiFaceMVP.view{
+class MultiFaceFragment : Fragment(), MultiFaceMVP.view, DrawableImageViewTouchInBoundsListener{
 
     private var imageOfPeoplesFaces: Bitmap? = null
     private var faceLocations: Array<PointF>? = null
@@ -34,7 +39,17 @@ class MultiFaceFragment : Fragment(), MultiFaceMVP.view{
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val imageWithBoxesAroundFaces = presenter.addFaceBoxesToMultipleFacesImage(context, imageOfPeoplesFaces)
+        drawableImageView.setBoundsTouchListener(this)
         presenter.displayImageWithFaces(imageWithBoxesAroundFaces)
+    }
+
+    override fun onBoundsTouch(image: Bitmap, index: Int) {
+        val croppedFace = presenter.cropFaceFromImage(presenter.imageOfPeoplesFaces!!, index)
+        presenter.sendCroppedFaceToMultiModel(croppedFace)
+    }
+    override fun sendImageToModel(file: File) {
+        startActivity(activity.intentFor<MainActivity>
+        ("indexInJson" to 0, "image" to file.path).clearTop())
     }
 
     override fun addFaceLocationToImage(rect: Rect) {
