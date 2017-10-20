@@ -5,7 +5,7 @@ import com.squareup.moshi.Json
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-class Control() : Parcelable {
+class Control : Parcelable {
     @Json(name = "type")
     var type: String? = null
 
