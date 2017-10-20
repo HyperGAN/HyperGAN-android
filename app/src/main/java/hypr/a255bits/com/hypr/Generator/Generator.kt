@@ -5,7 +5,7 @@ import com.squareup.moshi.Json
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-class Generator() : Parcelable {
+class Generator : Parcelable {
     @Json(name = "name")
     var name: String = ""
 
