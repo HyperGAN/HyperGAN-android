@@ -1,7 +1,6 @@
 package hypr.a255bits.com.hypr.CameraFragment
 
 import android.net.Uri
-import android.view.MenuItem
 
 
 interface CameraMVP{
@@ -11,6 +10,7 @@ interface CameraMVP{
        fun displayGallery()
        fun navigateUpActivity()
        fun takePicture()
+       fun noFaceDetectedPopup()
    }
     interface presenter{
         fun  sendPictureToModel(jpeg: ByteArray?)
