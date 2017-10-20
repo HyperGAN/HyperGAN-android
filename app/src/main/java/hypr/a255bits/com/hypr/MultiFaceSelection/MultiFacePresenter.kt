@@ -51,11 +51,6 @@ class MultiFacePresenter(val view: MultiFaceMVP.view) : MultiFaceMVP.presenter {
 
     private fun getFaceBoxLocationInImage(face: Face): Rect {
         return with(face) {
-            //            val left: Int = (position.x  - (width / 2)).toInt()
-//            val right: Int = (position.x - (height / 2)).toInt()
-//            val top: Int = (position.y - (height / 2)).toInt()
-//            val bottom: Int = (position.y - (height / 2)).toInt()
-
             val left: Int = (position.x - (0)).toInt()
             val right: Int = (position.x + (width)).toInt()
             val top: Int = (position.y - (0)).toInt()
