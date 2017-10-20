@@ -5,7 +5,6 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.ImageView
-import org.jetbrains.anko.toast
 
 
 open class DrawableImageView(context: Context?, attrs: AttributeSet?) : ImageView(context, attrs){
@@ -49,7 +48,6 @@ open class DrawableImageView(context: Context?, attrs: AttributeSet?) : ImageVie
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         faceLocation.forEachIndexed() { i, faceLocation ->
             if(faceLocation.contains(event?.x!!.toInt(), event.y.toInt())){
-               context.toast("inside bounds")
                 bitmap?.let { boundsListener?.onBoundsTouch(it, i) }
             }
         }
