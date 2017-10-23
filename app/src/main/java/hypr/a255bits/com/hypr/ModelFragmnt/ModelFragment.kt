@@ -36,7 +36,6 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
             presenter.readImageToBytes(arguments.getString(IMAGE_PARAM))
             presenter.generatorIndex = arguments.getInt(GENERATOR_INDEX)
             if (arguments.getString(FULL_IMAGE_LOCATION) != null) {
-
                 val fullImage: File? = arguments.getString(FULL_IMAGE_LOCATION).let { File(it) }
                 presenter.fullImage = fullImage?.readBytes()
             }
