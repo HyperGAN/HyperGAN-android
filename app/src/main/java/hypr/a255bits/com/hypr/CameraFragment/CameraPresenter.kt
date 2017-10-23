@@ -3,7 +3,9 @@ package hypr.a255bits.com.hypr.CameraFragment
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.PointF
 import android.net.Uri
+import collections.forEach
 import hypr.a255bits.com.hypr.Util.Analytics
 import hypr.a255bits.com.hypr.Util.AnalyticsEvent
 import hypr.a255bits.com.hypr.Util.FaceDetection
@@ -12,7 +14,7 @@ import hypr.a255bits.com.hypr.Util.ImageSaver
 
 class CameraPresenter(val view: CameraMVP.view, val context: Context) : CameraMVP.presenter {
 
-    val interactor: CameraInteractor by lazy{CameraInteractor(context)}
+    val interactor: CameraInteractor by lazy { CameraInteractor(context) }
     val analytics = Analytics(context)
     val faceDetection = FaceDetection(context)
     override fun sendPictureToModel(jpeg: ByteArray?) {
@@ -22,12 +24,20 @@ class CameraPresenter(val view: CameraMVP.view, val context: Context) : CameraMV
     }
 
     private fun startModelIfImageHasFace(bitmap: Bitmap?, jpeg: ByteArray) {
-        if(bitmap?.let { faceDetection.getFaceLocations(it, context)?.get(0) } != null){
-            view.sendImageToModel(jpeg)
-        }else{
-            view.noFaceDetectedPopup()
+        val facesDetected = bitmap?.let { faceDetection.getFaceLocations(it, context) }
+        if (facesDetected != null) {
+            when {
+                facesDetected.size() > 1 -> {
+                    val faceLocations = mutableListOf<PointF>()
+                    facesDetected.forEach { i, face -> faceLocations.add(face.position) }
+                    view.startMultiFaceSelection(jpeg, faceLocations)
+                }
+                facesDetected.size() > 0 -> view.sendImageToModel(jpeg)
+                facesDetected.size() == 0-> view.noFaceDetectedPopup()
+            }
         }
     }
+
 
     override fun getImageFromImageFileLocation(imageLocation: Uri) {
         val imageFromGallery: ByteArray? = ImageSaver().uriToByteArray(imageLocation, context)

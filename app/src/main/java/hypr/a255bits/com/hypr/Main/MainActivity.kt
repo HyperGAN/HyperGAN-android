@@ -3,6 +3,7 @@ package hypr.a255bits.com.hypr.Main
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
+import android.graphics.PointF
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
@@ -17,6 +18,7 @@ import com.pawegio.kandroid.start
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator.Generator
+import hypr.a255bits.com.hypr.MultiFaceSelection.MultiFaceFragment
 import hypr.a255bits.com.hypr.MultiModels.MultiModels
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
@@ -88,6 +90,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == presenter.SIGN_INTO_GOOGLE_RESULT && resultCode == Activity.RESULT_OK) {
+        }else if(requestCode == 1){
+            val image = data?.getByteArrayExtra("image")
+            val facesDetected = data?.getParcelableArrayExtra("faceLocations")
+            val facesDetectedPointF = mutableListOf<PointF>()
+            facesDetected?.forEach { item -> facesDetectedPointF.add(item as PointF)}
+
+            supportFragmentManager.beginTransaction().replace(R.id.container, MultiFaceFragment.newInstance(image ,facesDetectedPointF.toTypedArray())).commitAllowingStateLoss()
         }
     }
 
@@ -141,7 +150,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @Subscribe
     fun startIntent(intent: Intent) {
-        startActivity(intent)
+        startActivityForResult(intent, 1)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -194,6 +203,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this)
+        presenter.stop()
     }
 
     override fun onDestroy() {

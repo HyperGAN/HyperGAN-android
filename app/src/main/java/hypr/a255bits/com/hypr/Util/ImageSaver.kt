@@ -64,5 +64,4 @@ class ImageSaver {
         return stream.toByteArray()
 
     }
-
 }
