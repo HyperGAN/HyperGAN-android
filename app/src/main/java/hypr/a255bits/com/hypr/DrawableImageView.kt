@@ -57,13 +57,13 @@ open class DrawableImageView(context: Context?, attrs: AttributeSet?) : ImageVie
 
     private fun scaleTouchInputBoxesToImagePosition(bit: Bitmap, centreX: Int, centreY: Int){
         faceLocation.forEach { rect ->
-            val widthDifference = bit.width.toFloat() / bitmap!!.width.toFloat()
-            val heightDifference = ((bit.height.toFloat()))/ (bitmap!!.height.toFloat())
-            rect.right = (rect.right * widthDifference).toInt()
-            rect.left = (rect.left * widthDifference).toInt()
-            rect.bottom = (rect.bottom * heightDifference).toInt()
+            val widthRatio = bit.width.toFloat() / bitmap!!.width.toFloat()
+            val heightRatio = ((bit.height.toFloat()))/ (bitmap!!.height.toFloat())
+            rect.right = (rect.right * widthRatio).toInt()
+            rect.left = (rect.left * widthRatio).toInt()
+            rect.bottom = (rect.bottom * heightRatio).toInt()
             rect.bottom += centreY
-            rect.top = (rect.top * heightDifference).toInt()
+            rect.top = (rect.top * heightRatio).toInt()
             rect.top += centreY
         }
     }
