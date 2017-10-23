@@ -32,6 +32,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     var isModelFragmentDisplayed: Boolean = false
     var indexInJson: Int? = 0
     var image: String? = null
+    var fullImage: String? = null
     val settingsHelper = SettingsHelper(context)
 
     init {
@@ -105,7 +106,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
     private fun displayMultiModels(itemId: Int, imageLocationPath: String?, listOfGenerators: List<Generator>?) {
-        multiModel = MultiModels.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray())
+        multiModel = MultiModels.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray(), fullImage)
         view.startMultipleModels(multiModel!!)
     }
 
@@ -159,5 +160,6 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     fun stop() {
         multiModel = null
     }
+
 
 }

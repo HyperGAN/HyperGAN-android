@@ -47,9 +47,9 @@ class MultiFaceFragment : Fragment(), MultiFaceMVP.view, DrawableImageViewTouchI
         val croppedFace = presenter.cropFaceFromImage(presenter.imageOfPeoplesFaces!!, index, context)
         presenter.sendCroppedFaceToMultiModel(croppedFace)
     }
-    override fun sendImageToModel(file: File) {
+    override fun sendImageToModel(file: File, fullImage: File) {
         startActivity(activity.intentFor<MainActivity>
-        ("indexInJson" to 0, "image" to file.path).clearTop())
+        ("indexInJson" to 0, "image" to file.path, "fullimage" to fullImage.path).clearTop())
     }
 
     override fun addFaceLocationToImage(rect: Rect) {

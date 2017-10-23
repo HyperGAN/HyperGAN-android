@@ -10,7 +10,7 @@ interface MultiMvp{
 
     }
     interface presenter{
-        fun  startModelsList(generators: Array<Generator>?, fragmentManager: FragmentManager, image: String?, filePaths: Array<String?>)
+        fun  startModelsList(generators: Array<Generator>?, fragmentManager: FragmentManager, image: String?, filePaths: Array<String?>, fullImage: String?)
         fun lockModel(indexOfFragment: Int)
 
         fun unlockModel(indexOfFragment: Int)

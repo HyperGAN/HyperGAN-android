@@ -39,12 +39,13 @@ class MultiFacePresenter(val view: MultiFaceMVP.view) : MultiFaceMVP.presenter {
     }
 
     override fun sendCroppedFaceToMultiModel(croppedFace: Bitmap) {
-        val file = saveImageSoOtherFragmentCanViewIt(croppedFace.toByteArray())
-        view.sendImageToModel(file)
+        val croppedImage = saveImageSoOtherFragmentCanViewIt(croppedFace.toByteArray(), "image")
+        val fullImage = saveImageSoOtherFragmentCanViewIt(imageOfPeoplesFaces?.toByteArray(), "fullimage")
+        view.sendImageToModel(croppedImage, fullImage)
     }
 
-    override fun saveImageSoOtherFragmentCanViewIt(image: ByteArray?): File {
-        val file = File.createTempFile("image", "png")
+    override fun saveImageSoOtherFragmentCanViewIt(image: ByteArray?, filename: String): File {
+        val file = File.createTempFile(filename, "png")
         ImageSaver().saveImageToFile(file, image)
         return file
     }

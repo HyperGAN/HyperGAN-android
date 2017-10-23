@@ -10,7 +10,7 @@ import org.greenrobot.eventbus.EventBus
 import java.io.File
 
 
-class MultiModelAdapter(fm: FragmentManager?, val generators: Array<Generator>, val image: String?, val file: File) : FragmentPagerAdapter(fm) {
+class MultiModelAdapter(fm: FragmentManager?, val generators: Array<Generator>, val image: String?, val file: File, val fullImage: String?) : FragmentPagerAdapter(fm) {
     val modelFragments = mutableListOf<ModelFragment>()
     init{
        addControlNamesToToolbar(generators[0])
@@ -29,7 +29,7 @@ class MultiModelAdapter(fm: FragmentManager?, val generators: Array<Generator>, 
 
     fun createFragment(generator: Generator, position: Int): ModelFragment? {
         val controlArray: Array<Control>? = generator.generator?.viewer?.controls?.toTypedArray()
-        return ModelFragment.newInstance(generator, image, file, position)
+        return ModelFragment.newInstance(generator, image, file, position, fullImage)
     }
 
     override fun getPageTitle(position: Int): CharSequence {

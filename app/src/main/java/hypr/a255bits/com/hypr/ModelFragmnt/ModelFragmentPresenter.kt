@@ -42,6 +42,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         newValue
     }
     var byteArrayImage: ByteArray? = null
+    var fullImage: ByteArray? = null
     var generatorIndex: Int? = null
     var direction: FloatArray? = null
 
@@ -160,4 +161,5 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     override fun convertByteArrayImageToBitmap(): Bitmap? {
         return byteArrayImage?.let { BitmapManipulator().createBitmapFromByteArray(it) }
     }
+
 }
