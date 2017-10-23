@@ -95,6 +95,11 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         var isSaved = false
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             val bitmap = imageFromGallery?.let { changePixelToBitmap(it) }
+            val croppedPoint = SettingsHelper(context).getFaceLocation()
+            if (bitmap != null) {
+                val inlineImage = byteArrayImage?.toBitmap()?.let { InlineImage().inlineCroppedImageToFullImage(bitmap, it) }
+
+            }
             isSaved = ImageSaver().saveImageToInternalStorage(bitmap, context)
         } else {
             view.requestPermissionFromUser(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), SAVE_IMAGE_PERMISSION_REQUEST)

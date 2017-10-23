@@ -20,12 +20,11 @@ class InlineImage{
         val newWidth = croppedImage.width / widthRatio
         val newHeight = croppedImage.height / heightRatio
         val scaledBitmapToCroppedImage: Bitmap = scaleBitmap(fullImage, newWidth, newHeight)
-
     }
 
     private fun scaleBitmap(fullImage: Bitmap, newWidth: Int, newHeight: Int): Bitmap {
-        val width = fullImage.getWidth()
-        val height = fullImage.getHeight()
+        val width = fullImage.width
+        val height = fullImage.height
         val scaleWidth = newWidth as Float / width
         val scaleHeight = newHeight as Float / height
         // CREATE A MATRIX FOR THE MANIPULATION

@@ -2,6 +2,7 @@ package hypr.a255bits.com.hypr.Util
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Rect
 import android.util.SparseArray
 import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.face.Face
@@ -52,5 +53,12 @@ class FaceDetection(val context: Context){
         val x = centerOfFace.x.nonNegativeInt()
         val y = centerOfFace.y.nonNegativeInt()
         return BitmapManipulator().cropAreaOutOfBitmap(imageWithFaces,x,y,face.width.toInt(), face.height.toInt())
+    }
+    fun faceToRect(x: Float, y: Float, width: Float, height: Float): Rect {
+            val left: Int = (x - (0)).toInt()
+            val right: Int = (x + (width)).toInt()
+            val top: Int = (y - (0)).toInt()
+            val bottom: Int = (y + (height)).toInt()
+            return Rect(left, top, right, bottom)
     }
 }
