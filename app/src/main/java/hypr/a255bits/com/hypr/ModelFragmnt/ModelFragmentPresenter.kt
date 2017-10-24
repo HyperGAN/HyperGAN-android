@@ -99,7 +99,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
             if (bitmap != null && fullImage != null) {
                 val inliner = InlineImage()
                 inliner.setBeforeAfterCropSizingRatio(byteArrayImage?.toBitmap()!!, bitmap)
-                val inlineImage = byteArrayImage?.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(bitmap, it) }
+                val inlineImage = fullImage?.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(bitmap, it) }
                 println("hello")
 
             }
