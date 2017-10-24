@@ -98,12 +98,13 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
             if (bitmap != null && fullImage != null) {
                 val inliner = InlineImage()
                 inliner.setBeforeAfterCropSizingRatio(byteArrayImage?.toBitmap()!!, bitmap)
-                    val inlineImage = fullImage?.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(bitmap!!, it) }
-                bitmap = inlineImage
+                val inlineImage = fullImage?.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(bitmap!!, it, croppedPoint) }
                 println("hello")
+                isSaved = ImageSaver().saveImageToInternalStorage(inlineImage, context)
 
+            }else{
+                isSaved = ImageSaver().saveImageToInternalStorage(bitmap, context)
             }
-            isSaved = ImageSaver().saveImageToInternalStorage(bitmap, context)
         } else {
             view.requestPermissionFromUser(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), SAVE_IMAGE_PERMISSION_REQUEST)
         }

@@ -1,9 +1,6 @@
 package hypr.a255bits.com.hypr.ModelFragmnt
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Matrix
-import android.graphics.Paint
+import android.graphics.*
 
 
 /**
@@ -26,7 +23,7 @@ class InlineImage{
             heightRatio = oldCroppedImage.height.toFloat() / newCroppedImage.height.toFloat()
         }
     }
-    fun inlineCroppedImageToFullImage(croppedImage: Bitmap, fullImage: Bitmap): Bitmap {
+    fun inlineCroppedImageToFullImage(croppedImage: Bitmap, fullImage: Bitmap, croppedPoint: Rect): Bitmap {
         val newWidth: Float
         val newHeight: Float
         if(isOldCoppedImageBigger){
@@ -37,16 +34,18 @@ class InlineImage{
             newHeight = fullImage.height / heightRatio
 
         }
+        val offsetY: Int  = (croppedPoint.centerY() + (newHeight - fullImage.height)).toInt()
+        croppedPoint.offset(0, offsetY)
         val scaledBitmapToCroppedImage: Bitmap = scaleBitmap(fullImage, newWidth.toInt(), newHeight.toInt())
-        val fullImageWithCroppedImageInline: Bitmap = insertCroppedImageWithinFullImage(scaledBitmapToCroppedImage, croppedImage)
+        val fullImageWithCroppedImageInline: Bitmap = insertCroppedImageWithinFullImage(scaledBitmapToCroppedImage, croppedImage, croppedPoint)
         println("hi")
         return fullImageWithCroppedImageInline
     }
 
-    private fun insertCroppedImageWithinFullImage(scaledBitmapToCroppedImage: Bitmap, croppedImage: Bitmap): Bitmap {
+    private fun insertCroppedImageWithinFullImage(scaledBitmapToCroppedImage: Bitmap, croppedImage: Bitmap, croppedPoint: Rect): Bitmap {
         val fullImageCanvas = Canvas(scaledBitmapToCroppedImage)
         val left: Float = (fullImageCanvas.width - croppedImage.width).toFloat()
-        fullImageCanvas.drawBitmap(croppedImage, left, 0.0f, Paint())
+        fullImageCanvas.drawBitmap(croppedImage, croppedPoint.left.toFloat(), croppedPoint.top.toFloat(), Paint())
         return scaledBitmapToCroppedImage
     }
 

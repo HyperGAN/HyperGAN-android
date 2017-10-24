@@ -34,10 +34,12 @@ class SettingsHelper(val context: Context) {
 
     fun saveFaceLocation(face: Face?) {
         if (face != null) {
-            editor.edit().putFloat("face_x", face.position.x)
-            editor.edit().putFloat("face_y", face.position.y)
-            editor.edit().putFloat("face_width", face.width)
-            editor.edit().putFloat("face_height", face.height)
+            val edit = editor.edit()
+            edit.putFloat("face_x", face.position.x)
+            edit.putFloat("face_y", face.position.y)
+            edit.putFloat("face_width", face.width)
+            edit.putFloat("face_height", face.height)
+            edit.apply()
         }
     }
 
