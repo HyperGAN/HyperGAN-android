@@ -36,8 +36,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     val SHARE_IMAGE_PERMISSION_REQUEST = 10
     val SAVE_IMAGE_PERMISSION_REQUEST: Int = 11
     lateinit var easyGenerator: EasyGeneratorLoader
-    var generator: Generator by Delegates.observable(Generator()){
-        property, oldValue, newValue ->
+    var generator: Generator by Delegates.observable(Generator()) { property, oldValue, newValue ->
         newValue.generator?.let { easyGenerator = EasyGeneratorLoader(it) }
         newValue
     }
@@ -94,12 +93,13 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     override fun saveImageDisplayedToPhone(context: Context): Boolean {
         var isSaved = false
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            val bitmap = imageFromGallery?.let { changePixelToBitmap(it) }
+            var bitmap = imageFromGallery?.let { changePixelToBitmap(it) }
             val croppedPoint = SettingsHelper(context).getFaceLocation()
             if (bitmap != null && fullImage != null) {
                 val inliner = InlineImage()
                 inliner.setBeforeAfterCropSizingRatio(byteArrayImage?.toBitmap()!!, bitmap)
-                val inlineImage = fullImage?.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(bitmap, it) }
+                    val inlineImage = fullImage?.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(bitmap!!, it) }
+                bitmap = inlineImage
                 println("hello")
 
             }

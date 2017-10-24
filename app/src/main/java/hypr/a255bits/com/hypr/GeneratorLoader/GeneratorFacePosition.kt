@@ -7,8 +7,8 @@ import com.google.android.gms.vision.face.Face
 import com.google.android.gms.vision.face.Landmark
 
 class GeneratorFacePosition{
-    private val XOFFSET_PERCENT = 0.91
-    private val YOFFSET_PERCENT = 0.52
+    private val XOFFSET_PERCENT = 0.85
+    private val YOFFSET_PERCENT = 0.54
     fun cropFaceOutOfBitmap(face: Face, imageWithFaces: Bitmap): Bitmap {
 
         val left = face.landmarks.first{ it.type == Landmark.LEFT_EYE }

@@ -26,20 +26,21 @@ class InlineImage{
             heightRatio = oldCroppedImage.height.toFloat() / newCroppedImage.height.toFloat()
         }
     }
-    fun inlineCroppedImageToFullImage(croppedImage: Bitmap, fullImage: Bitmap){
+    fun inlineCroppedImageToFullImage(croppedImage: Bitmap, fullImage: Bitmap): Bitmap {
         val newWidth: Float
         val newHeight: Float
         if(isOldCoppedImageBigger){
-            newWidth = croppedImage.width * widthRatio
-            newHeight = croppedImage.height * heightRatio
+            newWidth = fullImage.width * widthRatio
+            newHeight = fullImage.height * heightRatio
         }else{
-            newWidth = croppedImage.width / widthRatio
-            newHeight = croppedImage.height / heightRatio
+            newWidth = fullImage.width / widthRatio
+            newHeight = fullImage.height / heightRatio
 
         }
         val scaledBitmapToCroppedImage: Bitmap = scaleBitmap(fullImage, newWidth.toInt(), newHeight.toInt())
         val fullImageWithCroppedImageInline: Bitmap = insertCroppedImageWithinFullImage(scaledBitmapToCroppedImage, croppedImage)
         println("hi")
+        return fullImageWithCroppedImageInline
     }
 
     private fun insertCroppedImageWithinFullImage(scaledBitmapToCroppedImage: Bitmap, croppedImage: Bitmap): Bitmap {
