@@ -42,7 +42,7 @@ class FaceDetection(val context: Context){
         repeat(numOfFaces) { index ->
             val faceLocation = faceLocations.valueAt(index)
             if (faceLocation != null) {
-                val face = GeneratorFacePosition().cropFaceOutOfBitmap(faceLocation, imageWithFaces)
+                val face = GeneratorFacePosition(context).cropFaceOutOfBitmap(faceLocation, imageWithFaces)
                 croppedFaces.add(face)
             }
         }

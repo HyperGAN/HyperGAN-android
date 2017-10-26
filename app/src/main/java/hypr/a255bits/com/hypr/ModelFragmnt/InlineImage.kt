@@ -3,14 +3,18 @@ package hypr.a255bits.com.hypr.ModelFragmnt
 import android.graphics.*
 
 
-/**
- * Created by tedho on 10/23/2017.
- */
-
 class InlineImage{
     var widthRatio: Float = 0.0f
     var heightRatio: Float = 0.0f
     var isOldCoppedImageBigger = false
+
+
+    val paint = Paint()
+    init{
+
+        paint.style = Paint.Style.STROKE
+        paint.color = Color.RED
+    }
 
     fun setBeforeAfterCropSizingRatio(oldCroppedImage: Bitmap, newCroppedImage: Bitmap){
         if(oldCroppedImage.byteCount < newCroppedImage.byteCount){
@@ -34,19 +38,26 @@ class InlineImage{
             newHeight = fullImage.height / heightRatio
 
         }
-        val offsetY: Int  = (croppedPoint.centerY() + (newHeight - fullImage.height)).toInt()
-        croppedPoint.offset(0, offsetY)
-        val scaledBitmapToCroppedImage: Bitmap = scaleBitmap(fullImage, newWidth.toInt(), newHeight.toInt())
-        val fullImageWithCroppedImageInline: Bitmap = insertCroppedImageWithinFullImage(scaledBitmapToCroppedImage, croppedImage, croppedPoint)
+//        val scaledBitmapToCroppedImage: Bitmap = scaleBitmap(fullImage, newWidth.toInt(), newHeight.toInt())
+        val fullImageWithCroppedImageInline: Bitmap = insertCroppedImageWithinFullImage(fullImage, croppedImage, croppedPoint)
         println("hi")
         return fullImageWithCroppedImageInline
     }
 
-    private fun insertCroppedImageWithinFullImage(scaledBitmapToCroppedImage: Bitmap, croppedImage: Bitmap, croppedPoint: Rect): Bitmap {
-        val fullImageCanvas = Canvas(scaledBitmapToCroppedImage)
-        val left: Float = (fullImageCanvas.width - croppedImage.width).toFloat()
-        fullImageCanvas.drawBitmap(croppedImage, croppedPoint.left.toFloat(), croppedPoint.top.toFloat(), Paint())
-        return scaledBitmapToCroppedImage
+    private fun insertCroppedImageWithinFullImage(fullImage: Bitmap, croppedImage: Bitmap, croppedPoint: Rect): Bitmap {
+        val left = 14
+        val top = 129
+        val w = 145
+        val h = 142
+
+        val rect = Rect(left, top, left + w, top + h)
+
+        val fullImageMutable = fullImage.copy(Bitmap.Config.ARGB_8888, true)
+        val fullImageCanvas = Canvas(fullImageMutable)
+        val scaledCropped = scaleBitmap(croppedImage, rect.width(), rect.height())
+//        fullImageCanvas.drawRect(rect, paint)
+        fullImageCanvas.drawBitmap(scaledCropped, rect.left.toFloat(), rect.top.toFloat(), Paint())
+        return fullImage
     }
 
     private fun scaleBitmap(fullImage: Bitmap, newWidth: Int, newHeight: Int): Bitmap {

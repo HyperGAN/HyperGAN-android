@@ -1,12 +1,12 @@
 package hypr.a255bits.com.hypr.GeneratorLoader
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Matrix
+import android.content.Context
+import android.graphics.*
 import com.google.android.gms.vision.face.Face
 import com.google.android.gms.vision.face.Landmark
+import hypr.a255bits.com.hypr.Util.FaceDetection
 
-class GeneratorFacePosition{
+class GeneratorFacePosition(val context: Context) {
     private val XOFFSET_PERCENT = 0.85
     private val YOFFSET_PERCENT = 0.54
     fun cropFaceOutOfBitmap(face: Face, imageWithFaces: Bitmap): Bitmap {
@@ -22,26 +22,26 @@ class GeneratorFacePosition{
         val x2: Int = (right.position.x + offsetX).toInt()
         val y2: Int = (left.position.y + offsetY).toInt()
 
+        val rect = FaceDetection(context).faceToRect(face.position.x, face.position.y, face.width, face.height)
+        rect.left = rect.left - offsetX
+        rect.right = rect.right + offsetX
+        rect.top = rect.top - offsetY
+        rect.bottom = rect.bottom + offsetY
+        val mutableBitmap = imageWithFaces.copy(Bitmap.Config.ARGB_8888, true)
+        val canvas = Canvas(mutableBitmap)
+        val paint = Paint()
+        paint.style = Paint.Style.STROKE
+        paint.color = Color.RED
+        canvas.drawRect(rect, paint)
+
         var w: Int = x2-x1
         var h: Int = y2-y1
 
 
-        val bitmapWithPadding: Bitmap = placePaddingAroundBitmap(imageWithFaces, offsetX, offsetY)
-
-        val bitmap:Bitmap =Bitmap.createBitmap(bitmapWithPadding, x1+offsetX, y1+offsetY, w, h)
+        val bitmap:Bitmap =Bitmap.createBitmap(imageWithFaces, x1, y1, w, h)
         val maxSize:Int = intArrayOf(bitmap.height, bitmap.width).min()!!
 
         return getResizedBitmap(bitmap, maxSize, maxSize)
-    }
-
-    private fun  placePaddingAroundBitmap(imageWithFaces: Bitmap, offsetX: Int, offsetY: Int): Bitmap {
-        val hpad = imageWithFaces.height + offsetY*2
-        val wpad = imageWithFaces.width + offsetX*2
-
-        val padded:Bitmap =Bitmap.createBitmap(wpad, hpad, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(padded)
-        canvas.drawBitmap(imageWithFaces, offsetX.toFloat(), offsetY.toFloat(), null)
-        return padded
     }
 
     fun getResizedBitmap(bm: Bitmap, newWidth: Int, newHeight: Int): Bitmap {
