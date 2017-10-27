@@ -2,6 +2,7 @@ package hypr.a255bits.com.hypr.Util
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.support.v4.view.ViewPager
 import com.flurgle.camerakit.CameraListener
 import com.flurgle.camerakit.CameraView
@@ -44,3 +45,15 @@ fun Bitmap.toByteArray(): ByteArray{
     this.compress(Bitmap.CompressFormat.PNG, 100, stream)
     return stream.toByteArray()
 }
+fun Bitmap.scaleBitmap(newWidth: Int, newHeight: Int): Bitmap {
+        val width = this.width
+        val height = this.height
+        val scaleWidth = newWidth.toFloat() / width
+        val scaleHeight = newHeight.toFloat() / height
+        val matrix = Matrix()
+        matrix.postScale(scaleWidth, scaleHeight)
+        val resizedBitmap = Bitmap.createBitmap(
+                this, 0, 0, width, height, matrix, false)
+        this.recycle()
+        return resizedBitmap
+    }

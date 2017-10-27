@@ -1,6 +1,7 @@
 package hypr.a255bits.com.hypr.ModelFragmnt
 
 import android.graphics.*
+import hypr.a255bits.com.hypr.Util.scaleBitmap
 
 
 class InlineImage{
@@ -28,32 +29,17 @@ class InlineImage{
         }
     }
     fun inlineCroppedImageToFullImage(croppedImage: Bitmap, fullImage: Bitmap, croppedPoint: Rect): Bitmap {
-        val fullImageWithCroppedImageInline: Bitmap = insertCroppedImageWithinFullImage(fullImage, croppedImage, croppedPoint)
-        return fullImageWithCroppedImageInline
+        val mutableFullImage = fullImage.copy(Bitmap.Config.ARGB_8888, true)
+        val scaledCroppedImage = croppedImage.scaleBitmap(croppedPoint.width(), croppedPoint.height())
+        insertCroppedImageWithinFullImage(mutableFullImage, scaledCroppedImage, croppedPoint)
+        return mutableFullImage
     }
 
-    private fun insertCroppedImageWithinFullImage(fullImage: Bitmap, croppedImage: Bitmap, croppedPoint: Rect): Bitmap {
-        val fullImageMutable = fullImage.copy(Bitmap.Config.ARGB_8888, true)
+    private fun insertCroppedImageWithinFullImage(fullImageMutable: Bitmap, scaledCropped: Bitmap, croppedPoint: Rect): Bitmap {
         val fullImageCanvas = Canvas(fullImageMutable)
-        val scaledCropped = scaleBitmap(croppedImage, croppedPoint.width(), croppedPoint.height())
         fullImageCanvas.drawBitmap(scaledCropped, croppedPoint.left.toFloat(), croppedPoint.top.toFloat(), Paint())
         return fullImageMutable
     }
 
-    private fun scaleBitmap(fullImage: Bitmap, newWidth: Int, newHeight: Int): Bitmap {
-        val width = fullImage.width
-        val height = fullImage.height
-        val scaleWidth = newWidth.toFloat() / width
-        val scaleHeight = newHeight.toFloat() / height
-        // CREATE A MATRIX FOR THE MANIPULATION
-        val matrix = Matrix()
-        // RESIZE THE BIT MAP
-        matrix.postScale(scaleWidth, scaleHeight)
 
-        // "RECREATE" THE NEW BITMAP
-        val resizedBitmap = Bitmap.createBitmap(
-                fullImage, 0, 0, width, height, matrix, false)
-        fullImage.recycle()
-        return resizedBitmap
-    }
 }
