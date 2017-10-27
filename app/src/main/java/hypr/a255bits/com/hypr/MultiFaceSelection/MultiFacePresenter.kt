@@ -62,9 +62,9 @@ class MultiFacePresenter(val view: MultiFaceMVP.view) : MultiFaceMVP.presenter {
     }
 
     override fun cropFaceFromImage(image: Bitmap, index: Int, context: Context): Bitmap {
-        SettingsHelper(context).saveFaceLocation(faceCoordinates.valueAt(index))
         val images = FaceDetection(context).getListOfFaces(faceCoordinates, image)
-        return images[index]
+        SettingsHelper(context).saveFaceLocation(images[index].faceLocation)
+        return images[index].croppedFace
     }
 
 }

@@ -28,36 +28,16 @@ class InlineImage{
         }
     }
     fun inlineCroppedImageToFullImage(croppedImage: Bitmap, fullImage: Bitmap, croppedPoint: Rect): Bitmap {
-        val newWidth: Float
-        val newHeight: Float
-        if(isOldCoppedImageBigger){
-            newWidth = fullImage.width * widthRatio
-            newHeight = fullImage.height * heightRatio
-        }else{
-            newWidth = fullImage.width / widthRatio
-            newHeight = fullImage.height / heightRatio
-
-        }
-//        val scaledBitmapToCroppedImage: Bitmap = scaleBitmap(fullImage, newWidth.toInt(), newHeight.toInt())
         val fullImageWithCroppedImageInline: Bitmap = insertCroppedImageWithinFullImage(fullImage, croppedImage, croppedPoint)
-        println("hi")
         return fullImageWithCroppedImageInline
     }
 
     private fun insertCroppedImageWithinFullImage(fullImage: Bitmap, croppedImage: Bitmap, croppedPoint: Rect): Bitmap {
-        val left = 14
-        val top = 129
-        val w = 145
-        val h = 142
-
-        val rect = Rect(left, top, left + w, top + h)
-
         val fullImageMutable = fullImage.copy(Bitmap.Config.ARGB_8888, true)
         val fullImageCanvas = Canvas(fullImageMutable)
-        val scaledCropped = scaleBitmap(croppedImage, rect.width(), rect.height())
-//        fullImageCanvas.drawRect(rect, paint)
-        fullImageCanvas.drawBitmap(scaledCropped, rect.left.toFloat(), rect.top.toFloat(), Paint())
-        return fullImage
+        val scaledCropped = scaleBitmap(croppedImage, croppedPoint.width(), croppedPoint.height())
+        fullImageCanvas.drawBitmap(scaledCropped, croppedPoint.left.toFloat(), croppedPoint.top.toFloat(), Paint())
+        return fullImageMutable
     }
 
     private fun scaleBitmap(fullImage: Bitmap, newWidth: Int, newHeight: Int): Bitmap {

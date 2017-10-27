@@ -9,7 +9,7 @@ import hypr.a255bits.com.hypr.Util.FaceDetection
 class GeneratorFacePosition(val context: Context) {
     private val XOFFSET_PERCENT = 0.85
     private val YOFFSET_PERCENT = 0.54
-    fun cropFaceOutOfBitmap(face: Face, imageWithFaces: Bitmap): Bitmap {
+    fun cropFaceOutOfBitmap(face: Face, imageWithFaces: Bitmap): FaceLocation {
 
         val left = face.landmarks.first{ it.type == Landmark.LEFT_EYE }
         val right = face.landmarks.first{ it.type == Landmark.RIGHT_EYE }
@@ -39,9 +39,10 @@ class GeneratorFacePosition(val context: Context) {
 
 
         val bitmap:Bitmap =Bitmap.createBitmap(imageWithFaces, x1, y1, w, h)
+        val scaledRect = Rect(x1, y1, x1 + w,y1 + h)
         val maxSize:Int = intArrayOf(bitmap.height, bitmap.width).min()!!
-
-        return getResizedBitmap(bitmap, maxSize, maxSize)
+        val resizedBitmap = getResizedBitmap(bitmap, maxSize, maxSize)
+        return FaceLocation(resizedBitmap, scaledRect)
     }
 
     fun getResizedBitmap(bm: Bitmap, newWidth: Int, newHeight: Int): Bitmap {

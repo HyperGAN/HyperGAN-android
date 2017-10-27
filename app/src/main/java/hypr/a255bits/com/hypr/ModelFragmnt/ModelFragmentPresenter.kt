@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.view.MenuItem
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.GeneratorLoader.EasyGeneratorLoader
+import hypr.a255bits.com.hypr.GeneratorLoader.FaceLocation
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.*
 import kotlinx.coroutines.experimental.android.UI
@@ -73,9 +74,9 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
                 if (imageWithFaces == null) {
                     view.displayFocusedImage(imageWithFaces)
                 } else {
-                    val croppedFaces: MutableList<Bitmap> = interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)
+                    val croppedFaces: MutableList<FaceLocation> = interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)
                     if (isFacesDetected(croppedFaces)) {
-                        view.displayFocusedImage(croppedFaces[0])
+                        view.displayFocusedImage(croppedFaces[0].croppedFace)
                     } else {
                         view.displayFocusedImage(imageWithFaces)
                     }
@@ -86,7 +87,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         }
     }
 
-    fun isFacesDetected(listOfFaces: MutableList<Bitmap>): Boolean {
+    fun isFacesDetected(listOfFaces: MutableList<FaceLocation>): Boolean {
         return !listOfFaces.isEmpty()
     }
 

@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Rect
 import android.preference.PreferenceManager
-import com.google.android.gms.vision.face.Face
 
 class SettingsHelper(val context: Context) {
     val FIRST_TIME_OPENED = "firstTimeOpened"
@@ -32,15 +31,13 @@ class SettingsHelper(val context: Context) {
         return preference.getString(RESTORE_MODEL_IMAGE, "")
     }
 
-    fun saveFaceLocation(face: Face?) {
-        if (face != null) {
+    fun saveFaceLocation(face: Rect) {
             val edit = editor.edit()
-            edit.putFloat("face_x", face.position.x)
-            edit.putFloat("face_y", face.position.y)
-            edit.putFloat("face_width", face.width)
-            edit.putFloat("face_height", face.height)
+            edit.putFloat("face_x", face.centerX().toFloat())
+            edit.putFloat("face_y", face.centerY().toFloat())
+            edit.putFloat("face_width", face.width().toFloat())
+            edit.putFloat("face_height", face.height().toFloat())
             edit.apply()
-        }
     }
 
     fun getFaceLocation(): Rect {

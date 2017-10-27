@@ -7,6 +7,7 @@ import android.util.SparseArray
 import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.face.Face
 import com.google.android.gms.vision.face.FaceDetector
+import hypr.a255bits.com.hypr.GeneratorLoader.FaceLocation
 import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorFacePosition
 import hypr.a255bits.com.hypr.R
 import java.io.IOException
@@ -36,8 +37,8 @@ class FaceDetection(val context: Context){
         val frame = Frame.Builder().setBitmap(imageWithFaces).build()
         return detector.detect(frame)
     }
-    fun getListOfFaces(faceLocations: SparseArray<Face>?, imageWithFaces: Bitmap): MutableList<Bitmap> {
-        val croppedFaces = mutableListOf<Bitmap>()
+    fun getListOfFaces(faceLocations: SparseArray<Face>?, imageWithFaces: Bitmap): MutableList<FaceLocation> {
+        val croppedFaces = mutableListOf<FaceLocation>()
         val numOfFaces: Int = faceLocations?.size()!!
         repeat(numOfFaces) { index ->
             val faceLocation = faceLocations.valueAt(index)
@@ -55,10 +56,10 @@ class FaceDetection(val context: Context){
         return BitmapManipulator().cropAreaOutOfBitmap(imageWithFaces,x,y,face.width.toInt(), face.height.toInt())
     }
     fun faceToRect(x: Float, y: Float, width: Float, height: Float): Rect {
-            val left: Int = (x - (0)).toInt()
-            val right: Int = (x + (width)).toInt()
-            val top: Int = (y - (0)).toInt()
-            val bottom: Int = (y + (height)).toInt()
+            val left: Int = (x - (width/2)).toInt()
+            val right: Int = (x + (width/2)).toInt()
+            val top: Int = (y - (height/2)).toInt()
+            val bottom: Int = (y + (height/2)).toInt()
             return Rect(left, top, right, bottom)
     }
 }
