@@ -4,6 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Rect
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.SparseArray
@@ -43,6 +46,16 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
     override fun getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context): MutableList<FaceLocation> {
         val faceLocations: SparseArray<Face>? = faceDetection.getFaceLocations(imageWithFaces, context)
         return faceDetection.getListOfFaces(faceLocations, imageWithFaces)
+    }
+
+    fun placeWatermarkOnImage(bitmap: Bitmap?): Bitmap? {
+        val paint = Paint()
+        val textBounds = Rect()
+        val text = "Hypr"
+        paint.getTextBounds(text, 0, text.length, textBounds)
+        val canvas = Canvas(bitmap)
+        canvas.drawText("Hypr", canvas.width.toFloat() - (textBounds.width() * 2), canvas.height.toFloat() - (textBounds.height()), paint)
+        return bitmap
     }
 
 }

@@ -57,7 +57,8 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     fun shareImageToOtherApps() {
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             val bitmap = imageFromGallery?.let { changePixelToBitmap(it) }
-            val shareIntent = interactor.getIntentForSharingImagesWithOtherApps(bitmap)
+            val watermarkBitmap = interactor.placeWatermarkOnImage(bitmap)
+            val shareIntent = interactor.getIntentForSharingImagesWithOtherApps(watermarkBitmap)
             view.shareImageToOtherApps(shareIntent)
         } else {
             view.requestPermissionFromUser(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), SHARE_IMAGE_PERMISSION_REQUEST)
@@ -100,7 +101,8 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
                 val inliner = InlineImage()
                 inliner.setBeforeAfterCropSizingRatio(byteArrayImage?.toBitmap()!!, bitmap)
                 val inlineImage = fullImage?.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(bitmap, it, croppedPoint) }
-                isSaved = ImageSaver().saveImageToInternalStorage(inlineImage, context)
+                val waterMarkImage = interactor.placeWatermarkOnImage(inlineImage)
+                isSaved = ImageSaver().saveImageToInternalStorage(waterMarkImage, context)
 
             }else{
                 isSaved = ImageSaver().saveImageToInternalStorage(bitmap, context)
