@@ -178,4 +178,11 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         return byteArrayImage?.let { BitmapManipulator().createBitmapFromByteArray(it) }
     }
 
+    fun getGeneratorImage(ganValue: Double): IntArray {
+        val direction = direction ?: easyGenerator.random_z()
+        val ganImage = easyGenerator.sample(easyGenerator.encoded!!, ganValue.toFloat(), easyGenerator.mask, direction, easyGenerator.baseImage!!)
+        imageFromGallery = ganImage
+        return ganImage
+    }
+
 }

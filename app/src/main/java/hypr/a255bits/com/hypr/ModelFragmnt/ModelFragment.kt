@@ -105,14 +105,15 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun changeGanImageFromSlider(ganValue: Double) {
         launch(UI) {
             with(presenter) {
-                val direction = direction ?: easyGenerator.random_z()
-                val ganImage = easyGenerator.sample(easyGenerator.encoded!!, ganValue.toFloat(), easyGenerator.mask, direction, easyGenerator.baseImage!!)
-                presenter.imageFromGallery = ganImage
+                val ganImage = presenter.getGeneratorImage(ganValue)
                 val manipulatedBitmap = bg { easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, ganImage) }.await()
-
-                val croppedPoint = SettingsHelper(context).getFaceLocation()
-                val inlineimage = presenter.inlineImage(presenter.byteArrayImage?.toBitmap()!!, manipulatedBitmap, croppedPoint, presenter.fullImage)
-                focusedImage.setImageBitmap(inlineimage)
+                if (fullImage != null) {
+                    val croppedPoint = SettingsHelper(context).getFaceLocation()
+                    val inlineimage = presenter.inlineImage(presenter.byteArrayImage?.toBitmap()!!, manipulatedBitmap, croppedPoint, presenter.fullImage)
+                    focusedImage.setImageBitmap(inlineimage)
+                }else{
+                    focusedImage.setImageBitmap(manipulatedBitmap)
+                }
             }
         }
     }
