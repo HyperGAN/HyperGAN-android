@@ -72,21 +72,25 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
 
     override fun findFacesInImage(imageWithFaces: Bitmap?, context: Context) {
         try {
-            launch(UI) {
-                if (imageWithFaces == null) {
-                    view.displayFocusedImage(imageWithFaces)
-                } else {
-                    val croppedFaces: MutableList<FaceLocation> = interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)
-                    if (isFacesDetected(croppedFaces)) {
-                        view.displayFocusedImage(croppedFaces[0].croppedFace)
-                    } else {
-                        view.displayFocusedImage(imageWithFaces)
-                    }
-                }
+            if (imageWithFaces == null) {
+                view.displayFocusedImage(imageWithFaces)
+            } else {
+                val croppedFaceImage = getCroppedFaceImagFromImageWithFaces(imageWithFaces)
+                view.displayFocusedImage(croppedFaceImage)
             }
         } catch (exception: IOException) {
             view.showError(exception.localizedMessage)
         }
+    }
+
+    private fun getCroppedFaceImagFromImageWithFaces(imageWithFaces: Bitmap): Bitmap? {
+        val croppedFaces: MutableList<FaceLocation> = interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)
+        val faceImage = if (isFacesDetected(croppedFaces)) {
+            croppedFaces[0].croppedFace
+        } else {
+            imageWithFaces
+        }
+        return faceImage
     }
 
     fun isFacesDetected(listOfFaces: MutableList<FaceLocation>): Boolean {
@@ -103,7 +107,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
                 val waterMarkImage = interactor.placeWatermarkOnImage(inlineImage)
                 isSaved = ImageSaver().saveImageToInternalStorage(waterMarkImage, context)
 
-            }else{
+            } else {
                 isSaved = ImageSaver().saveImageToInternalStorage(bitmap, context)
             }
         } else {
@@ -118,6 +122,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         inliner.setBeforeAfterCropSizingRatio(oldCroppedImage, newCroppedImage)
         return fullImage?.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(newCroppedImage, it, croppedPoint) }
     }
+
     override fun transformImage(normalImage: Bitmap?) {
         findFacesInImage(normalImage, context)
     }
