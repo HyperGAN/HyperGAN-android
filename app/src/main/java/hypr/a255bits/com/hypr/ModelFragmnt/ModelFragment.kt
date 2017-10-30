@@ -9,7 +9,9 @@ import com.pawegio.kandroid.onProgressChanged
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.R
+import hypr.a255bits.com.hypr.Util.SettingsHelper
 import hypr.a255bits.com.hypr.Util.negative1To1
+import hypr.a255bits.com.hypr.Util.toBitmap
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_model.*
 import kotlinx.coroutines.experimental.android.UI
@@ -106,8 +108,11 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
                 val direction = direction ?: easyGenerator.random_z()
                 val ganImage = easyGenerator.sample(easyGenerator.encoded!!, ganValue.toFloat(), easyGenerator.mask, direction, easyGenerator.baseImage!!)
                 presenter.imageFromGallery = ganImage
-                val manipulatedBitmap = bg { easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, ganImage) }
-                focusedImage.setImageBitmap(manipulatedBitmap.await())
+                val manipulatedBitmap = bg { easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, ganImage) }.await()
+
+                val croppedPoint = SettingsHelper(context).getFaceLocation()
+                val inlineimage = presenter.inlineImage(presenter.byteArrayImage?.toBitmap()!!, manipulatedBitmap, croppedPoint, presenter.fullImage)
+                focusedImage.setImageBitmap(inlineimage)
             }
         }
     }

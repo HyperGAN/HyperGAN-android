@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.AssetManager
 import android.graphics.Bitmap
+import android.graphics.Rect
 import android.view.MenuItem
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.GeneratorLoader.EasyGeneratorLoader
@@ -98,9 +99,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
             var bitmap = imageFromGallery?.let { changePixelToBitmap(it) }
             val croppedPoint = SettingsHelper(context).getFaceLocation()
             if (bitmap != null && fullImage != null) {
-                val inliner = InlineImage()
-                inliner.setBeforeAfterCropSizingRatio(byteArrayImage?.toBitmap()!!, bitmap)
-                val inlineImage = fullImage?.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(bitmap, it, croppedPoint) }
+                val inlineImage = inlineImage(byteArrayImage?.toBitmap()!!, bitmap, croppedPoint, fullImage)
                 val waterMarkImage = interactor.placeWatermarkOnImage(inlineImage)
                 isSaved = ImageSaver().saveImageToInternalStorage(waterMarkImage, context)
 
@@ -113,6 +112,12 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         return isSaved
     }
 
+    fun inlineImage(oldCroppedImage: Bitmap, newCroppedImage: Bitmap, croppedPoint: Rect, fullImage: ByteArray?): Bitmap? {
+
+        val inliner = InlineImage()
+        inliner.setBeforeAfterCropSizingRatio(oldCroppedImage, newCroppedImage)
+        return fullImage?.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(newCroppedImage, it, croppedPoint) }
+    }
     override fun transformImage(normalImage: Bitmap?) {
         findFacesInImage(normalImage, context)
     }
