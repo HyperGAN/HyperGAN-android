@@ -18,7 +18,6 @@ import kotlinx.coroutines.experimental.launch
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.cancelButton
-import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.toast
 import java.io.File
@@ -103,14 +102,12 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     override fun changeGanImageFromSlider(ganValue: Double) {
         launch(UI) {
-            with(presenter) {
-                val ganImage = presenter.getGeneratorImage(ganValue)
-                val manipulatedBitmap = bg { easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, ganImage) }.await()
-                val inlineimage = presenter.inlineImage(presenter.byteArrayImage?.toBitmap()!!, manipulatedBitmap, presenter.fullImage)
-                focusedImage.setImageBitmap(inlineimage)
-            }
+                val imageManipluatedFromZValue = presenter.manipulateZValueInImage(ganValue)
+                val imagePlacedInsideFullImage = imageManipluatedFromZValue?.let { presenter.inlineImage(presenter.byteArrayImage?.toBitmap()!!, it, presenter.fullImage) }
+                focusedImage.setImageBitmap(imagePlacedInsideFullImage)
         }
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.image_menu, menu)
@@ -132,11 +129,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     override fun displayFocusedImage(imageFromGallery: Bitmap?) {
-        launch(UI) {
-            val transformedImage = bg { presenter.sampleImage(imageFromGallery) }
-            val inlineimage = presenter.inlineImage(presenter.byteArrayImage?.toBitmap()!!, transformedImage.await(), presenter.fullImage)
-            focusedImage.setImageBitmap(inlineimage)
-        }
+        focusedImage.setImageBitmap(imageFromGallery)
     }
 
 

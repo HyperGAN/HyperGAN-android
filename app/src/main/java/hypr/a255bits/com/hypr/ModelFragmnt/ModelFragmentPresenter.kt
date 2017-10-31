@@ -26,10 +26,12 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         launch(UI) {
             val imageBitmap = bg {
                 loadGenerator(pbFile, cont.assets)
-                convertByteArrayImageToBitmap()
+                val bitmap = convertByteArrayImageToBitmap()
+                val faces = getFaceCroppedOutOfImageIfNoFaceGetFullImage(bitmap, cont)
+                val transformedImage = sampleImage(faces)
+                return@bg inlineImage(byteArrayImage?.toBitmap()!!, transformedImage, fullImage)
             }
-            val faces = getFaceCroppedOutOfImageIfNoFaceGetFullImage(imageBitmap.await(), cont)
-            view.displayFocusedImage(faces)
+            view.displayFocusedImage(imageBitmap.await())
         }
     }
 
@@ -123,7 +125,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         val image: Bitmap? = if (fullImage != null) {
             inliner.setBeforeAfterCropSizingRatio(oldCroppedImage, newCroppedImage)
             fullImage.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(newCroppedImage, it, croppedPoint) }
-        }else{
+        } else {
             newCroppedImage
         }
         return image
@@ -190,6 +192,11 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         val ganImage = easyGenerator.sample(easyGenerator.encoded!!, ganValue.toFloat(), easyGenerator.mask, direction, easyGenerator.baseImage!!)
         imageFromGallery = ganImage
         return ganImage
+    }
+
+    fun manipulateZValueInImage(ganValue: Double): Bitmap? {
+        val ganImage = getGeneratorImage(ganValue)
+        return easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, ganImage)
     }
 
 }
