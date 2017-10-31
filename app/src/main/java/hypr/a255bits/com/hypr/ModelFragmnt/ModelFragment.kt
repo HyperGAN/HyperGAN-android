@@ -35,6 +35,10 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
             presenter.generator = arguments.getParcelable(MODEL_CONTROLS)
             presenter.readImageToBytes(arguments.getString(IMAGE_PARAM))
             presenter.generatorIndex = arguments.getInt(GENERATOR_INDEX)
+            if (arguments.getString(FULL_IMAGE_LOCATION) != null) {
+                val fullImage: File? = arguments.getString(FULL_IMAGE_LOCATION).let { File(it) }
+                presenter.fullImage = fullImage?.readBytes()
+            }
         }
     }
 
@@ -152,12 +156,14 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
         private val IMAGE_PARAM = "param2"
         private val MODEL_CONTROLS = "modelControls"
         private val GENERATOR_INDEX = "generatorPosition"
+        private val FULL_IMAGE_LOCATION = "fulliamgelocation"
 
 
-        fun newInstance(generator: Generator, image: String?, pbFile: File, generatorIndex: Int): ModelFragment {
+        fun newInstance(generator: Generator, image: String?, pbFile: File, generatorIndex: Int, fullImage: String?): ModelFragment {
             val fragment = ModelFragment()
             val args = Bundle()
             args.putString(IMAGE_PARAM, image)
+            args.putString(FULL_IMAGE_LOCATION, fullImage)
             args.putParcelable(MODEL_CONTROLS, generator)
             args.putInt(GENERATOR_INDEX, generatorIndex)
             fragment.arguments = args

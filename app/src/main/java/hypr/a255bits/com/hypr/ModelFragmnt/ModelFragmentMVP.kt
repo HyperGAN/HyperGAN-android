@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.view.MenuItem
+import hypr.a255bits.com.hypr.GeneratorLoader.FaceLocation
 
 interface ModelFragmentMVP{
     interface view{
@@ -30,7 +31,7 @@ interface ModelFragmentMVP{
         fun randomizeModel(progress: Int)
     }
     interface interactor{
-        fun  getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context): MutableList<Bitmap>
+        fun  getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context): MutableList<FaceLocation>
         fun  getIntentForSharingImagesWithOtherApps(imageFromGallery: Bitmap?): Intent
         fun  checkIfPermissionGranted(permission: String): Boolean
     }

@@ -12,6 +12,7 @@ import android.provider.MediaStore
 import android.util.SparseArray
 import com.google.android.gms.vision.face.Face
 import com.pawegio.kandroid.fromApi
+import hypr.a255bits.com.hypr.GeneratorLoader.FaceLocation
 import hypr.a255bits.com.hypr.Util.FaceDetection
 import java.io.IOException
 
@@ -42,7 +43,7 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
     }
 
     @Throws(IOException::class)
-    override fun getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context): MutableList<Bitmap> {
+    override fun getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context): MutableList<FaceLocation> {
         val faceLocations: SparseArray<Face>? = faceDetection.getFaceLocations(imageWithFaces, context)
         return faceDetection.getListOfFaces(faceLocations, imageWithFaces)
     }

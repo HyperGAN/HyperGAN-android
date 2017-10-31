@@ -9,6 +9,7 @@ import collections.forEach
 import com.google.android.gms.vision.face.Face
 import hypr.a255bits.com.hypr.Util.FaceDetection
 import hypr.a255bits.com.hypr.Util.ImageSaver
+import hypr.a255bits.com.hypr.Util.SettingsHelper
 import hypr.a255bits.com.hypr.Util.toByteArray
 import java.io.File
 
@@ -39,12 +40,13 @@ class MultiFacePresenter(val view: MultiFaceMVP.view) : MultiFaceMVP.presenter {
     }
 
     override fun sendCroppedFaceToMultiModel(croppedFace: Bitmap) {
-        val file = saveImageSoOtherFragmentCanViewIt(croppedFace.toByteArray())
-        view.sendImageToModel(file)
+        val croppedImage = saveImageSoOtherFragmentCanViewIt(croppedFace.toByteArray(), "image")
+        val fullImage = saveImageSoOtherFragmentCanViewIt(imageOfPeoplesFaces?.toByteArray(), "fullimage")
+        view.sendImageToModel(croppedImage, fullImage)
     }
 
-    override fun saveImageSoOtherFragmentCanViewIt(image: ByteArray?): File {
-        val file = File.createTempFile("image", "png")
+    override fun saveImageSoOtherFragmentCanViewIt(image: ByteArray?, filename: String): File {
+        val file = File.createTempFile(filename, "png")
         ImageSaver().saveImageToFile(file, image)
         return file
     }
@@ -61,7 +63,8 @@ class MultiFacePresenter(val view: MultiFaceMVP.view) : MultiFaceMVP.presenter {
 
     override fun cropFaceFromImage(image: Bitmap, index: Int, context: Context): Bitmap {
         val images = FaceDetection(context).getListOfFaces(faceCoordinates, image)
-        return images[index]
+        SettingsHelper(context).saveFaceLocation(images[index].faceLocation)
+        return images[index].croppedFace
     }
 
 }

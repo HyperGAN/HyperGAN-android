@@ -53,10 +53,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (presenter.isModelFragmentDisplayed) {
             presenter.indexInJson = intent.extras.getInt("indexInJson")
             presenter.image = intent.extras.getString("image")
+            presenter.fullImage = intent.extras.getString("fullimage")
             presenter.settingsHelper.setModelImagePath(presenter.image!!)
         }
     }
-
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         presenter.onOptionsItemSelected(item)

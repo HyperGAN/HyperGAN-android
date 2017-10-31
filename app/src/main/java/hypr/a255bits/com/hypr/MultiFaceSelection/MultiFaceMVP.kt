@@ -12,13 +12,13 @@ interface MultiFaceMVP{
         fun addBoxAroundFace(rect: Rect, canvasImageWithFaces: Canvas)
         fun addFaceLocationToImage(rect: Rect)
 
-        fun sendImageToModel(file: File)
+        fun sendImageToModel(file: File, fullImage: File)
     }
     interface presenter{
         fun displayImageWithFaces(image: Bitmap?)
         fun addFaceBoxesToMultipleFacesImage(faceLocations: Context, imageOfPeoplesFaces: Bitmap?): Bitmap?
         fun cropFaceFromImage(image: Bitmap, bounds: Int, context: Context): Bitmap
         fun sendCroppedFaceToMultiModel(croppedFace: Bitmap)
-        fun saveImageSoOtherFragmentCanViewIt(image: ByteArray?): File
+        fun saveImageSoOtherFragmentCanViewIt(image: ByteArray?, s: String): File
     }
 }
