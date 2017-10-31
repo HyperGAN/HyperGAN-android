@@ -18,10 +18,9 @@ interface ModelFragmentMVP{
         fun changeGanImageFromSlider(ganValue: Double)
     }
     interface presenter{
-        fun findFacesInImage(imageWithFaces: Bitmap?, context: Context)
+        fun getFaceCroppedOutOfImageIfNoFaceGetFullImage(imageWithFaces: Bitmap?, context: Context): Bitmap?
         fun disconnectFaceDetector()
         fun saveImageDisplayedToPhone(context: Context): Boolean
-        fun transformImage(normalImage: Bitmap?)
         fun  changePixelToBitmap(transformedImage: IntArray): Bitmap?
         fun sampleImage(image: Bitmap?): Bitmap
         fun onRequestPermissionResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray)

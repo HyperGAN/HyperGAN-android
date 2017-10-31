@@ -9,7 +9,6 @@ import com.pawegio.kandroid.onProgressChanged
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.R
-import hypr.a255bits.com.hypr.Util.SettingsHelper
 import hypr.a255bits.com.hypr.Util.negative1To1
 import hypr.a255bits.com.hypr.Util.toBitmap
 import kotlinx.android.synthetic.main.activity_main.*
@@ -107,13 +106,8 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
             with(presenter) {
                 val ganImage = presenter.getGeneratorImage(ganValue)
                 val manipulatedBitmap = bg { easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, ganImage) }.await()
-                if (fullImage != null) {
-                    val croppedPoint = SettingsHelper(context).getFaceLocation()
-                    val inlineimage = presenter.inlineImage(presenter.byteArrayImage?.toBitmap()!!, manipulatedBitmap, croppedPoint, presenter.fullImage)
-                    focusedImage.setImageBitmap(inlineimage)
-                }else{
-                    focusedImage.setImageBitmap(manipulatedBitmap)
-                }
+                val inlineimage = presenter.inlineImage(presenter.byteArrayImage?.toBitmap()!!, manipulatedBitmap, presenter.fullImage)
+                focusedImage.setImageBitmap(inlineimage)
             }
         }
     }
@@ -140,7 +134,8 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun displayFocusedImage(imageFromGallery: Bitmap?) {
         launch(UI) {
             val transformedImage = bg { presenter.sampleImage(imageFromGallery) }
-            focusedImage.setImageBitmap(transformedImage.await())
+            val inlineimage = presenter.inlineImage(presenter.byteArrayImage?.toBitmap()!!, transformedImage.await(), presenter.fullImage)
+            focusedImage.setImageBitmap(inlineimage)
         }
     }
 

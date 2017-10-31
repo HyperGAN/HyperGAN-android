@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.AssetManager
 import android.graphics.Bitmap
-import android.graphics.Rect
 import android.view.MenuItem
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.GeneratorLoader.EasyGeneratorLoader
@@ -29,7 +28,8 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
                 loadGenerator(pbFile, cont.assets)
                 convertByteArrayImageToBitmap()
             }
-            transformImage(imageBitmap.await())
+            val faces = getFaceCroppedOutOfImageIfNoFaceGetFullImage(imageBitmap.await(), cont)
+            view.displayFocusedImage(faces)
         }
     }
 
@@ -46,6 +46,8 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     var fullImage: ByteArray? = null
     var generatorIndex: Int? = null
     var direction: FloatArray? = null
+    val croppedPoint = SettingsHelper(context).getFaceLocation()
+    val inliner = InlineImage()
 
     override fun disconnectFaceDetector() {
         interactor.faceDetection.release()
@@ -70,17 +72,18 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         view.changeGanImageFromSlider(progress.negative1To1())
     }
 
-    override fun findFacesInImage(imageWithFaces: Bitmap?, context: Context) {
+    override fun getFaceCroppedOutOfImageIfNoFaceGetFullImage(imageWithFaces: Bitmap?, context: Context): Bitmap? {
+        var image: Bitmap? = null
         try {
-            if (imageWithFaces == null) {
-                view.displayFocusedImage(imageWithFaces)
+            image = if (imageWithFaces == null) {
+                imageWithFaces
             } else {
-                val croppedFaceImage = getCroppedFaceImagFromImageWithFaces(imageWithFaces)
-                view.displayFocusedImage(croppedFaceImage)
+                getCroppedFaceImagFromImageWithFaces(imageWithFaces)
             }
         } catch (exception: IOException) {
             view.showError(exception.localizedMessage)
         }
+        return image
     }
 
     private fun getCroppedFaceImagFromImageWithFaces(imageWithFaces: Bitmap): Bitmap? {
@@ -103,7 +106,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
             var bitmap = imageFromGallery?.let { changePixelToBitmap(it) }
             val croppedPoint = SettingsHelper(context).getFaceLocation()
             if (bitmap != null && fullImage != null) {
-                val inlineImage = inlineImage(byteArrayImage?.toBitmap()!!, bitmap, croppedPoint, fullImage)
+                val inlineImage = inlineImage(byteArrayImage?.toBitmap()!!, bitmap, fullImage)
                 val waterMarkImage = interactor.placeWatermarkOnImage(inlineImage)
                 isSaved = ImageSaver().saveImageToInternalStorage(waterMarkImage, context)
 
@@ -116,15 +119,14 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         return isSaved
     }
 
-    fun inlineImage(oldCroppedImage: Bitmap, newCroppedImage: Bitmap, croppedPoint: Rect, fullImage: ByteArray?): Bitmap? {
-
-        val inliner = InlineImage()
-        inliner.setBeforeAfterCropSizingRatio(oldCroppedImage, newCroppedImage)
-        return fullImage?.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(newCroppedImage, it, croppedPoint) }
-    }
-
-    override fun transformImage(normalImage: Bitmap?) {
-        findFacesInImage(normalImage, context)
+    fun inlineImage(oldCroppedImage: Bitmap, newCroppedImage: Bitmap, fullImage: ByteArray?): Bitmap? {
+        val image: Bitmap? = if (fullImage != null) {
+            inliner.setBeforeAfterCropSizingRatio(oldCroppedImage, newCroppedImage)
+            fullImage.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(newCroppedImage, it, croppedPoint) }
+        }else{
+            newCroppedImage
+        }
+        return image
     }
 
     fun loadGenerator(pbFile: File?, assets: AssetManager) {
