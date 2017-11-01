@@ -29,13 +29,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            presenter.generator = arguments.getParcelable(MODEL_CONTROLS)
-            presenter.readImageToBytes(arguments.getString(IMAGE_PARAM))
-            presenter.generatorIndex = arguments.getInt(GENERATOR_INDEX)
-            if (arguments.getString(FULL_IMAGE_LOCATION) != null) {
-                val fullImage: File? = arguments.getString(FULL_IMAGE_LOCATION).let { File(it) }
-                presenter.fullImage = fullImage?.readBytes()
-            }
+            presenter.getInfoFromFragmentCreation(arguments)
         }
     }
 
@@ -135,10 +129,10 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     companion object {
-        private val IMAGE_PARAM = "param2"
-        private val MODEL_CONTROLS = "modelControls"
-        private val GENERATOR_INDEX = "generatorPosition"
-        private val FULL_IMAGE_LOCATION = "fulliamgelocation"
+        val IMAGE_PARAM = "param2"
+        val MODEL_CONTROLS = "modelControls"
+        val GENERATOR_INDEX = "generatorPosition"
+        val FULL_IMAGE_LOCATION = "fulliamgelocation"
 
 
         fun newInstance(generator: Generator, image: String?, pbFile: File, generatorIndex: Int, fullImage: String?): ModelFragment {

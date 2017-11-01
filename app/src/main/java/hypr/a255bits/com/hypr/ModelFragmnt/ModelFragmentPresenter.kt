@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.AssetManager
 import android.graphics.Bitmap
+import android.os.Bundle
 import android.view.MenuItem
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.GeneratorLoader.EasyGeneratorLoader
@@ -199,11 +200,19 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         return easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, ganImage)
     }
 
-    fun changeGanImageFromSlider(ganValue: Double){
+    fun changeGanImageFromSlider(ganValue: Double) {
         val imageManipluatedFromZValue = manipulateZValueInImage(ganValue)
         val imagePlacedInsideFullImage = imageManipluatedFromZValue?.let { inlineImage(byteArrayImage?.toBitmap()!!, it, fullImage) }
         view.displayFocusedImage(imagePlacedInsideFullImage)
     }
 
-
+    fun getInfoFromFragmentCreation(arguments: Bundle) {
+        generator = arguments.getParcelable(ModelFragment.MODEL_CONTROLS)
+        readImageToBytes(arguments.getString(ModelFragment.IMAGE_PARAM))
+        generatorIndex = arguments.getInt(ModelFragment.GENERATOR_INDEX)
+        if (arguments.getString(ModelFragment.FULL_IMAGE_LOCATION) != null) {
+            val fullImage: File? = arguments.getString(ModelFragment.FULL_IMAGE_LOCATION).let { File(it) }
+            this.fullImage = fullImage?.readBytes()
+        }
+    }
 }
