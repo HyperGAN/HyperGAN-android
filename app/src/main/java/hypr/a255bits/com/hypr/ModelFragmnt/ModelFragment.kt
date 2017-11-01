@@ -10,11 +10,8 @@ import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.negative1To1
-import hypr.a255bits.com.hypr.Util.toBitmap
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_model.*
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.cancelButton
@@ -96,18 +93,9 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     private fun displayImageTransitionSeekbarProgress() {
         imageTransitionSeekBar.onProgressChanged { progress, _ ->
-            changeGanImageFromSlider(progress.negative1To1())
+            presenter.changeGanImageFromSlider(progress.negative1To1())
         }
     }
-
-    override fun changeGanImageFromSlider(ganValue: Double) {
-        launch(UI) {
-                val imageManipluatedFromZValue = presenter.manipulateZValueInImage(ganValue)
-                val imagePlacedInsideFullImage = imageManipluatedFromZValue?.let { presenter.inlineImage(presenter.byteArrayImage?.toBitmap()!!, it, presenter.fullImage) }
-                focusedImage.setImageBitmap(imagePlacedInsideFullImage)
-        }
-    }
-
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.image_menu, menu)

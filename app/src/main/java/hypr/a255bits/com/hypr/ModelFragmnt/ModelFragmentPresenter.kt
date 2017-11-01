@@ -71,7 +71,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     }
 
     override fun randomizeModel(progress: Int) {
-        view.changeGanImageFromSlider(progress.negative1To1())
+        changeGanImageFromSlider(progress.negative1To1())
     }
 
     override fun getFaceCroppedOutOfImageIfNoFaceGetFullImage(imageWithFaces: Bitmap?, context: Context): Bitmap? {
@@ -198,5 +198,12 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         val ganImage = getGeneratorImage(ganValue)
         return easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, ganImage)
     }
+
+    fun changeGanImageFromSlider(ganValue: Double){
+        val imageManipluatedFromZValue = manipulateZValueInImage(ganValue)
+        val imagePlacedInsideFullImage = imageManipluatedFromZValue?.let { inlineImage(byteArrayImage?.toBitmap()!!, it, fullImage) }
+        view.displayFocusedImage(imagePlacedInsideFullImage)
+    }
+
 
 }

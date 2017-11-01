@@ -15,7 +15,6 @@ interface ModelFragmentMVP{
         fun startCameraActivity()
         fun lockModel()
         fun unLockModel()
-        fun changeGanImageFromSlider(ganValue: Double)
     }
     interface presenter{
         fun getFaceCroppedOutOfImageIfNoFaceGetFullImage(imageWithFaces: Bitmap?, context: Context): Bitmap?
