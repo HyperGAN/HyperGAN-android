@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.*
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.content.res.ResourcesCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,10 +59,11 @@ class MultiFaceFragment : Fragment(), MultiFaceMVP.view, DrawableImageViewTouchI
 
     override fun addBoxAroundFace(rect: Rect, canvasImageWithFaces: Canvas) {
         val paint = Paint()
-        paint.color = Color.RED
+        paint.color = ResourcesCompat.getColor(resources, R.color.colorPrimary, null)
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 1.0f
-        canvasImageWithFaces.drawRect(rect, paint)
+        val rectF = RectF(rect)
+        canvasImageWithFaces.drawRoundRect(rectF, 7.0f, 7.0f, paint)
     }
 
     override fun displayImageWithFaces(imageOfPeople: Bitmap) {

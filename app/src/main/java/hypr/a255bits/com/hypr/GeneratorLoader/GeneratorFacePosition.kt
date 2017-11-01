@@ -9,14 +9,21 @@ import hypr.a255bits.com.hypr.Util.FaceDetection
 class GeneratorFacePosition(val context: Context) {
     private val XOFFSET_PERCENT = 0.85
     private val YOFFSET_PERCENT = 0.54
+    val paint = Paint()
+
+    init {
+        paint.style = Paint.Style.STROKE
+        paint.color = Color.RED
+    }
+
     fun cropFaceOutOfBitmap(face: Face, imageWithFaces: Bitmap): FaceLocation {
 
-        val left = face.landmarks.first{ it.type == Landmark.LEFT_EYE }
-        val right = face.landmarks.first{ it.type == Landmark.RIGHT_EYE }
+        val left = face.landmarks.first { it.type == Landmark.LEFT_EYE }
+        val right = face.landmarks.first { it.type == Landmark.RIGHT_EYE }
 
 
-        val offsetX: Int = (XOFFSET_PERCENT *face.width).toInt()
-        val offsetY: Int = (YOFFSET_PERCENT*face.height).toInt()
+        val offsetX: Int = (XOFFSET_PERCENT * face.width).toInt()
+        val offsetY: Int = (YOFFSET_PERCENT * face.height).toInt()
         val x1: Int = (left.position.x - offsetX).toInt()
         val y1: Int = (left.position.y - offsetY).toInt()
         val x2: Int = (right.position.x + offsetX).toInt()
@@ -29,18 +36,15 @@ class GeneratorFacePosition(val context: Context) {
         rect.bottom = rect.bottom + offsetY
         val mutableBitmap = imageWithFaces.copy(Bitmap.Config.ARGB_8888, true)
         val canvas = Canvas(mutableBitmap)
-        val paint = Paint()
-        paint.style = Paint.Style.STROKE
-        paint.color = Color.RED
         canvas.drawRect(rect, paint)
 
-        var w: Int = x2-x1
-        var h: Int = y2-y1
+        var w: Int = x2 - x1
+        var h: Int = y2 - y1
 
 
-        val bitmap:Bitmap =Bitmap.createBitmap(imageWithFaces, x1, y1, w, h)
-        val scaledRect = Rect(x1, y1, x1 + w,y1 + h)
-        val maxSize:Int = intArrayOf(bitmap.height, bitmap.width).min()!!
+        val bitmap: Bitmap = Bitmap.createBitmap(imageWithFaces, x1, y1, w, h)
+        val scaledRect = Rect(x1, y1, x1 + w, y1 + h)
+        val maxSize: Int = intArrayOf(bitmap.height, bitmap.width).min()!!
         val resizedBitmap = getResizedBitmap(bitmap, maxSize, maxSize)
         return FaceLocation(resizedBitmap, scaledRect)
     }
