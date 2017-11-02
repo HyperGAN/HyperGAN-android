@@ -27,10 +27,13 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         launch(UI) {
             val imageBitmap = bg {
                 loadGenerator(pbFile, cont.assets)
+                if(byteArrayImage == null)
+                    byteArrayImage = changePixelToBitmap(easyGenerator.sampleImageWithoutImage())?.toByteArray()
                 val bitmap = convertByteArrayImageToBitmap()
                 val faces = getFaceCroppedOutOfImageIfNoFaceGetFullImage(bitmap, cont)
                 val transformedImage = sampleImage(faces)
-                return@bg inlineImage(byteArrayImage?.toBitmap()!!, transformedImage, fullImage)
+                val byteBitmap = byteArrayImage?.toBitmap()!!
+                return@bg inlineImage(byteBitmap, transformedImage, fullImage)
             }
             view.displayFocusedImage(imageBitmap.await())
         }
