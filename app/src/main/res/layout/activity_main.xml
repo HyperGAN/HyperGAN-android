@@ -6,52 +6,66 @@
     android:layout_height="match_parent"
     android:background="#EEEEEE">
 
-    <Button
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/chooseImageFromGalleryButton"
-        android:gravity="center"
-        android:text="@string/choose_image"
-        android:textColor="#ffffff"
-        android:background="@color/colorPrimary"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.0" />
 
     <ImageView
         android:id="@+id/focusedImage"
         android:layout_width="0dp"
-        android:scaleType="fitCenter"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/randomizeModel"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
-        android:id="@+id/randomizeModel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="?android:selectableItemBackground"
-        android:padding="16dp"
-        android:src="@drawable/ic_shuffle_black_24px"
-        app:layout_constraintBottom_toTopOf="@+id/chooseImageFromGalleryButton"
-        app:layout_constraintStart_toStartOf="@id/focusedImage" />
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="#80ffffff"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-    <SeekBar
-        android:id="@+id/imageTransitionSeekBar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="24dp"
-        android:max="200"
-        android:progress="100"
-        app:layout_constraintBottom_toBottomOf="@id/randomizeModel"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/randomizeModel"
-        app:layout_constraintTop_toTopOf="@+id/randomizeModel" />
+        <Button
+            android:id="@+id/chooseImageFromGalleryButton"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/colorPrimary"
+            android:gravity="center"
+            android:text="@string/choose_image"
+            android:textColor="#ffffff"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+        <ImageButton
+            android:id="@+id/randomizeModel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?android:selectableItemBackground"
+            android:paddingBottom="8dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="10dp"
+            android:paddingTop="8dp"
+            android:src="@drawable/ic_shuffle_black_24px"
+            app:layout_constraintBottom_toTopOf="@+id/chooseImageFromGalleryButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <SeekBar
+            android:id="@+id/imageTransitionSeekBar"
+            android:layout_width="0dp"
+            android:layout_height="31dp"
+            android:layout_marginStart="8dp"
+            android:max="200"
+            android:progress="100"
+            app:layout_constraintBottom_toBottomOf="@+id/randomizeModel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/randomizeModel"
+            app:layout_constraintTop_toTopOf="@+id/randomizeModel" />
+
+    </android.support.constraint.ConstraintLayout>
 </android.support.constraint.ConstraintLayout>
