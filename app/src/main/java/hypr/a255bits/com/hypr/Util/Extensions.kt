@@ -59,11 +59,11 @@ fun Bitmap.scaleBitmap(newWidth: Int, newHeight: Int): Bitmap {
         return resizedBitmap
     }
 
-fun IntArray.toByteArrayImage(values: IntArray): ByteArray {
+fun IntArray.toByteArrayImage(): ByteArray {
     val baos = ByteArrayOutputStream()
     val dos = DataOutputStream(baos)
-    for (i in values.indices) {
-        dos.writeInt(values[i])
+    for (i in this.indices) {
+        dos.writeInt(this[i])
     }
 
     return baos.toByteArray()
