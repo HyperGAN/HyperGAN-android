@@ -12,12 +12,9 @@ import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.negative1To1
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_model.*
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.cancelButton
-import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.toast
 import java.io.File
@@ -32,13 +29,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            presenter.generator = arguments.getParcelable(MODEL_CONTROLS)
-            presenter.readImageToBytes(arguments.getString(IMAGE_PARAM))
-            presenter.generatorIndex = arguments.getInt(GENERATOR_INDEX)
-            if (arguments.getString(FULL_IMAGE_LOCATION) != null) {
-                val fullImage: File? = arguments.getString(FULL_IMAGE_LOCATION).let { File(it) }
-                presenter.fullImage = fullImage?.readBytes()
-            }
+            presenter.getInfoFromFragmentCreation(arguments)
         }
     }
 
@@ -96,19 +87,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     private fun displayImageTransitionSeekbarProgress() {
         imageTransitionSeekBar.onProgressChanged { progress, _ ->
-            changeGanImageFromSlider(progress.negative1To1())
-        }
-    }
-
-    override fun changeGanImageFromSlider(ganValue: Double) {
-        launch(UI) {
-            with(presenter) {
-                val direction = direction ?: easyGenerator.random_z()
-                val ganImage = easyGenerator.sample(easyGenerator.encoded!!, ganValue.toFloat(), easyGenerator.mask, direction, easyGenerator.baseImage!!)
-                presenter.imageFromGallery = ganImage
-                val manipulatedBitmap = bg { easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, ganImage) }
-                focusedImage.setImageBitmap(manipulatedBitmap.await())
-            }
+            presenter.changeGanImageFromSlider(progress.negative1To1())
         }
     }
 
@@ -132,10 +111,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     override fun displayFocusedImage(imageFromGallery: Bitmap?) {
-        launch(UI) {
-            val transformedImage = bg { presenter.sampleImage(imageFromGallery) }
-            focusedImage.setImageBitmap(transformedImage.await())
-        }
+        focusedImage.setImageBitmap(imageFromGallery)
     }
 
 
@@ -153,10 +129,10 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     companion object {
-        private val IMAGE_PARAM = "param2"
-        private val MODEL_CONTROLS = "modelControls"
-        private val GENERATOR_INDEX = "generatorPosition"
-        private val FULL_IMAGE_LOCATION = "fulliamgelocation"
+        val IMAGE_PARAM = "param2"
+        val MODEL_CONTROLS = "modelControls"
+        val GENERATOR_INDEX = "generatorPosition"
+        val FULL_IMAGE_LOCATION = "fulliamgelocation"
 
 
         fun newInstance(generator: Generator, image: String?, pbFile: File, generatorIndex: Int, fullImage: String?): ModelFragment {

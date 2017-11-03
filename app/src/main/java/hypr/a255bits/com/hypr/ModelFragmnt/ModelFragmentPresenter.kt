@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.AssetManager
 import android.graphics.Bitmap
+import android.os.Bundle
 import android.view.MenuItem
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.GeneratorLoader.EasyGeneratorLoader
@@ -26,9 +27,15 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         launch(UI) {
             val imageBitmap = bg {
                 loadGenerator(pbFile, cont.assets)
-                convertByteArrayImageToBitmap()
+                if(byteArrayImage == null)
+                    byteArrayImage = changePixelToBitmap(easyGenerator.sampleImageWithoutImage())?.toByteArray()
+                val bitmap = convertByteArrayImageToBitmap()
+                val faces = getFaceCroppedOutOfImageIfNoFaceGetFullImage(bitmap, cont)
+                val transformedImage = sampleImage(faces)
+                val byteBitmap = byteArrayImage?.toBitmap()!!
+                return@bg inlineImage(byteBitmap, transformedImage, fullImage)
             }
-            transformImage(imageBitmap.await())
+            view.displayFocusedImage(imageBitmap.await())
         }
     }
 
@@ -45,6 +52,8 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     var fullImage: ByteArray? = null
     var generatorIndex: Int? = null
     var direction: FloatArray? = null
+    val croppedPoint = SettingsHelper(context).getFaceLocation()
+    val inliner = InlineImage()
 
     override fun disconnectFaceDetector() {
         interactor.faceDetection.release()
@@ -66,26 +75,31 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     }
 
     override fun randomizeModel(progress: Int) {
-        view.changeGanImageFromSlider(progress.negative1To1())
+        changeGanImageFromSlider(progress.negative1To1())
     }
 
-    override fun findFacesInImage(imageWithFaces: Bitmap?, context: Context) {
+    override fun getFaceCroppedOutOfImageIfNoFaceGetFullImage(imageWithFaces: Bitmap?, context: Context): Bitmap? {
+        var image: Bitmap? = null
         try {
-            launch(UI) {
-                if (imageWithFaces == null) {
-                    view.displayFocusedImage(imageWithFaces)
-                } else {
-                    val croppedFaces: MutableList<FaceLocation> = interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)
-                    if (isFacesDetected(croppedFaces)) {
-                        view.displayFocusedImage(croppedFaces[0].croppedFace)
-                    } else {
-                        view.displayFocusedImage(imageWithFaces)
-                    }
-                }
+            image = if (imageWithFaces == null) {
+                imageWithFaces
+            } else {
+                getCroppedFaceImagFromImageWithFaces(imageWithFaces)
             }
         } catch (exception: IOException) {
             view.showError(exception.localizedMessage)
         }
+        return image
+    }
+
+    private fun getCroppedFaceImagFromImageWithFaces(imageWithFaces: Bitmap): Bitmap? {
+        val croppedFaces: MutableList<FaceLocation> = interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)
+        val faceImage = if (isFacesDetected(croppedFaces)) {
+            croppedFaces[0].croppedFace
+        } else {
+            imageWithFaces
+        }
+        return faceImage
     }
 
     fun isFacesDetected(listOfFaces: MutableList<FaceLocation>): Boolean {
@@ -98,13 +112,11 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
             var bitmap = imageFromGallery?.let { changePixelToBitmap(it) }
             val croppedPoint = SettingsHelper(context).getFaceLocation()
             if (bitmap != null && fullImage != null) {
-                val inliner = InlineImage()
-                inliner.setBeforeAfterCropSizingRatio(byteArrayImage?.toBitmap()!!, bitmap)
-                val inlineImage = fullImage?.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(bitmap, it, croppedPoint) }
+                val inlineImage = inlineImage(byteArrayImage?.toBitmap()!!, bitmap, fullImage)
                 val waterMarkImage = interactor.placeWatermarkOnImage(inlineImage)
                 isSaved = ImageSaver().saveImageToInternalStorage(waterMarkImage, context)
 
-            }else{
+            } else {
                 isSaved = ImageSaver().saveImageToInternalStorage(bitmap, context)
             }
         } else {
@@ -113,8 +125,14 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         return isSaved
     }
 
-    override fun transformImage(normalImage: Bitmap?) {
-        findFacesInImage(normalImage, context)
+    fun inlineImage(oldCroppedImage: Bitmap, newCroppedImage: Bitmap, fullImage: ByteArray?): Bitmap? {
+        val image: Bitmap? = if (fullImage != null) {
+            inliner.setBeforeAfterCropSizingRatio(oldCroppedImage, newCroppedImage)
+            fullImage.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(newCroppedImage, it, croppedPoint) }
+        } else {
+            newCroppedImage
+        }
+        return image
     }
 
     fun loadGenerator(pbFile: File?, assets: AssetManager) {
@@ -173,4 +191,31 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         return byteArrayImage?.let { BitmapManipulator().createBitmapFromByteArray(it) }
     }
 
+    fun getGeneratorImage(ganValue: Double): IntArray {
+        val direction = direction ?: easyGenerator.random_z()
+        val ganImage = easyGenerator.sample(easyGenerator.encoded!!, ganValue.toFloat(), easyGenerator.mask, direction, easyGenerator.baseImage!!)
+        imageFromGallery = ganImage
+        return ganImage
+    }
+
+    fun manipulateZValueInImage(ganValue: Double): Bitmap? {
+        val ganImage = getGeneratorImage(ganValue)
+        return easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, ganImage)
+    }
+
+    fun changeGanImageFromSlider(ganValue: Double) {
+        val imageManipluatedFromZValue = manipulateZValueInImage(ganValue)
+        val imagePlacedInsideFullImage = imageManipluatedFromZValue?.let { inlineImage(byteArrayImage?.toBitmap()!!, it, fullImage) }
+        view.displayFocusedImage(imagePlacedInsideFullImage)
+    }
+
+    fun getInfoFromFragmentCreation(arguments: Bundle) {
+        generator = arguments.getParcelable(ModelFragment.MODEL_CONTROLS)
+        readImageToBytes(arguments.getString(ModelFragment.IMAGE_PARAM))
+        generatorIndex = arguments.getInt(ModelFragment.GENERATOR_INDEX)
+        if (arguments.getString(ModelFragment.FULL_IMAGE_LOCATION) != null) {
+            val fullImage: File? = arguments.getString(ModelFragment.FULL_IMAGE_LOCATION).let { File(it) }
+            this.fullImage = fullImage?.readBytes()
+        }
+    }
 }

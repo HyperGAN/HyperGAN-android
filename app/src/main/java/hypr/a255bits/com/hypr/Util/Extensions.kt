@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager
 import com.flurgle.camerakit.CameraListener
 import com.flurgle.camerakit.CameraView
 import java.io.ByteArrayOutputStream
+import java.io.DataOutputStream
 
 
 fun Float.nonNegativeInt(): Int {
@@ -57,3 +58,12 @@ fun Bitmap.scaleBitmap(newWidth: Int, newHeight: Int): Bitmap {
         this.recycle()
         return resizedBitmap
     }
+
+fun IntArray.toByteArrayImage(): ByteArray {
+    val baos = ByteArrayOutputStream()
+    val dos = DataOutputStream(baos)
+    for (i in this.indices) {
+        dos.writeInt(this[i])
+    }
+    return baos.toByteArray()
+}
