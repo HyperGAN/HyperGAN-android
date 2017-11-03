@@ -13,7 +13,7 @@ import hypr.a255bits.com.hypr.Util.SettingsHelper
 import hypr.a255bits.com.hypr.Util.toByteArray
 import java.io.File
 
-class MultiFacePresenter(val view: MultiFaceMVP.view) : MultiFaceMVP.presenter {
+class MultiFacePresenter(val view: MultiFaceMVP.view, val context: Context) : MultiFaceMVP.presenter {
     var imageOfPeoplesFaces: Bitmap? = null
     lateinit var faceCoordinates: SparseArray<Face>
 
@@ -39,9 +39,10 @@ class MultiFacePresenter(val view: MultiFaceMVP.view) : MultiFaceMVP.presenter {
         return face
     }
 
-    override fun sendCroppedFaceToMultiModel(croppedFace: Bitmap) {
+    override fun sendCroppedFaceToMultiModel(croppedFace: Bitmap, index: Int) {
         val croppedImage = saveImageSoOtherFragmentCanViewIt(croppedFace.toByteArray(), "image")
         val fullImage = saveImageSoOtherFragmentCanViewIt(imageOfPeoplesFaces?.toByteArray(), "fullimage")
+        SettingsHelper(context).setFaceIndex(index)
         view.sendImageToModel(croppedImage, fullImage)
     }
 

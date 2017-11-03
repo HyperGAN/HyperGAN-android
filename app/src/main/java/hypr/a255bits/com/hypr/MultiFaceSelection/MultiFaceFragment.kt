@@ -20,7 +20,7 @@ class MultiFaceFragment : Fragment(), MultiFaceMVP.view, DrawableImageViewTouchI
 
     private var imageOfPeoplesFaces: Bitmap? = null
     private var faceLocations: Array<PointF>? = null
-    private val presenter by lazy{MultiFacePresenter(this)}
+    private val presenter by lazy{MultiFacePresenter(this, context)}
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +45,7 @@ class MultiFaceFragment : Fragment(), MultiFaceMVP.view, DrawableImageViewTouchI
 
     override fun onBoundsTouch(image: Bitmap, index: Int) {
         val croppedFace = presenter.cropFaceFromImage(presenter.imageOfPeoplesFaces!!, index, context)
-        presenter.sendCroppedFaceToMultiModel(croppedFace)
+        presenter.sendCroppedFaceToMultiModel(croppedFace, index)
     }
     override fun sendImageToModel(file: File, fullImage: File) {
         startActivity(activity.intentFor<MainActivity>
