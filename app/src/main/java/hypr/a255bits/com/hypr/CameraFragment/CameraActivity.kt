@@ -9,6 +9,7 @@ import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.flurgle.camerakit.CameraView
+import com.pawegio.kandroid.start
 import hypr.a255bits.com.hypr.Main.MainActivity
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.ImageSaver
@@ -79,6 +80,10 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
         }
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        intentFor<MainActivity>().start(applicationContext)
+    }
     override fun onResume() {
         super.onResume()
         cameraView.start()

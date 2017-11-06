@@ -25,8 +25,8 @@ class MultiFaceFragment : Fragment(), MultiFaceMVP.view, DrawableImageViewTouchI
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            imageOfPeoplesFaces = arguments.getByteArray(IMAGE).toBitmap()
+        if (arguments != null && arguments.getByteArray(IMAGE) != null) {
+            imageOfPeoplesFaces = arguments.getByteArray(IMAGE)?.toBitmap()
             faceLocations = arguments.getParcelableArray(FACE_LOCATIONS) as Array<PointF>?
         }
     }
