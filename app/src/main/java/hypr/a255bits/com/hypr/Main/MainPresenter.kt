@@ -39,6 +39,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         interactor.presenter = this
         if(settingsHelper.isModelImageRestoreable()){
             image = settingsHelper.getModelImagePath()
+            fullImage = settingsHelper.getFullImagePath()
         }
     }
 
