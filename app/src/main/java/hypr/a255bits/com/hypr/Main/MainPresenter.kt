@@ -37,7 +37,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     init {
         interactor.presenter = this
-        if(settingsHelper.isModelImageRestoreable()){
+        if (settingsHelper.isModelImageRestoreable()) {
             image = settingsHelper.getModelImagePath()
         }
     }
@@ -68,7 +68,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             }
         }
 
-            displayMultiModels(itemId, null, interactor.listOfGenerators)
+        displayMultiModels(itemId, null, interactor.listOfGenerators)
     }
 
     override fun buyModel(skus: String, generatorIndex: Int) {
@@ -106,8 +106,9 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
     private fun displayMultiModels(itemId: Int, imageLocationPath: String?, listOfGenerators: List<Generator>?) {
-        multiModel = MultiModels.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray(), fullImage)
-        view.startMultipleModels(multiModel!!)
+        val multiModel = MultiModels.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray(), fullImage)
+        this.multiModel = multiModel
+        view.startMultipleModels(multiModel)
     }
 
     fun saveImageSoOtherFragmentCanViewIt(image: ByteArray?): File {
