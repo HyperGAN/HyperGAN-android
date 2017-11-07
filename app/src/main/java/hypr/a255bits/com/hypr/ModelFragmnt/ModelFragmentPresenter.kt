@@ -27,7 +27,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         launch(UI) {
             val imageBitmap = bg {
                 loadGenerator(pbFile, cont.assets)
-                if(byteArrayImage == null)
+                if (byteArrayImage == null)
                     byteArrayImage = changePixelToBitmap(easyGenerator.sampleImageWithoutImage())?.toByteArray()
                 val bitmap = convertByteArrayImageToBitmap()
                 val faces = getFaceCroppedOutOfImageIfNoFaceGetFullImage(bitmap, cont)
@@ -204,9 +204,12 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     }
 
     fun changeGanImageFromSlider(ganValue: Double) {
-        val imageManipluatedFromZValue = manipulateZValueInImage(ganValue)
-        val imagePlacedInsideFullImage = imageManipluatedFromZValue?.let { inlineImage(byteArrayImage?.toBitmap()!!, it, fullImage) }
-        view.displayFocusedImage(imagePlacedInsideFullImage)
+        if (easyGenerator != null) {
+
+            val imageManipluatedFromZValue = manipulateZValueInImage(ganValue)
+            val imagePlacedInsideFullImage = imageManipluatedFromZValue?.let { inlineImage(byteArrayImage?.toBitmap()!!, it, fullImage) }
+            view.displayFocusedImage(imagePlacedInsideFullImage)
+        }
     }
 
     fun getInfoFromFragmentCreation(arguments: Bundle) {
