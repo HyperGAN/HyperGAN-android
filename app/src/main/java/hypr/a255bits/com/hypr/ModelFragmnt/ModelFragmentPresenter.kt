@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.GeneratorLoader.EasyGeneratorLoader
@@ -87,6 +88,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
                 getCroppedFaceImagFromImageWithFaces(imageWithFaces)
             }
         } catch (exception: IOException) {
+            Log.e("ModelFragment", exception.message)
             view.showError(exception.localizedMessage)
         }
         return image
