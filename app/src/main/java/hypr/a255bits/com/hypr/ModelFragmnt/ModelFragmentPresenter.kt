@@ -147,11 +147,11 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
             easyGenerator.sampleImageWithoutImage()
         }
         imageFromGallery = transformedImage
-        return easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, transformedImage)
+        return transformedImage.toBitmap(easyGenerator.width, easyGenerator.height)
     }
 
     override fun changePixelToBitmap(transformedImage: IntArray): Bitmap? {
-        return easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, transformedImage)
+        return transformedImage.toBitmap(easyGenerator.width, easyGenerator.height)
     }
 
     override fun onRequestPermissionResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -197,7 +197,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
 
     fun manipulateZValueInImage(ganValue: Double): Bitmap? {
         val ganImage = getGeneratorImage(ganValue)
-        return easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, ganImage)
+        return ganImage.toBitmap(easyGenerator.width, easyGenerator.height)
     }
 
     fun changeGanImageFromSlider(ganValue: Double) {
