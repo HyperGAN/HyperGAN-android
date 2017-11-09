@@ -49,9 +49,11 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
     }
 
     override fun takePicture() {
-        if (cameraView.isEnabled) {
-            cameraView.captureImage()
-        }
+        cameraView.captureImage()
+    }
+
+    override fun isCameraViewEnabled(): Boolean {
+        return cameraView.isEnabled
     }
 
     override fun startMultiFaceSelection(jpeg: ByteArray, facesDetected: MutableList<PointF>) {
