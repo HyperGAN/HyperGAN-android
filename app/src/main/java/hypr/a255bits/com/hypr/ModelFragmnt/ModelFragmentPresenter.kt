@@ -111,7 +111,6 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         var isSaved = false
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             var bitmap = imageFromGallery?.let { changePixelToBitmap(it) }
-            val croppedPoint = SettingsHelper(context).getFaceLocation()
             if (bitmap != null && fullImage != null) {
                 val inlineImage = inlineImage(byteArrayImage?.toBitmap()!!, bitmap, fullImage)
                 val waterMarkImage = interactor.placeWatermarkOnImage(inlineImage)
