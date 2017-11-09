@@ -9,7 +9,6 @@ import hypr.a255bits.com.hypr.GeneratorLoader.FaceLocation
 interface ModelFragmentMVP{
     interface view{
         fun displayFocusedImage(imageFromGallery: Bitmap?)
-        fun  showError(errorMesssage: String)
         fun  shareImageToOtherApps(shareIntent: Intent)
         fun  requestPermissionFromUser(permissions: Array<String>, REQUEST_CODE: Int)
         fun startCameraActivity()
