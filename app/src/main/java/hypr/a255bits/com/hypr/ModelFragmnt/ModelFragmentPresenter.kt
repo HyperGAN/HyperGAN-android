@@ -200,12 +200,9 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     }
 
     fun changeGanImageFromSlider(ganValue: Double) {
-        if (easyGenerator != null) {
-
-            val imageManipluatedFromZValue = manipulateZValueInImage(ganValue)
-            val imagePlacedInsideFullImage = imageManipluatedFromZValue?.let { inlineImage(byteArrayImage?.toBitmap()!!, it, fullImage) }
-            view.displayFocusedImage(imagePlacedInsideFullImage)
-        }
+        val imageManipluatedFromZValue = manipulateZValueInImage(ganValue)
+        val imagePlacedInsideFullImage = imageManipluatedFromZValue?.let { inlineImage(byteArrayImage?.toBitmap()!!, it, fullImage) }
+        view.displayFocusedImage(imagePlacedInsideFullImage)
     }
 
     fun getInfoFromFragmentCreation(arguments: Bundle) {
