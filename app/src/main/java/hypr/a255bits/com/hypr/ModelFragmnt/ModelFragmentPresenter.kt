@@ -89,7 +89,6 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
             }
         } catch (exception: IOException) {
             Log.e("ModelFragment", exception.message)
-            view.showError(exception.localizedMessage)
         }
         return image
     }
