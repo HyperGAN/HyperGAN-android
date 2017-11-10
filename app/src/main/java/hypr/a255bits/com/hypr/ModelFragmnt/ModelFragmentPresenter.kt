@@ -126,7 +126,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     fun inlineImage(person: Person, newCroppedImage: Bitmap): Bitmap? {
         val fullImage = person.fullImage
         val faceImage = person.faceImage?.toBitmap()
-        val image: Bitmap? = if (fullImage != null && faceImage != null) {
+        val image: Bitmap? = if (faceImage != null) {
             inliner.setBeforeAfterCropSizingRatio(faceImage, newCroppedImage)
             fullImage.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(newCroppedImage, it, croppedPoint) }
         } else {
