@@ -60,7 +60,6 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     private fun randomizeModelClickListener() {
         randomizeModel.setOnClickListener {
-            presenter.direction = presenter.easyGenerator.random_z()
             presenter.randomizeModel(imageTransitionSeekBar.progress)
         }
     }

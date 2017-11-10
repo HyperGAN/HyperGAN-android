@@ -73,6 +73,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     }
 
     override fun randomizeModel(progress: Int) {
+        easyGenerator.direction = easyGenerator.random_z()
         changeGanImageFromSlider(progress.negative1To1())
     }
 
