@@ -55,4 +55,13 @@ class SettingsHelper(val context: Context) {
         val height = preference.getFloat("face_height", 0.0f)
         return FaceDetection(context).faceToRect(x, y, width, height)
     }
+
+    fun setFaceIndex(index: Int) {
+        val edit = editor.edit()
+        edit.putInt("index", index)
+        edit.apply()
+    }
+    fun getFaceIndex(): Int {
+        return preference.getInt("index", 0)
+    }
 }

@@ -95,7 +95,8 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     private fun getCroppedFaceImagFromImageWithFaces(imageWithFaces: Bitmap): Bitmap? {
         val croppedFaces: MutableList<FaceLocation> = interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)
         val faceImage = if (isFacesDetected(croppedFaces)) {
-            croppedFaces[0].croppedFace
+            val faceIndex = SettingsHelper(context).getFaceIndex()
+            croppedFaces[faceIndex].croppedFace
         } else {
             imageWithFaces
         }
