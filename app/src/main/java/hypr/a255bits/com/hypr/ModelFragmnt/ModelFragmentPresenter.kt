@@ -28,7 +28,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         launch(UI) {
             val imageBitmap = bg {
                 loadGenerator(pbFile, cont.assets)
-                val bitmap = person.faceImage?.toBitmap()
+                val bitmap = person.fullImage.toBitmap()
                 val faces = getFaceCroppedOutOfImageIfNoFaceGetFullImage(bitmap, cont)
                 val transformedImage: Bitmap = sampleImage(faces)
                 return@bg inlineImage(person, transformedImage)
