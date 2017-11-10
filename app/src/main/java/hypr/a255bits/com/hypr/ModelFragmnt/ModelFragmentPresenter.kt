@@ -189,8 +189,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     }
 
     fun getGeneratorImage(ganValue: Double): IntArray {
-        val direction = direction ?: easyGenerator.random_z()
-        val ganImage = easyGenerator.sample(easyGenerator.encoded!!, ganValue.toFloat(), easyGenerator.mask, direction, easyGenerator.baseImage!!)
+        val ganImage = easyGenerator.sampleImageWithZValue(ganValue.toFloat())
         imageDisplayedOnScreen = ganImage
         return ganImage
     }
