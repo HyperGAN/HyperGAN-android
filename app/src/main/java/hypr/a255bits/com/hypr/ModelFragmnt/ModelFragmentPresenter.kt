@@ -48,7 +48,8 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     }
     var generatorIndex: Int? = null
     var direction: FloatArray? = null
-    val croppedPoint = SettingsHelper(context).getFaceLocation()
+    val settings = SettingsHelper(context)
+    val croppedPoint = settings.getFaceLocation()
     val inliner = InlineImage()
     lateinit var person: Person
 
@@ -92,7 +93,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     private fun getCroppedFaceImagFromImageWithFaces(imageWithFaces: Bitmap): Bitmap? {
         val croppedFaces: MutableList<FaceLocation> = interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)
         val faceImage = if (isFacesDetected(croppedFaces)) {
-            val faceIndex = SettingsHelper(context).getFaceIndex()
+            val faceIndex = settings.getFaceIndex()
             croppedFaces[faceIndex].croppedFace
         } else {
             imageWithFaces
@@ -108,8 +109,8 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         var isSaved = false
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             var bitmap = imageDisplayedOnScreen?.let { changePixelToBitmap(it) }
-            val croppedPoint = SettingsHelper(context).getFaceLocation()
-            if (bitmap != null && person.fullImage != null) {
+            val croppedPoint = settings.getFaceLocation()
+            if (bitmap != null) {
                 val inlineImage = inlineImage(person, bitmap)
                 val waterMarkImage = interactor.placeWatermarkOnImage(inlineImage)
                 isSaved = ImageSaver().saveImageToInternalStorage(waterMarkImage, context)
