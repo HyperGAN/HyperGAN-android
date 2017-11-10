@@ -67,3 +67,9 @@ fun IntArray.toByteArrayImage(): ByteArray {
     }
     return baos.toByteArray()
 }
+
+fun IntArray.toBitmap(width: Int, height: Int): Bitmap{
+    val bitmap: Bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    bitmap.setPixels(this, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+    return bitmap
+}
