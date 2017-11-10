@@ -28,14 +28,10 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         launch(UI) {
             val imageBitmap = bg {
                 loadGenerator(pbFile, cont.assets)
-                if (person?.faceImage == null) {
-                    person?.faceImage = easyGenerator.sampleImageWithoutImage().toBitmap(easyGenerator.width, easyGenerator.height).toByteArray()
-                }
-                val bitmap = convertByteArrayImageToBitmap()
+                val bitmap = person.faceImage?.toBitmap()
                 val faces = getFaceCroppedOutOfImageIfNoFaceGetFullImage(bitmap, cont)
-                val transformedImage = sampleImage(faces)
-                val byteBitmap = person?.faceImage?.toBitmap()!!
-                return@bg inlineImage(byteBitmap, transformedImage, person!!.fullImage)
+                val transformedImage: Bitmap = sampleImage(faces)
+                return@bg inlineImage(person, transformedImage)
             }
             view.displayFocusedImage(imageBitmap.await())
         }
@@ -54,7 +50,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     var direction: FloatArray? = null
     val croppedPoint = SettingsHelper(context).getFaceLocation()
     val inliner = InlineImage()
-    var person: Person? = null
+    lateinit var person: Person
 
     override fun disconnectFaceDetector() {
         interactor.faceDetection.release()
@@ -113,8 +109,8 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             var bitmap = imageFromGallery?.let { changePixelToBitmap(it) }
             val croppedPoint = SettingsHelper(context).getFaceLocation()
-            if (bitmap != null && person?.fullImage != null) {
-                val inlineImage = inlineImage(person?.faceImage?.toBitmap()!!, bitmap, person?.fullImage)
+            if (bitmap != null && person.fullImage != null) {
+                val inlineImage = inlineImage(person, bitmap)
                 val waterMarkImage = interactor.placeWatermarkOnImage(inlineImage)
                 isSaved = ImageSaver().saveImageToInternalStorage(waterMarkImage, context)
 
@@ -127,9 +123,11 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         return isSaved
     }
 
-    fun inlineImage(oldCroppedImage: Bitmap, newCroppedImage: Bitmap, fullImage: ByteArray?): Bitmap? {
-        val image: Bitmap? = if (fullImage != null) {
-            inliner.setBeforeAfterCropSizingRatio(oldCroppedImage, newCroppedImage)
+    fun inlineImage(person: Person, newCroppedImage: Bitmap): Bitmap? {
+        val fullImage = person.fullImage
+        val faceImage = person.faceImage?.toBitmap()
+        val image: Bitmap? = if (fullImage != null && faceImage != null) {
+            inliner.setBeforeAfterCropSizingRatio(faceImage, newCroppedImage)
             fullImage.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(newCroppedImage, it, croppedPoint) }
         } else {
             newCroppedImage
@@ -189,10 +187,6 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         view.startCameraActivity()
     }
 
-    override fun convertByteArrayImageToBitmap(): Bitmap? {
-        return person?.faceImage?.let { BitmapManipulator().createBitmapFromByteArray(it) }
-    }
-
     fun getGeneratorImage(ganValue: Double): IntArray {
         val direction = direction ?: easyGenerator.random_z()
         val ganImage = easyGenerator.sample(easyGenerator.encoded!!, ganValue.toFloat(), easyGenerator.mask, direction, easyGenerator.baseImage!!)
@@ -207,7 +201,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
 
     fun changeGanImageFromSlider(ganValue: Double) {
         val imageManipluatedFromZValue = manipulateZValueInImage(ganValue)
-        val imagePlacedInsideFullImage = imageManipluatedFromZValue?.let { inlineImage(person?.faceImage?.toBitmap()!!, it, person?.fullImage) }
+        val imagePlacedInsideFullImage = imageManipluatedFromZValue?.let { inlineImage(person, it) }
         view.displayFocusedImage(imagePlacedInsideFullImage)
     }
 
@@ -216,6 +210,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         val faceImage = readImageToBytes(arguments.getString(ModelFragment.IMAGE_PARAM))
         generatorIndex = arguments.getInt(ModelFragment.GENERATOR_INDEX)
         val fullImage: File? = arguments.getString(ModelFragment.FULL_IMAGE_LOCATION).let { File(it) }
-        this.person = Person(faceImage, fullImage?.readBytes())
+        val fullImageBit = fullImage?.readBytes() ?: easyGenerator.sampleImageWithoutImage().toByteArrayImage()
+        this.person = Person(faceImage, fullImageBit)
     }
 }
