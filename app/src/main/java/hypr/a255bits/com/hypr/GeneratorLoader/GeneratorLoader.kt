@@ -17,7 +17,7 @@ open class GeneratorLoader(val generator: Generator_) { //generator constructor 
     val z_dimsArray: LongArray = generator.input!!.z_dims!!.map { item -> item.toLong() }.toLongArray()
     var z_dims:Long = z_dimsArray.fold(1.toLong(), { mul, next -> mul * next })
 
-    var raw: FloatArray = FloatArray(width * height * channels)
+    var raw: IntArray = IntArray(width * height * channels)
 
     fun load(assets: AssetManager) {
         System.loadLibrary("tensorflow_inference")
@@ -35,32 +35,34 @@ open class GeneratorLoader(val generator: Generator_) { //generator constructor 
         print("Sampling ")
         feedInput(bitmap)
 
-
         this.inference.feed("concat", z, *z_dimsArray)
         this.inference.feed("direction", direction, *z_dimsArray)
         Log.i("slider", "SLIDER VALUE "+slider)
 
         val maskDims = longArrayOf(1, width.toLong(),height.toLong(), 1)
-        this.inference.feed("Tanh_1", mask!!, *maskDims)
+        if(generator.uses_mask!!) {
+            this.inference.feed(generator.mask_input_node, mask!!, *maskDims)
+        }
 
         val dims = longArrayOf(1.toLong(),1.toLong())
         this.inference.feed("slider", floatArrayOf(slider), *dims)
-        this.inference.run(arrayOf("add_21"))
-        //inference.readNodeFloat(OUTPUT_NODE, resu)
 
-        //inference.run(..)
-        this.inference.fetch("add_21", this.raw)
+        this.inference.run(arrayOf("generator_int"))
+        this.inference.fetch("generator_int", this.raw)
 
-        return manipulatePixelsInBitmap()
+        return this.raw
     }
 
     fun mask(bitmap: Bitmap): FloatArray {
-        feedInput(bitmap)
         val floatValues = FloatArray(width * height)
 
-        this.inference.run(arrayOf("Tanh_4"))
+        if(!generator.uses_mask!!) {
+            return floatValues // TODO: this is hacky
+        }
+        feedInput(bitmap)
+        this.inference.run(arrayOf(generator.mask_input_node))
 
-        this.inference.fetch("Tanh_4", floatValues)
+        this.inference.fetch(generator.mask_input_node, floatValues)
 
         return floatValues
     }
@@ -75,17 +77,17 @@ open class GeneratorLoader(val generator: Generator_) { //generator constructor 
         this.inference.feed("direction", direction, *z_dimsArray)
 
         val maskDims = longArrayOf(1, width.toLong(), height.toLong(), 1)
-        this.inference.feed("Tanh_1", mask, *maskDims)
+        if(generator.uses_mask!!) {
+            this.inference.feed(generator.mask_input_node, mask!!, *maskDims)
+        }
 
         val dims = longArrayOf(1.toLong(), 1.toLong())
         this.inference.feed("slider", floatArrayOf(slider), *dims)
-        this.inference.run(arrayOf("add_21"))
-        //inference.readNodeFloat(OUTPUT_NODE, resu)
 
-        //inference.run(..)
-        this.inference.fetch("add_21", this.raw)
+        this.inference.run(arrayOf("generator_int"))
+        this.inference.fetch("generator_int", this.raw)
 
-        return manipulatePixelsInBitmap()
+        return this.raw
     }
 
     fun get_z(z:FloatArray, slider:Float, direction:FloatArray): FloatArray {
@@ -98,9 +100,9 @@ open class GeneratorLoader(val generator: Generator_) { //generator constructor 
 
         this.inference.feed("direction", direction, *z_dimsArray)
 
-        this.inference.run(arrayOf("add"))
+        this.inference.run(arrayOf(generator.z_output_node))
 
-        this.inference.fetch("add", floatValues)
+        this.inference.fetch(generator.z_output_node, floatValues)
 
         return floatValues
     }
@@ -120,11 +122,11 @@ open class GeneratorLoader(val generator: Generator_) { //generator constructor 
     fun encode(bitmap: Bitmap): FloatArray {
         feedInput(bitmap)
 
-        this.inference.run(arrayOf("Tanh"))
+        this.inference.run(arrayOf(generator.z_output_node))
 
         val z = FloatArray(z_dims.toInt())
 
-        this.inference.fetch("Tanh", z)
+        this.inference.fetch(generator.z_output_node, z)
 
         return z
     }

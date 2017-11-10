@@ -4,6 +4,8 @@
   "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
   "google_play_id": "",
   "generator" : {
+    "uses_mask": false,
+    "z_output_node": "Maximum",
     "viewer":{
       "type": "FaceViewer",
       "operation": "crop",
@@ -21,7 +23,7 @@
    ]
     },
     "input" : {
-      "z_dims": [1.0, 8.0, 8.0, 160.0],
+      "z_dims": [1, 300],
       "type": "image",
       "width": 256,
       "height": 256,
@@ -32,7 +34,6 @@
       "width": 256,
       "height": 256,
       "channels" : 3
-    
     }
   }
 },
@@ -42,13 +43,16 @@
   "price_in_cents": 1499,
   "google_play_id": "com.halloween",
   "generator" : {
+    "uses_mask": false,
+    "mask_input_node": "Maximum_6",
+    "z_output_node": "Maximum",
     "viewer":{
       "type": "FaceViewer",
       "operation": "crop",
       "controls":  []
     },
     "input" : {
-      "z_dims": [1.0, 8.0, 8.0, 160.0],
+      "z_dims": [1, 300],
       "type": "image",
       "width": 256,
       "height": 256,
