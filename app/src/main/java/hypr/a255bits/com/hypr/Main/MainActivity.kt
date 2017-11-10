@@ -55,6 +55,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             presenter.image = intent.extras.getString("image")
             presenter.fullImage = intent.extras.getString("fullimage")
             presenter.settingsHelper.setModelImagePath(presenter.image!!)
+            presenter.settingsHelper.setFullImagePath(presenter.fullImage!!)
         }
     }
 

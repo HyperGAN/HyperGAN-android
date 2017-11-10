@@ -8,6 +8,7 @@ import android.preference.PreferenceManager
 class SettingsHelper(val context: Context) {
     val FIRST_TIME_OPENED = "firstTimeOpened"
     val RESTORE_MODEL_IMAGE = "restoreImage"
+    val RESTORE_MODEL_FULL_IMAGE = "restoreFullImage"
     val preference: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     val editor: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
@@ -22,6 +23,9 @@ class SettingsHelper(val context: Context) {
     fun setModelImagePath(filePath: String) {
         editor.edit().putString(RESTORE_MODEL_IMAGE, filePath).apply()
     }
+    fun setFullImagePath(filePath: String){
+        editor.edit().putString(RESTORE_MODEL_FULL_IMAGE, filePath).apply()
+    }
 
     fun isModelImageRestoreable(): Boolean {
         return !preference.getString(RESTORE_MODEL_IMAGE, "").isEmpty()
@@ -29,6 +33,10 @@ class SettingsHelper(val context: Context) {
 
     fun getModelImagePath(): String {
         return preference.getString(RESTORE_MODEL_IMAGE, "")
+    }
+
+    fun getFullImagePath(): String{
+       return preference.getString(RESTORE_MODEL_FULL_IMAGE, "")
     }
 
     fun saveFaceLocation(face: Rect) {
