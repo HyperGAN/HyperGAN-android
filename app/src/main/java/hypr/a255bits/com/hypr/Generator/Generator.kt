@@ -8,6 +8,8 @@ import kotlinx.android.parcel.Parcelize
 class Generator : Parcelable {
     @Json(name = "name")
     var name: String = ""
+    @Json(name = "features")
+    var features: List<String> = listOf()
 
     @Json(name = "file_size_in_bytes")
     var fileSizeInBytes: Long? = null

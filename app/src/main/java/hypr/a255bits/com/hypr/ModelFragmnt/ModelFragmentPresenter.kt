@@ -44,7 +44,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     val SAVE_IMAGE_PERMISSION_REQUEST: Int = 11
     lateinit var easyGenerator: EasyGeneratorLoader
     var generator: Generator by Delegates.observable(Generator()) { property, oldValue, newValue ->
-        newValue.generator?.let { easyGenerator = EasyGeneratorLoader(it) }
+        newValue.let { easyGenerator = EasyGeneratorLoader(it) }
         newValue
     }
     var generatorIndex: Int? = null

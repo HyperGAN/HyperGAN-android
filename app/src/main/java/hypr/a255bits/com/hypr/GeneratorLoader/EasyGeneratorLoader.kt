@@ -1,9 +1,9 @@
 package hypr.a255bits.com.hypr.GeneratorLoader
 
 import android.graphics.Bitmap
-import hypr.a255bits.com.hypr.Generator.Generator_
+import hypr.a255bits.com.hypr.Generator.Generator
 
-class EasyGeneratorLoader(val gen: Generator_): GeneratorLoader(gen){
+class EasyGeneratorLoader(val gen: Generator): GeneratorLoader(gen.generator!!){
     var baseImage: Bitmap? = null
     var encoded: FloatArray? = null
     var mask: FloatArray? = null
@@ -11,7 +11,7 @@ class EasyGeneratorLoader(val gen: Generator_): GeneratorLoader(gen){
 
     fun sampleImageWithImage(image: Bitmap?): IntArray {
         direction = this.random_z()
-        val scaled = Bitmap.createScaledBitmap(image, gen.output?.width!!, gen.output?.height!!, false)
+        val scaled = Bitmap.createScaledBitmap(image, gen.generator?.output?.width!!, gen.generator?.output?.height!!, false)
 
         baseImage = scaled
         encoded = this.encode(scaled)
@@ -20,7 +20,7 @@ class EasyGeneratorLoader(val gen: Generator_): GeneratorLoader(gen){
         return this.sample(encoded!!, 0.0f, mask, direction!!, scaled)
     }
     fun sampleImageWithoutImage(): IntArray {
-        val scaled = Bitmap.createBitmap(gen.output?.width!!, gen.output?.height!!, Bitmap.Config.ARGB_8888)
+        val scaled = Bitmap.createBitmap(gen.generator?.output?.width!!, gen.generator?.output?.height!!, Bitmap.Config.ARGB_8888)
         mask = this.mask(scaled)
         val direction = this.random_z()
         baseImage = scaled
