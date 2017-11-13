@@ -52,6 +52,10 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
         cameraView.captureImage()
     }
 
+    override fun isCameraViewEnabled(): Boolean {
+        return cameraView.isEnabled
+    }
+
     override fun startMultiFaceSelection(jpeg: ByteArray, facesDetected: MutableList<PointF>) {
         val intent = Intent()
         intent.putExtra("image", jpeg)
@@ -84,6 +88,7 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
         super.onBackPressed()
         intentFor<MainActivity>().start(applicationContext)
     }
+
     override fun onResume() {
         super.onResume()
         cameraView.start()

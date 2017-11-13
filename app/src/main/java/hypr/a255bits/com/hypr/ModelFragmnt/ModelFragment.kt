@@ -16,7 +16,6 @@ import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.cancelButton
 import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.toast
 import java.io.File
 
 
@@ -103,10 +102,6 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     override fun onDetach() {
         super.onDetach()
         presenter.disconnectFaceDetector()
-    }
-
-    override fun showError(errorMesssage: String) {
-        context.toast(errorMesssage)
     }
 
     override fun displayFocusedImage(imageFromGallery: Bitmap?) {

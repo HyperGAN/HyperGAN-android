@@ -38,7 +38,7 @@ open class DrawableImageView(context: Context?, attrs: AttributeSet?) : ImageVie
         faceLocation.forEach { item ->
             oldFaceLocations.add(Rect(item))
         }
-        scaledBitmap = scaleBitmap(bitmap!!)
+        scaledBitmap = bitmap?.let { scaleBitmap(it) }
         val centreX = (width - scaledBitmap!!.width) / 2
         val centreY = (height - scaledBitmap!!.height) / 2
         canvas?.drawBitmap(scaledBitmap, centreX.toFloat(), centreY.toFloat(), paint)
