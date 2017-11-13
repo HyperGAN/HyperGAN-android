@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.GeneratorLoader.EasyGeneratorLoader
@@ -27,13 +28,13 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         launch(UI) {
             val imageBitmap = bg {
                 loadGenerator(pbFile, cont.assets)
-                if(byteArrayImage == null)
+                if (byteArrayImage == null) {
                     byteArrayImage = changePixelToBitmap(easyGenerator.sampleImageWithoutImage())?.toByteArray()
-                val bitmap = convertByteArrayImageToBitmap()
+                }
+                val bitmap = byteArrayImage?.toBitmap()
                 val faces = getFaceCroppedOutOfImageIfNoFaceGetFullImage(bitmap, cont)
                 val transformedImage = sampleImage(faces)
-                val byteBitmap = byteArrayImage?.toBitmap()!!
-                return@bg inlineImage(byteBitmap, transformedImage, fullImage)
+                return@bg inlineImage(bitmap!!, transformedImage, fullImage)
             }
             view.displayFocusedImage(imageBitmap.await())
         }
@@ -87,7 +88,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
                 getCroppedFaceImagFromImageWithFaces(imageWithFaces)
             }
         } catch (exception: IOException) {
-            view.showError(exception.localizedMessage)
+            Log.e("ModelFragment", exception.message)
         }
         return image
     }
@@ -111,7 +112,6 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         var isSaved = false
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             var bitmap = imageFromGallery?.let { changePixelToBitmap(it) }
-            val croppedPoint = SettingsHelper(context).getFaceLocation()
             if (bitmap != null && fullImage != null) {
                 val inlineImage = inlineImage(byteArrayImage?.toBitmap()!!, bitmap, fullImage)
                 val waterMarkImage = interactor.placeWatermarkOnImage(inlineImage)
@@ -147,11 +147,11 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
             easyGenerator.sampleImageWithoutImage()
         }
         imageFromGallery = transformedImage
-        return easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, transformedImage)
+        return transformedImage.toBitmap(easyGenerator.width, easyGenerator.height)
     }
 
     override fun changePixelToBitmap(transformedImage: IntArray): Bitmap? {
-        return easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, transformedImage)
+        return transformedImage.toBitmap(easyGenerator.width, easyGenerator.height)
     }
 
     override fun onRequestPermissionResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -188,10 +188,6 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         view.startCameraActivity()
     }
 
-    override fun convertByteArrayImageToBitmap(): Bitmap? {
-        return byteArrayImage?.let { BitmapManipulator().createBitmapFromByteArray(it) }
-    }
-
     fun getGeneratorImage(ganValue: Double): IntArray {
         val direction = direction ?: easyGenerator.random_z()
         val ganImage = easyGenerator.sample(easyGenerator.encoded!!, ganValue.toFloat(), easyGenerator.mask, direction, easyGenerator.baseImage!!)
@@ -201,7 +197,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
 
     fun manipulateZValueInImage(ganValue: Double): Bitmap? {
         val ganImage = getGeneratorImage(ganValue)
-        return easyGenerator.manipulateBitmap(easyGenerator.width, easyGenerator.height, ganImage)
+        return ganImage.toBitmap(easyGenerator.width, easyGenerator.height)
     }
 
     fun changeGanImageFromSlider(ganValue: Double) {

@@ -150,11 +150,4 @@ open class GeneratorLoader(val generator: Generator_) { //generator constructor 
         }
         return pixelsInBitmap
     }
-
-    fun manipulateBitmap(width: Int, height: Int, pixelsInBitmap: IntArray): Bitmap {
-        val bitmap: Bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        bitmap.setPixels(pixelsInBitmap, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
-        return bitmap
-    }
-
 }

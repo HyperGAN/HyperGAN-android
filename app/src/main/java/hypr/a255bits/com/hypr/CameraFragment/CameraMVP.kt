@@ -13,6 +13,7 @@ interface CameraMVP{
        fun takePicture()
        fun noFaceDetectedPopup()
        fun startMultiFaceSelection(jpeg: ByteArray, facesDetected: MutableList<PointF>)
+       fun isCameraViewEnabled(): Boolean
    }
     interface presenter{
         fun  sendPictureToModel(jpeg: ByteArray?)

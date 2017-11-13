@@ -33,7 +33,7 @@ class CameraPresenter(val view: CameraMVP.view, val context: Context) : CameraMV
                     view.startMultiFaceSelection(jpeg, faceLocations)
                 }
                 facesDetected.size() > 0 -> view.sendImageToModel(jpeg)
-                facesDetected.size() == 0-> view.noFaceDetectedPopup()
+                facesDetected.size() == 0 -> view.noFaceDetectedPopup()
             }
         }
     }
@@ -46,8 +46,10 @@ class CameraPresenter(val view: CameraMVP.view, val context: Context) : CameraMV
     }
 
     fun captureImage() {
-        view.takePicture()
-        analytics.logEvent(AnalyticsEvent.TAKE_PICTURE)
+        if (view.isCameraViewEnabled()) {
+            view.takePicture()
+            analytics.logEvent(AnalyticsEvent.TAKE_PICTURE)
+        }
     }
 
     override fun displayGallery() {
