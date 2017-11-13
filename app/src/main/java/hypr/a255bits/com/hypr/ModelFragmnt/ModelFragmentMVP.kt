@@ -23,7 +23,7 @@ interface ModelFragmentMVP{
         fun sampleImage(image: Bitmap?): Bitmap
         fun onRequestPermissionResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray)
         fun  onOptionsItemSelected(item: MenuItem, context: Context)
-        fun  readImageToBytes(imagePath: String?)
+        fun  readImageToBytes(imagePath: String?): ByteArray?
         fun randomizeModel(progress: Int)
     }
     interface interactor{
