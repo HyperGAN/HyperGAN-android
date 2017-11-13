@@ -1,15 +1,19 @@
 package hypr.a255bits.com.hypr.GeneratorLoader
 
 import android.graphics.Bitmap
+import android.graphics.Rect
 import hypr.a255bits.com.hypr.Generator.Generator
+import hypr.a255bits.com.hypr.ModelFragmnt.InlineImage
+import hypr.a255bits.com.hypr.Util.toBitmap
 
-class EasyGeneratorLoader(val gen: Generator): GeneratorLoader(gen.generator!!){
+class EasyGeneratorLoader(val gen: Generator) : GeneratorLoader(gen.generator!!) {
     var baseImage: Bitmap? = null
     var encoded: FloatArray? = null
     var mask: FloatArray? = null
     var direction: FloatArray? = null
+    val inliner = InlineImage()
 
-    fun sampleImageWithImage(image: Bitmap?): IntArray {
+    fun sampleImageWithImage(person: Person, image: Bitmap?, croppedPoint: Rect): Bitmap? {
         direction = this.random_z()
         val scaled = Bitmap.createScaledBitmap(image, gen.generator?.output?.width!!, gen.generator?.output?.height!!, false)
 
@@ -17,8 +21,10 @@ class EasyGeneratorLoader(val gen: Generator): GeneratorLoader(gen.generator!!){
         encoded = this.encode(scaled)
 
         mask = this.mask(scaled)
-        return this.sample(encoded!!, 0.0f, mask, direction!!, scaled)
+        val image = this.sample(encoded!!, 0.0f, mask, direction!!, scaled).toBitmap(this.width, this.height)
+        return inlineImage(person, image, croppedPoint)
     }
+
     fun sampleImageWithoutImage(): IntArray {
         val scaled = Bitmap.createBitmap(gen.generator?.output?.width!!, gen.generator?.output?.height!!, Bitmap.Config.ARGB_8888)
         mask = this.mask(scaled)
@@ -27,8 +33,30 @@ class EasyGeneratorLoader(val gen: Generator): GeneratorLoader(gen.generator!!){
         encoded = this.encode(scaled)
         return this.sampleRandom(encoded!!, 0.0f, direction, mask!!, scaled)
     }
-    fun sampleImageWithZValue(slider: Float): IntArray{
+
+    fun sampleImageWithZValue(slider: Float): IntArray {
         val direction = this.direction ?: this.random_z()
         return this.sample(this.encoded!!, slider, mask, direction, baseImage!!)
+    }
+
+    fun inlineImage(person: Person, newCroppedImage: Bitmap, croppedPoint: Rect): Bitmap? {
+        val image: Bitmap?
+        if (featureEnabled("inline")) {
+            val fullImage = person.fullImage
+            val faceImage = person.faceImage?.toBitmap()
+            image = if (faceImage != null) {
+                inliner.setBeforeAfterCropSizingRatio(faceImage, newCroppedImage)
+                fullImage.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(newCroppedImage, it, croppedPoint) }
+            } else {
+                newCroppedImage
+            }
+        } else {
+            image = newCroppedImage
+        }
+        return image
+    }
+
+    private fun featureEnabled(feature: String): Boolean {
+        return gen.features.contains(feature)
     }
 }
