@@ -37,7 +37,7 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
     }
 
     override fun noFaceDetectedPopup() {
-        longToast("Please select an image with a face")
+        longToast(getString(R.string.select_image_with_face))
     }
 
     fun galleryButtonClick(view: View) {
