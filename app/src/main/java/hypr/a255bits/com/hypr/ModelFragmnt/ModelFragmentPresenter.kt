@@ -49,10 +49,8 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         newValue
     }
     var generatorIndex: Int? = null
-    var direction: FloatArray? = null
     val settings = SettingsHelper(context)
     val croppedPoint = settings.getFaceLocation()
-    val inliner = InlineImage()
     lateinit var person: Person
 
     override fun disconnectFaceDetector() {

@@ -5,11 +5,14 @@ import android.graphics.Rect
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.ModelFragmnt.InlineImage
 import hypr.a255bits.com.hypr.Util.toBitmap
+import kotlin.properties.Delegates
 
 class EasyGeneratorLoader(val gen: Generator) : GeneratorLoader(gen.generator!!) {
     var baseImage: Bitmap? = null
     var encoded: FloatArray? = null
-    var mask: FloatArray? = null
+    var mask: FloatArray by Delegates.vetoable(floatArrayOf()) { property, oldValue, newValue ->
+        featureEnabled("mask")
+    }
     var direction: FloatArray? = null
     val inliner = InlineImage()
 
