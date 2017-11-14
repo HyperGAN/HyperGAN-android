@@ -45,7 +45,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     val SAVE_IMAGE_PERMISSION_REQUEST: Int = 11
     lateinit var easyGenerator: EasyGeneratorLoader
     var generator: Generator by Delegates.observable(Generator()) { property, oldValue, newValue ->
-        newValue.let { easyGenerator = EasyGeneratorLoader(it) }
+        newValue.let { easyGenerator = EasyGeneratorLoader(it, context) }
         newValue
     }
     var generatorIndex: Int? = null
@@ -209,8 +209,12 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         generator = arguments.getParcelable(ModelFragment.MODEL_CONTROLS)
         val faceImage = readImageToBytes(arguments.getString(ModelFragment.IMAGE_PARAM))
         generatorIndex = arguments.getInt(ModelFragment.GENERATOR_INDEX)
-        val fullImage: File? = arguments.getString(ModelFragment.FULL_IMAGE_LOCATION).let { File(it) }
-        val fullImageBit = fullImage?.readBytes() ?: easyGenerator.sampleImageWithoutImage().toByteArrayImage()
+        val fullImage: String? = arguments.getString(ModelFragment.FULL_IMAGE_LOCATION)
+        val fullImageBit = if (fullImage != null) {
+            File(fullImage).readBytes()
+        } else {
+            easyGenerator.sampleImageWithoutImage().toByteArrayImage()
+        }
         this.person = Person(faceImage, fullImageBit)
     }
 }

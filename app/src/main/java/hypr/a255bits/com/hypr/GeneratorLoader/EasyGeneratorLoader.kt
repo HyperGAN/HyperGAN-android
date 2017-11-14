@@ -1,5 +1,6 @@
 package hypr.a255bits.com.hypr.GeneratorLoader
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Rect
 import hypr.a255bits.com.hypr.Generator.Generator
@@ -7,7 +8,7 @@ import hypr.a255bits.com.hypr.ModelFragmnt.InlineImage
 import hypr.a255bits.com.hypr.Util.toBitmap
 import kotlin.properties.Delegates
 
-class EasyGeneratorLoader(val gen: Generator) : GeneratorLoader(gen.generator!!) {
+class EasyGeneratorLoader(val gen: Generator, val context: Context): GeneratorLoader(gen.generator!!) {
     var baseImage: Bitmap? = null
     var encoded: FloatArray? = null
     var mask: FloatArray by Delegates.vetoable(floatArrayOf()) { property, oldValue, newValue ->
@@ -16,6 +17,9 @@ class EasyGeneratorLoader(val gen: Generator) : GeneratorLoader(gen.generator!!)
     var direction: FloatArray? = null
     val inliner = InlineImage()
 
+    init{
+        this.load(context.assets)
+    }
     fun sampleImageWithImage(person: Person, image: Bitmap?, croppedPoint: Rect): Bitmap? {
         direction = this.random_z()
         val scaled = Bitmap.createScaledBitmap(image, gen.generator?.output?.width!!, gen.generator?.output?.height!!, false)
