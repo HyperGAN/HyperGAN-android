@@ -174,7 +174,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
                 R.id.saveImage -> {
                     bg { saveImageDisplayedToPhone(context) }.await()
                     analytics.logEvent(AnalyticsEvent.SAVE_IMAGE)
-                    context.toast("Image Saved!")
+                    context.toast(context.getString(R.string.image_saved_toast))
                 }
                 R.id.shareIamge -> {
                     shareImageToOtherApps()
