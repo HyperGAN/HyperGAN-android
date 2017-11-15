@@ -58,7 +58,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             if(presenter.fullImage != null){
                 presenter.settingsHelper.setFullImagePath(presenter.fullImage!!)
             }
-            presenter.fullImage.let {  presenter.settingsHelper.setFullImagePath(it!!)}
 
         }
     }

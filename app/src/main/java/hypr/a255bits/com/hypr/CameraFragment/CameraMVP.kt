@@ -1,12 +1,13 @@
 package hypr.a255bits.com.hypr.CameraFragment
 
+import android.graphics.Bitmap
 import android.graphics.PointF
 import android.net.Uri
 
 
 interface CameraMVP{
    interface view{
-       fun  sendImageToModel(image: ByteArray?)
+       fun  sendImageToModel(image: ByteArray?, croppedFace: Bitmap)
 
        fun displayGallery()
        fun navigateUpActivity()

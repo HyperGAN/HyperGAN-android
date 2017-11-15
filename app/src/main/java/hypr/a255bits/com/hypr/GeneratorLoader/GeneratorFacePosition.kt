@@ -38,7 +38,12 @@ class GeneratorFacePosition(val context: Context) {
         var h: Int = y2-y1
 
 
-        val bitmap:Bitmap =Bitmap.createBitmap(imageWithFaces, x1, y1, w, h)
+        var bitmap: Bitmap
+        try{
+            bitmap = Bitmap.createBitmap(imageWithFaces, x1, y1, w, h)
+        }catch(e: IllegalArgumentException){
+            bitmap = Bitmap.createBitmap(imageWithFaces, face.position.x.toInt(), face.position.y.toInt(), face.width.toInt(), face.height.toInt())
+        }
         val scaledRect = Rect(x1, y1, x1 + w,y1 + h)
         val maxSize:Int = intArrayOf(bitmap.height, bitmap.width).min()!!
         val resizedBitmap = getResizedBitmap(bitmap, maxSize, maxSize)
