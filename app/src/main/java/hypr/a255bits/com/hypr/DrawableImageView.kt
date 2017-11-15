@@ -7,7 +7,7 @@ import android.view.MotionEvent
 import android.widget.ImageView
 
 
-open class DrawableImageView(context: Context?, attrs: AttributeSet?) : ImageView(context, attrs) {
+open class DrawableImageView(context: Context?, attrs: AttributeSet?) : ImageView(context, attrs){
 
     var bitmap: Bitmap? = null
     val paint = Paint()
@@ -16,18 +16,16 @@ open class DrawableImageView(context: Context?, attrs: AttributeSet?) : ImageVie
     private val faceLocation = mutableListOf<Rect>()
     val touchPaint = Paint()
     private var boundsListener: DrawableImageViewTouchInBoundsListener? = null
-
-    init {
+    init{
         touchPaint.color = Color.BLUE
         touchPaint.style = Paint.Style.STROKE
         touchPaint.strokeWidth = 1.5f
     }
 
 
-    fun setBoundsTouchListener(boundsListener: DrawableImageViewTouchInBoundsListener) {
+    fun setBoundsTouchListener(boundsListener: DrawableImageViewTouchInBoundsListener){
         this.boundsListener = boundsListener
     }
-
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val parentWidth = MeasureSpec.getSize(widthMeasureSpec)
         val parentHeight = MeasureSpec.getSize(heightMeasureSpec)
@@ -40,19 +38,16 @@ open class DrawableImageView(context: Context?, attrs: AttributeSet?) : ImageVie
         faceLocation.forEach { item ->
             oldFaceLocations.add(Rect(item))
         }
-        if (scaledBitmap != null) {
-
-            scaledBitmap = bitmap?.let { scaleBitmap(it) }
-            val centreX = (width - scaledBitmap!!.width) / 2
-            val centreY = (height - scaledBitmap!!.height) / 2
-            canvas?.drawBitmap(scaledBitmap, centreX.toFloat(), centreY.toFloat(), paint)
-            scaleTouchInputBoxesToImagePosition(scaledBitmap!!, centreX, centreY)
-        }
+        scaledBitmap = bitmap?.let { scaleBitmap(it) }
+        val centreX = (width - scaledBitmap!!.width) / 2
+        val centreY = (height - scaledBitmap!!.height) / 2
+        canvas?.drawBitmap(scaledBitmap, centreX.toFloat(), centreY.toFloat(), paint)
+        scaleTouchInputBoxesToImagePosition(scaledBitmap!!, centreX, centreY)
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         faceLocation.forEachIndexed() { i, faceLocation ->
-            if (faceLocation.contains(event?.x!!.toInt(), event.y.toInt())) {
+            if(faceLocation.contains(event?.x!!.toInt(), event.y.toInt())){
                 bitmap?.let { boundsListener?.onBoundsTouch(it, i) }
             }
         }
@@ -60,10 +55,10 @@ open class DrawableImageView(context: Context?, attrs: AttributeSet?) : ImageVie
         return super.onTouchEvent(event)
     }
 
-    private fun scaleTouchInputBoxesToImagePosition(bit: Bitmap, centreX: Int, centreY: Int) {
+    private fun scaleTouchInputBoxesToImagePosition(bit: Bitmap, centreX: Int, centreY: Int){
         faceLocation.forEach { rect ->
             val widthRatio = bit.width.toFloat() / bitmap!!.width.toFloat()
-            val heightRatio = ((bit.height.toFloat())) / (bitmap!!.height.toFloat())
+            val heightRatio = ((bit.height.toFloat()))/ (bitmap!!.height.toFloat())
             rect.right = (rect.right * widthRatio).toInt()
             rect.left = (rect.left * widthRatio).toInt()
             rect.bottom = (rect.bottom * heightRatio).toInt()
@@ -102,7 +97,6 @@ open class DrawableImageView(context: Context?, attrs: AttributeSet?) : ImageVie
         faceLocation.add(rect)
     }
 }
-
-interface DrawableImageViewTouchInBoundsListener {
-    fun onBoundsTouch(image: Bitmap, index: Int)
-}
+interface DrawableImageViewTouchInBoundsListener{
+        fun onBoundsTouch(image: Bitmap, index: Int)
+    }
