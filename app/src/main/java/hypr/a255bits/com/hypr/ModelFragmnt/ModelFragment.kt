@@ -13,7 +13,9 @@ import hypr.a255bits.com.hypr.Util.negative1To1
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_model.*
 import org.greenrobot.eventbus.EventBus
-import org.jetbrains.anko.*
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.cancelButton
+import org.jetbrains.anko.intentFor
 import java.io.File
 
 
@@ -77,7 +79,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     override fun startCameraActivity() {
-        val intent = activity.intentFor<CameraActivity>("indexInJson" to 0).clearTop().newTask()
+        val intent = activity.intentFor<CameraActivity>("indexInJson" to 0)
         EventBus.getDefault().post(intent)
     }
 
