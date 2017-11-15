@@ -23,6 +23,7 @@ import org.junit.runner.RunWith
 @LargeTest
 @RunWith(AndroidJUnit4::class)
 class CameraTest {
+// Must be run with clean install
 
     @get:Rule
     var mActivityTestRule = ActivityTestRule(MainActivity::class.java)
