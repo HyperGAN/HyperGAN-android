@@ -28,8 +28,15 @@ class CameraTest {
     var mActivityTestRule = ActivityTestRule(MainActivity::class.java)
 
     @Test
-    fun cameraTest() {
-        val appCompatButton = onView(allOf(withId(R.id.chooseImageFromGalleryButton)))
+    fun cameraSnapshotWithNoFaceShowsNoFaceError() {
+        val appCompatButton = onView(
+                allOf(withId(R.id.chooseImageFromGalleryButton), withText("Choose Image"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(`is`("android.widget.RelativeLayout")),
+                                        0),
+                                0),
+                        isDisplayed()))
         appCompatButton.perform(click())
         val takepicButton = onView(
                 allOf(withId(R.id.takePicture)))
