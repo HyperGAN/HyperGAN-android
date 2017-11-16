@@ -105,9 +105,8 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
     }
 
     override fun displayFocusedImage(imageFromGallery: Bitmap?) {
-        focusedImage.setImageBitmap(imageFromGallery)
+        imageFromGallery.let {  focusedImage.setImageBitmap(it)}
     }
-
 
     override fun shareImageToOtherApps(shareIntent: Intent) {
         startActivity(Intent.createChooser(shareIntent, getString(R.string.share_image)))

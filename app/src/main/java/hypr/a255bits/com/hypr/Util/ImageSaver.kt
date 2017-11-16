@@ -40,9 +40,10 @@ class ImageSaver {
             return true
     }
 
-    fun saveImageToFile(file: File, image: ByteArray?) {
+    fun saveImageToFile(file: File, image: ByteArray?): File {
         val fos = FileOutputStream(file)
         fos.write(image)
+        return file
     }
 
     fun writeByteArrayToFile(fileLocation: String, imageInBytes: ByteArray?) {

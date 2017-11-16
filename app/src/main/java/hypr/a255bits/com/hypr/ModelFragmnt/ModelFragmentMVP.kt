@@ -3,8 +3,10 @@ package hypr.a255bits.com.hypr.ModelFragmnt
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Rect
 import android.view.MenuItem
 import hypr.a255bits.com.hypr.GeneratorLoader.FaceLocation
+import hypr.a255bits.com.hypr.GeneratorLoader.Person
 
 interface ModelFragmentMVP{
     interface view{
@@ -20,7 +22,7 @@ interface ModelFragmentMVP{
         fun disconnectFaceDetector()
         fun saveImageDisplayedToPhone(context: Context): Boolean
         fun  changePixelToBitmap(transformedImage: IntArray): Bitmap?
-        fun sampleImage(image: Bitmap?): Bitmap
+        fun sampleImage(image: Person, faces: Bitmap?, croppedPoint: Rect): Bitmap?
         fun onRequestPermissionResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray)
         fun  onOptionsItemSelected(item: MenuItem, context: Context)
         fun  readImageToBytes(imagePath: String?): ByteArray?

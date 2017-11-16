@@ -44,7 +44,7 @@ class FaceDetection(val context: Context){
             val faceLocation = faceLocations.valueAt(index)
             if (faceLocation != null) {
                 val face = GeneratorFacePosition(context).cropFaceOutOfBitmap(faceLocation, imageWithFaces)
-                croppedFaces.add(face)
+                face?.let { croppedFaces.add(it) }
             }
         }
         return croppedFaces

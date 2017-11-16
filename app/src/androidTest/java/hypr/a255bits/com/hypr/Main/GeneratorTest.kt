@@ -7,8 +7,10 @@ import android.graphics.BitmapFactory
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import android.test.suitebuilder.annotation.LargeTest
-import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorLoader
+import hypr.a255bits.com.hypr.GeneratorLoader.EasyGeneratorLoader
 import hypr.a255bits.com.hypr.Util.ImageSaver
+import hypr.a255bits.com.hypr.Util.JsonReader
+import hypr.a255bits.com.hypr.Util.toBitmap
 
 import org.junit.Rule
 import org.junit.Test
@@ -21,8 +23,9 @@ import java.io.InputStream
 open class GeneratorTest {
 
     @get:Rule open val mActivityTestRule = ActivityTestRule(MainActivity::class.java)
-    private val generator = GeneratorLoader(generator.viewer, generator.input, generator.output)
     private val IMAGES_TO_TRANSFER_FOLDERNAME = "beforeImages"
+    val gen = JsonReader().getGeneratorsFromJson(mActivityTestRule.activity)
+    val generator = EasyGeneratorLoader(gen?.get(0)!!, mActivityTestRule.activity)
 
     @Test
     fun generatorTest() {
@@ -54,7 +57,8 @@ open class GeneratorTest {
         generator.load(mActivityTestRule.activity.assets)
         val scaled = Bitmap.createScaledBitmap(image, 128, 128, false)
         val encoded = generator.encode(scaled)
-        return generator.sample(encoded)
+        val imageFace = generator.sampleImageWithoutImage()
+        return imageFace.toBitmap(generator.width, generator.height)
     }
 
     private fun writeImageToFileOnAndroidDeviceGallery(encodedBitmap: Bitmap, context: Context) {

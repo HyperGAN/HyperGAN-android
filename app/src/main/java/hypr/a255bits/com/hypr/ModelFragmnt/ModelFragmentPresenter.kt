@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.AssetManager
 import android.graphics.Bitmap
+import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -31,27 +32,25 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
                 loadGenerator(pbFile, cont.assets)
                 val bitmap = person.fullImage.toBitmap()
                 val faces = getFaceCroppedOutOfImageIfNoFaceGetFullImage(bitmap, cont)
-                val transformedImage: Bitmap = sampleImage(faces)
-                return@bg inlineImage(person, transformedImage)
+                val transformedImage: Bitmap? = sampleImage(person, faces, croppedPoint)
+                return@bg transformedImage
             }
             view.displayFocusedImage(imageBitmap.await())
         }
     }
 
     val analytics = Analytics(context)
-    var imageDisplayedOnScreen: IntArray? = null
+    var imageDisplayedOnScreen: Bitmap? = null
     val SHARE_IMAGE_PERMISSION_REQUEST = 10
     val SAVE_IMAGE_PERMISSION_REQUEST: Int = 11
     lateinit var easyGenerator: EasyGeneratorLoader
     var generator: Generator by Delegates.observable(Generator()) { property, oldValue, newValue ->
-        newValue.generator?.let { easyGenerator = EasyGeneratorLoader(it) }
+        newValue.let { easyGenerator = EasyGeneratorLoader(it, context) }
         newValue
     }
     var generatorIndex: Int? = null
-    var direction: FloatArray? = null
     val settings = SettingsHelper(context)
     val croppedPoint = settings.getFaceLocation()
-    val inliner = InlineImage()
     lateinit var person: Person
 
     override fun disconnectFaceDetector() {
@@ -64,8 +63,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
 
     fun shareImageToOtherApps() {
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            val bitmap = imageDisplayedOnScreen?.let { changePixelToBitmap(it) }
-            val watermarkBitmap = interactor.placeWatermarkOnImage(bitmap)
+            val watermarkBitmap = interactor.placeWatermarkOnImage(imageDisplayedOnScreen)
             val shareIntent = interactor.getIntentForSharingImagesWithOtherApps(watermarkBitmap)
             view.shareImageToOtherApps(shareIntent)
         } else {
@@ -110,15 +108,14 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     override fun saveImageDisplayedToPhone(context: Context): Boolean {
         var isSaved = false
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            var bitmap = imageDisplayedOnScreen?.let { changePixelToBitmap(it) }
             val croppedPoint = settings.getFaceLocation()
-            if (bitmap != null) {
-                val inlineImage = inlineImage(person, bitmap)
+            if (imageDisplayedOnScreen != null) {
+                val inlineImage = inlineImage(person, imageDisplayedOnScreen!!)
                 val waterMarkImage = interactor.placeWatermarkOnImage(inlineImage)
                 isSaved = ImageSaver().saveImageToInternalStorage(waterMarkImage, context)
 
             } else {
-                isSaved = ImageSaver().saveImageToInternalStorage(bitmap, context)
+                isSaved = ImageSaver().saveImageToInternalStorage(imageDisplayedOnScreen, context)
             }
         } else {
             view.requestPermissionFromUser(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), SAVE_IMAGE_PERMISSION_REQUEST)
@@ -130,8 +127,9 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         val fullImage = person.fullImage
         val faceImage = person.faceImage?.toBitmap()
         val image: Bitmap? = if (faceImage != null) {
-            inliner.setBeforeAfterCropSizingRatio(faceImage, newCroppedImage)
-            fullImage.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(newCroppedImage, it, croppedPoint) }
+            easyGenerator.inlineImage(person, newCroppedImage, croppedPoint)
+//            inliner.setBeforeAfterCropSizingRatio(faceImage, newCroppedImage)
+//            fullImage.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(newCroppedImage, it, croppedPoint) }
         } else {
             newCroppedImage
         }
@@ -142,14 +140,14 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         pbFile?.let { easyGenerator.load(assets, it) }
     }
 
-    override fun sampleImage(image: Bitmap?): Bitmap {
+    override fun sampleImage(person: Person, image: Bitmap?, croppedPoint: Rect): Bitmap? {
         val transformedImage = if (image != null) {
-            easyGenerator.sampleImageWithImage(image)
+            easyGenerator.sampleImageWithImage(person, image, croppedPoint)
         } else {
-            easyGenerator.sampleImageWithoutImage()
+            easyGenerator.sampleImageWithoutImage().toBitmap(easyGenerator.width, easyGenerator.height)
         }
         imageDisplayedOnScreen = transformedImage
-        return transformedImage.toBitmap(easyGenerator.width, easyGenerator.height)
+        return transformedImage
     }
 
     override fun changePixelToBitmap(transformedImage: IntArray): Bitmap? {
@@ -176,7 +174,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
                 R.id.saveImage -> {
                     bg { saveImageDisplayedToPhone(context) }.await()
                     analytics.logEvent(AnalyticsEvent.SAVE_IMAGE)
-                    context.toast("Image Saved!")
+                    context.toast(context.getString(R.string.image_saved_toast))
                 }
                 R.id.shareIamge -> {
                     shareImageToOtherApps()
@@ -192,7 +190,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
 
     fun getGeneratorImage(ganValue: Double): IntArray {
         val ganImage = easyGenerator.sampleImageWithZValue(ganValue.toFloat())
-        imageDisplayedOnScreen = ganImage
+        imageDisplayedOnScreen = ganImage.toBitmap(easyGenerator.width, easyGenerator.height)
         return ganImage
     }
 
@@ -211,8 +209,12 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         generator = arguments.getParcelable(ModelFragment.MODEL_CONTROLS)
         val faceImage = readImageToBytes(arguments.getString(ModelFragment.IMAGE_PARAM))
         generatorIndex = arguments.getInt(ModelFragment.GENERATOR_INDEX)
-        val fullImage: File? = arguments.getString(ModelFragment.FULL_IMAGE_LOCATION).let { File(it) }
-        val fullImageBit = fullImage?.readBytes() ?: easyGenerator.sampleImageWithoutImage().toByteArrayImage()
+        val fullImage: String? = arguments.getString(ModelFragment.FULL_IMAGE_LOCATION)
+        val fullImageBit = if (fullImage != null) {
+            File(fullImage).readBytes()
+        } else {
+            easyGenerator.sampleImageWithoutImage().toByteArrayImage()
+        }
         this.person = Person(faceImage, fullImageBit)
     }
 }

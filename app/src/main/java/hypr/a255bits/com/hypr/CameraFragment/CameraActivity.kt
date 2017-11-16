@@ -2,6 +2,7 @@ package hypr.a255bits.com.hypr.CameraFragment
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.PointF
 import android.net.Uri
 import android.os.Bundle
@@ -14,10 +15,12 @@ import hypr.a255bits.com.hypr.Main.MainActivity
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.ImageSaver
 import hypr.a255bits.com.hypr.Util.onPictureTaken
+import hypr.a255bits.com.hypr.Util.toByteArray
 import kotlinx.android.synthetic.main.activity_camera.*
 import org.jetbrains.anko.clearTop
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
+import org.jetbrains.anko.toast
 import java.io.File
 
 class CameraActivity : AppCompatActivity(), CameraMVP.view {
@@ -37,7 +40,7 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
     }
 
     override fun noFaceDetectedPopup() {
-        longToast("Please select an image with a face")
+        longToast(getString(R.string.select_image_with_face))
     }
 
     fun galleryButtonClick(view: View) {
@@ -64,6 +67,9 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
         finish()
     }
 
+    override fun showFaceTooCloseErrorTryAgain() {
+        toast(getString(R.string.face_too_close_camera_error))
+    }
     private fun takePictureListener(cameraView: CameraView) {
         cameraView.onPictureTaken { jpeg -> presenter.sendPictureToModel(jpeg) }
     }
@@ -99,10 +105,13 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
         cameraView.stop()
     }
 
-    override fun sendImageToModel(image: ByteArray?) {
-        val file = saveImageSoOtherFragmentCanViewIt(image)
+    override fun sendImageToModel(image: ByteArray?, croppedFace: Bitmap) {
+        val fullImage = saveImageSoOtherFragmentCanViewIt(image)
+        val croppedFaceFile = ImageSaver().saveImageToFile(createTempFile("fullimage", "jpg"), croppedFace.toByteArray())
+
         startActivity(intentFor<MainActivity>
-        ("indexInJson" to indexInJson, "image" to file.path).clearTop())
+//        ("indexInJson" to indexInJson, "image" to fullImage.path).clearTop())
+        ("indexInJson" to indexInJson, "image" to croppedFaceFile.path, "fullimage" to fullImage.path).clearTop())
     }
 
     fun saveImageSoOtherFragmentCanViewIt(image: ByteArray?): File {

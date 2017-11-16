@@ -6,10 +6,7 @@ import android.graphics.BitmapFactory
 import android.graphics.PointF
 import android.net.Uri
 import collections.forEach
-import hypr.a255bits.com.hypr.Util.Analytics
-import hypr.a255bits.com.hypr.Util.AnalyticsEvent
-import hypr.a255bits.com.hypr.Util.FaceDetection
-import hypr.a255bits.com.hypr.Util.ImageSaver
+import hypr.a255bits.com.hypr.Util.*
 
 
 class CameraPresenter(val view: CameraMVP.view, val context: Context) : CameraMVP.presenter {
@@ -25,14 +22,24 @@ class CameraPresenter(val view: CameraMVP.view, val context: Context) : CameraMV
 
     private fun startModelIfImageHasFace(bitmap: Bitmap?, jpeg: ByteArray) {
         val facesDetected = bitmap?.let { faceDetection.getFaceLocations(it, context) }
-        if (facesDetected != null) {
+        if (facesDetected != null && facesDetected.size() > 0) {
             when {
                 facesDetected.size() > 1 -> {
                     val faceLocations = mutableListOf<PointF>()
                     facesDetected.forEach { i, face -> faceLocations.add(face.position) }
                     view.startMultiFaceSelection(jpeg, faceLocations)
                 }
-                facesDetected.size() > 0 -> view.sendImageToModel(jpeg)
+                facesDetected.size() == 1 -> {
+                    val images = faceDetection.getListOfFaces(facesDetected, bitmap)
+                    if (images.isEmpty()) {
+                        view.showFaceTooCloseErrorTryAgain()
+                    } else {
+
+                        SettingsHelper(context).saveFaceLocation(images[0].faceLocation)
+                        SettingsHelper(context).setFaceIndex(0)
+                        view.sendImageToModel(jpeg, images[0].croppedFace)
+                    }
+                }
                 facesDetected.size() == 0 -> view.noFaceDetectedPopup()
             }
         }
