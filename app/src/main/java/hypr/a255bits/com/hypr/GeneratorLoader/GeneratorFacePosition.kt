@@ -2,6 +2,7 @@ package hypr.a255bits.com.hypr.GeneratorLoader
 
 import android.content.Context
 import android.graphics.*
+import android.util.Log
 import com.google.android.gms.vision.face.Face
 import com.google.android.gms.vision.face.Landmark
 import hypr.a255bits.com.hypr.Util.FaceDetection
@@ -9,7 +10,7 @@ import hypr.a255bits.com.hypr.Util.FaceDetection
 class GeneratorFacePosition(val context: Context) {
     private val XOFFSET_PERCENT = 0.85
     private val YOFFSET_PERCENT = 0.54
-    fun cropFaceOutOfBitmap(face: Face, imageWithFaces: Bitmap): FaceLocation {
+    fun cropFaceOutOfBitmap(face: Face, imageWithFaces: Bitmap): FaceLocation? {
 
         val left = face.landmarks.first{ it.type == Landmark.LEFT_EYE }
         val right = face.landmarks.first{ it.type == Landmark.RIGHT_EYE }
@@ -42,7 +43,8 @@ class GeneratorFacePosition(val context: Context) {
         try{
             bitmap = Bitmap.createBitmap(imageWithFaces, x1, y1, w, h)
         }catch(e: IllegalArgumentException){
-            bitmap = Bitmap.createBitmap(imageWithFaces, face.position.x.toInt(), face.position.y.toInt(), face.width.toInt(), face.height.toInt())
+            Log.e("GeneratorFacePosition", "Face too close to camera: ${e.localizedMessage}")
+            return null
         }
         val scaledRect = Rect(x1, y1, x1 + w,y1 + h)
         val maxSize:Int = intArrayOf(bitmap.height, bitmap.width).min()!!

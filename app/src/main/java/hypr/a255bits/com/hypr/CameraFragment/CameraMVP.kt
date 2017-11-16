@@ -15,6 +15,7 @@ interface CameraMVP{
        fun noFaceDetectedPopup()
        fun startMultiFaceSelection(jpeg: ByteArray, facesDetected: MutableList<PointF>)
        fun isCameraViewEnabled(): Boolean
+       fun showFaceTooCloseErrorTryAgain()
    }
     interface presenter{
         fun  sendPictureToModel(jpeg: ByteArray?)

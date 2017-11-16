@@ -31,9 +31,15 @@ class CameraPresenter(val view: CameraMVP.view, val context: Context) : CameraMV
                 }
                 facesDetected.size() == 1 -> {
                     val images = faceDetection.getListOfFaces(facesDetected, bitmap)
-                    SettingsHelper(context).saveFaceLocation(images[0].faceLocation)
-                    SettingsHelper(context).setFaceIndex(0)
-                    view.sendImageToModel(jpeg, images[0].croppedFace)}
+                    if (images.isEmpty()) {
+                        view.showFaceTooCloseErrorTryAgain()
+                    } else {
+
+                        SettingsHelper(context).saveFaceLocation(images[0].faceLocation)
+                        SettingsHelper(context).setFaceIndex(0)
+                        view.sendImageToModel(jpeg, images[0].croppedFace)
+                    }
+                }
                 facesDetected.size() == 0 -> view.noFaceDetectedPopup()
             }
         }

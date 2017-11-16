@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.activity_camera.*
 import org.jetbrains.anko.clearTop
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
+import org.jetbrains.anko.toast
 import java.io.File
 
 class CameraActivity : AppCompatActivity(), CameraMVP.view {
@@ -66,6 +67,9 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
         finish()
     }
 
+    override fun showFaceTooCloseErrorTryAgain() {
+        toast(getString(R.string.face_too_close_camera_error))
+    }
     private fun takePictureListener(cameraView: CameraView) {
         cameraView.onPictureTaken { jpeg -> presenter.sendPictureToModel(jpeg) }
     }
