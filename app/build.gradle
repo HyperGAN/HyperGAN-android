@@ -79,6 +79,7 @@ dependencies {
     testCompile 'org.mockito:mockito-core:2.8.9'
     compile 'com.android.support.test.espresso:espresso-core:2.2.2'
     compile 'com.android.support:multidex:1.0.1'
+    compile 'com.alexvasilkov:gesture-views:2.3.2'
 
 
 }
