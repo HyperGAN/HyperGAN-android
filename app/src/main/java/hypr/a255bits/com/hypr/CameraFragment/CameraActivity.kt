@@ -61,7 +61,8 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
 
     override fun startMultiFaceSelection(jpeg: ByteArray, facesDetected: MutableList<PointF>) {
         val intent = Intent()
-        intent.putExtra("image", jpeg)
+        val image = ImageSaver().saveImageToFile(createTempFile("fullimage", "png"), jpeg)
+        intent.putExtra("image", image.path)
         intent.putExtra("faceLocations", facesDetected.toTypedArray())
         setResult(Activity.RESULT_OK, intent)
         finish()
