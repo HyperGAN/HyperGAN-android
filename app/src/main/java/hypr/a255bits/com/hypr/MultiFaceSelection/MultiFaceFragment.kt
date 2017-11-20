@@ -18,15 +18,15 @@ import java.io.File
 
 class MultiFaceFragment : Fragment(), MultiFaceMVP.view, DrawableImageViewTouchInBoundsListener{
 
-    private var imageOfPeoplesFaces: Bitmap? = null
+    private var imageOfPeoplesFaces: File? = null
     private var faceLocations: Array<PointF>? = null
     private val presenter by lazy{MultiFacePresenter(this, context)}
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (arguments != null && arguments.getByteArray(IMAGE) != null) {
-            imageOfPeoplesFaces = arguments.getByteArray(IMAGE)?.toBitmap()
+        if (arguments != null && arguments.getString(IMAGE) != null) {
+            imageOfPeoplesFaces = File(arguments.getString(IMAGE))
             faceLocations = arguments.getParcelableArray(FACE_LOCATIONS) as Array<PointF>?
         }
     }
@@ -38,7 +38,7 @@ class MultiFaceFragment : Fragment(), MultiFaceMVP.view, DrawableImageViewTouchI
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val imageWithBoxesAroundFaces = presenter.addFaceBoxesToMultipleFacesImage(context, imageOfPeoplesFaces)
+        val imageWithBoxesAroundFaces = presenter.addFaceBoxesToMultipleFacesImage(context, imageOfPeoplesFaces?.readBytes()?.toBitmap())
         drawableImageView.setBoundsTouchListener(this)
         presenter.displayImageWithFaces(imageWithBoxesAroundFaces)
     }
@@ -57,10 +57,11 @@ class MultiFaceFragment : Fragment(), MultiFaceMVP.view, DrawableImageViewTouchI
     }
 
     override fun addBoxAroundFace(rect: Rect, canvasImageWithFaces: Canvas) {
+        val resolution = canvasImageWithFaces.width + canvasImageWithFaces.height
         val paint = Paint()
         paint.color = Color.RED
         paint.style = Paint.Style.STROKE
-        paint.strokeWidth = 1.0f
+        paint.strokeWidth = resolution * 0.0023f
         canvasImageWithFaces.drawRect(rect, paint)
     }
 
@@ -79,10 +80,10 @@ class MultiFaceFragment : Fragment(), MultiFaceMVP.view, DrawableImageViewTouchI
         private val IMAGE = "param1"
         private val FACE_LOCATIONS = "param2"
 
-        fun newInstance(image: ByteArray?, faceLocations: Array<PointF>?): MultiFaceFragment {
+        fun newInstance(image: String?, faceLocations: Array<PointF>?): MultiFaceFragment {
             val fragment = MultiFaceFragment()
             val args = Bundle()
-            args.putByteArray(IMAGE, image)
+            args.putString(IMAGE, image)
             args.putParcelableArray(FACE_LOCATIONS, faceLocations)
             fragment.arguments = args
             return fragment
