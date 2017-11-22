@@ -23,7 +23,7 @@ interface ModelFragmentMVP{
         fun saveImageDisplayedToPhone(context: Context): Boolean
         fun  changePixelToBitmap(transformedImage: IntArray): Bitmap?
         fun sampleImage(image: Person, faces: Bitmap?, croppedPoint: Rect): Bitmap?
-        fun onRequestPermissionResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray)
+        fun onRequestPermissionResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray, context: Context)
         fun  onOptionsItemSelected(item: MenuItem, context: Context)
         fun  readImageToBytes(imagePath: String?): ByteArray?
         fun randomizeModel(progress: Int)

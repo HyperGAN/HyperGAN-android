@@ -8,7 +8,7 @@ import hypr.a255bits.com.hypr.ModelFragmnt.InlineImage
 import hypr.a255bits.com.hypr.Util.toBitmap
 import kotlin.properties.Delegates
 
-class EasyGeneratorLoader(val gen: Generator, val context: Context): GeneratorLoader(gen.generator!!) {
+class EasyGeneratorLoader(val gen: Generator): GeneratorLoader(gen.generator!!) {
     var baseImage: Bitmap? = null
     var encoded: FloatArray? = null
     var mask: FloatArray by Delegates.vetoable(floatArrayOf()) { property, oldValue, newValue ->
@@ -17,7 +17,7 @@ class EasyGeneratorLoader(val gen: Generator, val context: Context): GeneratorLo
     var direction: FloatArray? = null
     val inliner = InlineImage()
 
-    init{
+    fun loadAssets(context: Context){
         this.load(context.assets)
     }
     fun sampleImageWithImage(person: Person, image: Bitmap?, croppedPoint: Rect): Bitmap? {

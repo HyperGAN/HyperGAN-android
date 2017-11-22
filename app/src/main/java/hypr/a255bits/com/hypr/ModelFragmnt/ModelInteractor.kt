@@ -13,12 +13,16 @@ import android.util.SparseArray
 import com.google.android.gms.vision.face.Face
 import com.pawegio.kandroid.fromApi
 import hypr.a255bits.com.hypr.GeneratorLoader.FaceLocation
+import hypr.a255bits.com.hypr.Util.Analytics
 import hypr.a255bits.com.hypr.Util.FaceDetection
+import hypr.a255bits.com.hypr.Util.SettingsHelper
 import java.io.IOException
 
 
 class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
     val faceDetection = FaceDetection(context)
+    val analytics = Analytics(context)
+    val settings = SettingsHelper(context)
 
     override fun checkIfPermissionGranted(permission: String): Boolean {
         var isPermissionGranted = true

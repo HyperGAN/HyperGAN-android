@@ -17,6 +17,7 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.pawegio.kandroid.start
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
+import hypr.a255bits.com.hypr.DependencyInjection.MainApplication
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.MultiFaceSelection.MultiFaceFragment
 import hypr.a255bits.com.hypr.MultiModels.MultiModels
@@ -44,6 +45,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
         setSupportActionBar(toolbar)
+        MainApplication().onCreate()
         presenter.addModelsToNavBar(applicationContext)
         getInfoFromCameraActivity()
     }
