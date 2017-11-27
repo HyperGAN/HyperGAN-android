@@ -7,6 +7,7 @@ import android.view.*
 import com.pawegio.kandroid.onProgressChanged
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator.Generator
+import hypr.a255bits.com.hypr.GeneratorLoader.EasyGeneratorLoader
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.negative1To1
 import kotlinx.android.synthetic.main.activity_main.*
@@ -25,11 +26,14 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
         get() = "generator"
 
     var pbFile: File? = null
-    val presenter by inject<ModelFragmentPresenter>()
+    val generator by inject<EasyGeneratorLoader>()
+    val presenter by lazy{ModelFragmentPresenter(generator)}
 //    val presenter by lazy { ModelFragmentPresenter(pbFile) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        presenter.setInteractors(ModelInteractor(context))
+        presenter.setViews(this)
         if (arguments != null) {
             presenter.getInfoFromFragmentCreation(arguments)
         }
@@ -43,8 +47,6 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     override fun onResume() {
         super.onResume()
-        presenter.setViews(this)
-        presenter.setInteractors(ModelInteractor(context))
     }
 
     override fun lockModel() {

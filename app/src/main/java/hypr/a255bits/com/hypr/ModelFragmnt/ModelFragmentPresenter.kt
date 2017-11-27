@@ -23,19 +23,17 @@ import java.io.IOException
 import kotlin.properties.Delegates
 
 
-class ModelFragmentPresenter() : ModelFragmentMVP.presenter {
+class ModelFragmentPresenter(var easyGenerator: EasyGeneratorLoader) : ModelFragmentMVP.presenter {
 
 
     var imageDisplayedOnScreen: Bitmap? = null
     val SHARE_IMAGE_PERMISSION_REQUEST = 10
     val SAVE_IMAGE_PERMISSION_REQUEST: Int = 11
-    lateinit var easyGenerator: EasyGeneratorLoader
     var generator: Generator by Delegates.observable(Generator()) { property, oldValue, newValue ->
         newValue.let { easyGenerator = EasyGeneratorLoader(it) }
         newValue
     }
     var generatorIndex: Int? = null
-    val croppedPoint = interactor.settings.getFaceLocation()
     lateinit var person: Person
     lateinit var view: ModelFragmentMVP.view
     lateinit var interactor: ModelInteractor
@@ -46,7 +44,7 @@ class ModelFragmentPresenter() : ModelFragmentMVP.presenter {
                 loadGenerator(pbFile, context.assets)
                 val bitmap = person.fullImage.toBitmap()
                 val faces = getFaceCroppedOutOfImageIfNoFaceGetFullImage(bitmap, context)
-                val transformedImage: Bitmap? = sampleImage(person, faces, croppedPoint)
+                val transformedImage: Bitmap? = sampleImage(person, faces, interactor.croppedPoint)
                 return@bg transformedImage
             }
             view.displayFocusedImage(imageBitmap.await())
@@ -135,7 +133,7 @@ class ModelFragmentPresenter() : ModelFragmentMVP.presenter {
         val fullImage = person.fullImage
         val faceImage = person.faceImage?.toBitmap()
         val image: Bitmap? = if (faceImage != null) {
-            easyGenerator.inlineImage(person, newCroppedImage, croppedPoint)
+            easyGenerator.inlineImage(person, newCroppedImage, interactor.croppedPoint)
 //            inliner.setBeforeAfterCropSizingRatio(faceImage, newCroppedImage)
 //            fullImage.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(newCroppedImage, it, croppedPoint) }
         } else {

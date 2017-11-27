@@ -23,6 +23,7 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
     val faceDetection = FaceDetection(context)
     val analytics = Analytics(context)
     val settings = SettingsHelper(context)
+    val croppedPoint = settings.getFaceLocation()
 
     override fun checkIfPermissionGranted(permission: String): Boolean {
         var isPermissionGranted = true
