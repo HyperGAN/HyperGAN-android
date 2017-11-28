@@ -30,6 +30,9 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        presenter.setInteractors(ModelInteractor(context))
+        presenter.setViews(this)
+        presenter.easyGenerator.loadAssets(context)
         if (arguments != null) {
             presenter.getInfoFromFragmentCreation(arguments)
         }
@@ -43,8 +46,6 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     override fun onResume() {
         super.onResume()
-        presenter.setViews(this)
-        presenter.setInteractors(ModelInteractor(context))
     }
 
     override fun lockModel() {

@@ -3,21 +3,32 @@ package hypr.a255bits.com.hypr.GeneratorLoader
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.util.Log
-import hypr.a255bits.com.hypr.Generator.Generator_
+import hypr.a255bits.com.hypr.Generator.Generator
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface
 import java.io.File
 
-open class GeneratorLoader(val generator: Generator_) {
+open class GeneratorLoader() {
     lateinit var inference: TensorFlowInferenceInterface
     val PB_FILE_PATH: String = "file:///android_asset/generators/expression-model.pb" // TODO generator['model_url']
 
-    var channels = generator.input!!.channels
-    var width = generator.input!!.width
-    var height = generator.input!!.height
-    val z_dimsArray: LongArray = generator.input!!.z_dims!!.map { item -> item.toLong() }.toLongArray()
-    var z_dims: Long = z_dimsArray.fold(1.toLong(), { mul, next -> mul * next })
+    var generator: Generator? = null
+    var channels: Int = 0
+    var width: Int = 0
+    var height: Int = 0
+    var z_dimsArray: LongArray = longArrayOf()
+    var z_dims: Long = 0
+    var raw: FloatArray = floatArrayOf()
 
-    var raw: FloatArray = FloatArray(width * height * channels)
+    fun loadGenerator(generator: Generator){
+        this.generator = generator
+        this.width = generator.generator?.input?.width!!
+        this.height = generator.generator!!.input?.height!!
+        z_dimsArray = generator.generator!!.input!!.z_dims!!.map { item -> item.toLong() }.toLongArray()
+        z_dims = z_dimsArray.fold(1.toLong(), { mul, next -> mul * next })
+        channels = generator.generator!!.input!!.channels
+        raw = FloatArray(width * height * channels)
+
+    }
 
     fun load(assets: AssetManager) {
         System.loadLibrary("tensorflow_inference")

@@ -8,7 +8,7 @@ import hypr.a255bits.com.hypr.ModelFragmnt.InlineImage
 import hypr.a255bits.com.hypr.Util.toBitmap
 import kotlin.properties.Delegates
 
-class EasyGeneratorLoader(val gen: Generator): GeneratorLoader(gen.generator!!) {
+class EasyGeneratorLoader(var gen: Generator): GeneratorLoader() {
     var baseImage: Bitmap? = null
     var encoded: FloatArray? = null
     var mask: FloatArray by Delegates.vetoable(floatArrayOf()) { property, oldValue, newValue ->
@@ -20,9 +20,10 @@ class EasyGeneratorLoader(val gen: Generator): GeneratorLoader(gen.generator!!) 
     fun loadAssets(context: Context){
         this.load(context.assets)
     }
+
     fun sampleImageWithImage(person: Person, image: Bitmap?, croppedPoint: Rect): Bitmap? {
         direction = this.random_z()
-        val scaled = Bitmap.createScaledBitmap(image, gen.generator?.output?.width!!, gen.generator?.output?.height!!, false)
+        val scaled = Bitmap.createScaledBitmap(image, generator?.generator?.output?.width!!, generator?.generator?.output?.height!!, false)
 
         baseImage = scaled
         encoded = this.encode(scaled)
@@ -33,7 +34,7 @@ class EasyGeneratorLoader(val gen: Generator): GeneratorLoader(gen.generator!!) 
     }
 
     fun sampleImageWithoutImage(): IntArray {
-        val scaled = Bitmap.createBitmap(gen.generator?.output?.width!!, gen.generator?.output?.height!!, Bitmap.Config.ARGB_8888)
+        val scaled = Bitmap.createBitmap(generator?.generator?.output?.width!!, generator?.generator?.output?.height!!, Bitmap.Config.ARGB_8888)
         mask = this.mask(scaled)
         val direction = this.random_z()
         baseImage = scaled
@@ -64,6 +65,6 @@ class EasyGeneratorLoader(val gen: Generator): GeneratorLoader(gen.generator!!) 
     }
 
     private fun featureEnabled(feature: String): Boolean {
-        return gen.features.contains(feature)
+        return generator!!.features.contains(feature)
     }
 }
