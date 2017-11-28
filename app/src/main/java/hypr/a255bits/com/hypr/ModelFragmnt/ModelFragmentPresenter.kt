@@ -49,6 +49,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
             }
             view.displayFocusedImage(imageBitmap.await())
         }
+        generatorIndex?.let { easyGenerator.setIndex(it) }
     }
 
     fun setViews(view: ModelFragmentMVP.view) {
@@ -146,11 +147,11 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
         pbFile?.let { easyGenerator.load(assets, it) }
     }
 
-    override fun sampleImage(person: Person, image: Bitmap?, croppedPoint: Rect, index: Int): Bitmap? {
+    override fun sampleImage(person: Person, image: Bitmap?, croppedPoint: Rect): Bitmap? {
         val transformedImage = if (image != null) {
             easyGenerator.sampleImageWithImage(person, image, croppedPoint)
         } else {
-            easyGenerator.sampleImageWithoutImage(index).toBitmap(easyGenerator.width, easyGenerator.height)
+            easyGenerator.sampleImageWithoutImage().toBitmap(easyGenerator.width, easyGenerator.height)
         }
         imageDisplayedOnScreen = transformedImage
         return transformedImage
@@ -219,7 +220,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
         val fullImageBit = if (fullImage != null) {
             File(fullImage).readBytes()
         } else {
-            easyGenerator.sampleImageWithoutImage(index).toByteArrayImage()
+            easyGenerator.sampleImageWithoutImage().toByteArrayImage()
         }
         this.person = Person(faceImage, fullImageBit)
     }

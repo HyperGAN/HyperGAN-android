@@ -18,8 +18,13 @@ open class GeneratorLoader() {
     var z_dimsArray: LongArray = longArrayOf()
     var z_dims: Long = 0
     var raw: FloatArray = floatArrayOf()
+    var index: Int? = 0
 
-    fun loadGenerator(generator: Generator){
+    fun setIndex(index: Int) {
+        this.index = index
+    }
+
+    fun loadGenerator(generator: Generator) {
         this.generator = generator
         this.width = generator.generator?.input?.width!!
         this.height = generator.generator!!.input?.height!!
@@ -71,9 +76,12 @@ open class GeneratorLoader() {
         feedInput(bitmap)
         val floatValues = FloatArray(width * height)
 
-        this.inference.run(arrayOf("Tanh_4"))
+        if (index == 0) {
 
-        this.inference.fetch("Tanh_4", floatValues)
+            this.inference.run(arrayOf("Tanh_4"))
+
+            this.inference.fetch("Tanh_4", floatValues)
+        }
 
         return floatValues
     }
@@ -88,7 +96,10 @@ open class GeneratorLoader() {
         this.inference.feed("direction", direction, *z_dimsArray)
 
         val maskDims = longArrayOf(1, width.toLong(), height.toLong(), 1)
-        this.inference.feed("Tanh_1", mask, *maskDims)
+        if (index == 0) {
+
+            this.inference.feed("Tanh_1", mask, *maskDims)
+        }
 
         val dims = longArrayOf(1.toLong(), 1.toLong())
         this.inference.feed("slider", floatArrayOf(slider), *dims)
@@ -129,26 +140,32 @@ open class GeneratorLoader() {
             floatValues[i * 3 + 2] = ((ival and 0xFF) / 255.0f - 0.5f) * 2
         }
         val dims = longArrayOf(1.toLong(), width.toLong(), height.toLong(), channels.toLong())
-        this.inference.feed("input", floatValues, *dims)
+        if (index == 0) {
+
+            this.inference.feed("input", floatValues, *dims)
+        }
     }
 
     fun encode(bitmap: Bitmap): FloatArray {
         feedInput(bitmap)
 
-        this.inference.run(arrayOf("Tanh"))
+        if (index == 0) {
+            this.inference.run(arrayOf("Tanh"))
+        }
 
         val z = FloatArray(z_dims.toInt())
 
-        this.inference.fetch("Tanh", z)
+        if (index == 0) {
+
+            this.inference.fetch("Tanh", z)
+        }
 
         return z
     }
 
     fun random_z(): FloatArray {
         this.inference.run(arrayOf("random_z"))
-
         val z = FloatArray(z_dims.toInt())
-
         this.inference.fetch("random_z", z)
 
         return z
@@ -166,4 +183,5 @@ open class GeneratorLoader() {
         }
         return pixelsInBitmap
     }
+
 }
