@@ -10,10 +10,14 @@ class GeneratorModule : AndroidModule() {
     override fun context(): Context {
         return applicationContext {
             context("generator") {
-                provide { EasyGeneratorLoader(Generator()) }
+                provide { getGeneratorLoader() }
                 provide { ModelFragmentPresenter(get()) }
             }
         }
+    }
+    fun getGeneratorLoader(): EasyGeneratorLoader {
+        val easyGen = EasyGeneratorLoader(Generator())
+        return easyGen
     }
 
 }

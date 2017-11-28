@@ -33,6 +33,7 @@ open class GeneratorLoader() {
     fun load(assets: AssetManager) {
         System.loadLibrary("tensorflow_inference")
         this.inference = TensorFlowInferenceInterface(assets, PB_FILE_PATH)
+
     }
 
     fun load(assets: AssetManager, file: File) {

@@ -146,11 +146,11 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
         pbFile?.let { easyGenerator.load(assets, it) }
     }
 
-    override fun sampleImage(person: Person, image: Bitmap?, croppedPoint: Rect): Bitmap? {
+    override fun sampleImage(person: Person, image: Bitmap?, croppedPoint: Rect, index: Int): Bitmap? {
         val transformedImage = if (image != null) {
             easyGenerator.sampleImageWithImage(person, image, croppedPoint)
         } else {
-            easyGenerator.sampleImageWithoutImage().toBitmap(easyGenerator.width, easyGenerator.height)
+            easyGenerator.sampleImageWithoutImage(index).toBitmap(easyGenerator.width, easyGenerator.height)
         }
         imageDisplayedOnScreen = transformedImage
         return transformedImage
@@ -219,7 +219,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
         val fullImageBit = if (fullImage != null) {
             File(fullImage).readBytes()
         } else {
-            easyGenerator.sampleImageWithoutImage().toByteArrayImage()
+            easyGenerator.sampleImageWithoutImage(index).toByteArrayImage()
         }
         this.person = Person(faceImage, fullImageBit)
     }
