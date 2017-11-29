@@ -83,7 +83,6 @@ dependencies {
     compile 'org.koin:koin-android:0.5.2'
 
 
-
 }
 
 apply plugin: 'com.google.gms.google-services'
