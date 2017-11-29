@@ -1,7 +1,6 @@
 package hypr.a255bits.com.hypr.Main
 
 import android.content.Context
-import android.util.Log
 import android.view.MenuItem
 import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
@@ -15,6 +14,7 @@ import hypr.a255bits.com.hypr.Util.InAppBilling.IabResult
 import hypr.a255bits.com.hypr.Util.SettingsHelper
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
+import org.jetbrains.anko.toast
 import java.io.File
 
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter {
@@ -51,8 +51,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         if (result.isSuccess) {
             dashboard?.presenter?.unlockBoughtModel(generatorIndex)
         } else {
-            view.popupSigninGoogle(interactor.googleSignInClient.client)
-            Log.w("IabHelper", "$result")
+            context.toast("Network error")
         }
     }
 
@@ -73,9 +72,11 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
     override fun buyModel(skus: String, generatorIndex: Int) {
-        if (interactor.googleSignInClient.client.isConnected) {
+        if (interactor.googleSignInClient.client.isConnected && !interactor.hasBoughtItem(skus)) {
             view.buyModelPopup(skus, interactor.billingHelper, generatorIndex)
-        } else {
+        } else if (interactor.hasBoughtItem(skus)) {
+            context.toast("You already bought this item.")
+        }else{
             signInToGoogle(interactor.googleSignInClient.client)
         }
     }

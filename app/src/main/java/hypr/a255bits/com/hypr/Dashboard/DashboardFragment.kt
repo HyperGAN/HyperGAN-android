@@ -2,11 +2,14 @@ package hypr.a255bits.com.hypr.Dashboard
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.R
+import kotlinx.android.synthetic.main.fragment_dashboard.*
 
 class DashboardFragment : Fragment(), DashboardMVP.view {
 
@@ -35,8 +38,13 @@ class DashboardFragment : Fragment(), DashboardMVP.view {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        presenter.displayListOfModels(generators)
+        presenter.displayListOfModels(generators, context)
 
+    }
+
+    override fun displayListOfModels(buyGenerators: MutableList<BuyGenerator>, welcomeScreenAdapter: WelcomeScreenAdapter) {
+        recyclerview.layoutManager = LinearLayoutManager(activity)
+        recyclerview.adapter = welcomeScreenAdapter
     }
 
     companion object {
