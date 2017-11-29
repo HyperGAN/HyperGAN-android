@@ -5,7 +5,7 @@ import android.os.Parcelable
 
 
 data class BuyGenerator(val name: String) : Parcelable {
-    val itemBought = false
+    var itemBought = false
 
     constructor(source: Parcel) : this(
             source.readString()

@@ -17,10 +17,10 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.pawegio.kandroid.start
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
+import hypr.a255bits.com.hypr.Dashboard.DashboardFragment
 import hypr.a255bits.com.hypr.DependencyInjection.MainApplication
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.MultiFaceSelection.MultiFaceFragment
-import hypr.a255bits.com.hypr.MultiModels.MultiModels
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import hypr.a255bits.com.hypr.WelcomeScreen.WelcomeScreen
@@ -116,7 +116,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         startActivity(intentFor<CameraActivity>("indexInJson" to indexInJson))
     }
 
-    override fun startMultipleModels(multiModels: MultiModels) {
+    override fun startMultipleModels(multiModels: DashboardFragment) {
         supportFragmentManager.beginTransaction().replace(R.id.container, multiModels).commit()
     }
 
@@ -173,8 +173,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun lockModelIfNotBought(googlePlayId: HashMap<String, String>) {
         val isModelBought = interactor.hasBoughtItem(googlePlayId["Generator"]!!)
-        if (!isModelBought) {
-            presenter.multiModel?.presenter?.lockModel(googlePlayId["Index"]?.toInt()!!)
+        if (isModelBought) {
+            presenter.dashboard?.presenter?.unlockBoughtModel(googlePlayId["Index"]?.toInt()!!)
         }
     }
 

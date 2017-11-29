@@ -10,8 +10,17 @@ class DashboardPresenter(val view: DashboardMVP.view) {
         generators.forEachIndexed { index, generator ->
             val buyGenerator = BuyGenerator(generator.name)
             buyGenerators.add(index, buyGenerator)
-            val hash = hashMapOf("Generator" to generator.google_play_id, "Index" to index.toString())
-            EventBus.getDefault().post(hash)
+            isItemBought(generator, index)
         }
     }
+
+    fun isItemBought(generator: Generator, index: Int) {
+        val hash = hashMapOf("Generator" to generator.google_play_id, "Index" to index.toString())
+        EventBus.getDefault().post(hash)
+    }
+
+    fun unlockBoughtModel(index: Int) {
+        buyGenerators[index].itemBought = true
+    }
+
 }

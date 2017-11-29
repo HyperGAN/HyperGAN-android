@@ -5,8 +5,8 @@ import android.util.Log
 import android.view.MenuItem
 import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
+import hypr.a255bits.com.hypr.Dashboard.DashboardFragment
 import hypr.a255bits.com.hypr.Generator.Generator
-import hypr.a255bits.com.hypr.MultiModels.MultiModels
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.Analytics
 import hypr.a255bits.com.hypr.Util.AnalyticsEvent
@@ -28,7 +28,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     private val DOWNLOAD_COMPLETE: Float = 100.0f
     var buyGenerators: MutableList<BuyGenerator> = mutableListOf()
     val analytics by lazy { Analytics(context) }
-    var multiModel: MultiModels? = null
+    var dashboard: DashboardFragment? = null
     var isModelFragmentDisplayed: Boolean = false
     var indexInJson: Int? = 0
     var image: String? = null
@@ -49,7 +49,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     override fun handlePurchase(result: IabResult, generatorIndex: Int) {
         if (result.isSuccess) {
-            multiModel?.presenter?.unlockModel(generatorIndex)
+            dashboard?.presenter?.unlockBoughtModel(generatorIndex)
         } else {
             view.popupSigninGoogle(interactor.googleSignInClient.client)
             Log.w("IabHelper", "$result")
@@ -107,8 +107,8 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
     private fun displayMultiModels(itemId: Int, imageLocationPath: String?, listOfGenerators: List<Generator>?) {
-        val multiModel = MultiModels.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray(), fullImage)
-        this.multiModel = multiModel
+        val multiModel = DashboardFragment.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray(), fullImage)
+        this.dashboard = multiModel
         view.startMultipleModels(multiModel)
     }
 
@@ -160,7 +160,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
     fun stop() {
-        multiModel = null
+        dashboard = null
     }
 
 
