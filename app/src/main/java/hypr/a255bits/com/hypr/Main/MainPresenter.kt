@@ -6,6 +6,7 @@ import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.Dashboard.DashboardFragment
 import hypr.a255bits.com.hypr.Generator.Generator
+import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.Analytics
 import hypr.a255bits.com.hypr.Util.AnalyticsEvent
@@ -57,6 +58,13 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     override fun signInToGoogle(googleSignInClient: GoogleApiClient) {
         view.popupSigninGoogle(googleSignInClient)
+    }
+
+    override fun getModelFragment(position: Int): ModelFragment? {
+        val generator = interactor.listOfGenerators?.get(position)
+        val modelPbFile = File(modelFileNames[position])
+        val fragment = generator?.let { ModelFragment.newInstance(it, image, modelPbFile, position, fullImage) }
+        return fragment
     }
 
     override fun createGeneratorLoader(fileName: String, itemId: Int) {

@@ -1,6 +1,7 @@
 package hypr.a255bits.com.hypr.Dashboard
 
 import android.content.Context
+import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -33,11 +34,13 @@ class WelcomeScreenAdapter(val generators: MutableList<BuyGenerator>, val contex
                 negativeButton { dismiss() }
             }.show()
         }
+        holder?.card?.setOnClickListener {EventBus.getDefault().post(position.toDouble()) }
     }
 
     class CustomViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val title: TextView = view.nameOfCard
         val buyButton: Button = view.buyButton
+        val card: CardView = view.card
 
     }
 }

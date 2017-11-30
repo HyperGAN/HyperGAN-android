@@ -7,6 +7,7 @@ import com.google.firebase.storage.FileDownloadTask
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.Dashboard.DashboardFragment
 import hypr.a255bits.com.hypr.Generator.Generator
+import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabResult
 import kotlinx.coroutines.experimental.Deferred
@@ -40,6 +41,7 @@ interface MainMvp {
         fun onNavigationItemSelected(item: MenuItem)
         fun onOptionsItemSelected(item: MenuItem?)
         fun handlePurchase(result: IabResult, generatorIndex: Int)
+        fun getModelFragment(position: Int): ModelFragment?
     }
 
     interface interactor {

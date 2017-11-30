@@ -196,6 +196,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         presenter.buyModel(presenter.interactor.listOfGenerators?.get(generatorIndex.toInt())?.google_play_id!!, generatorIndex.toInt())
     }
 
+    @Subscribe
+    fun startModelFragment(position: java.lang.Double){
+        val modelFragment = presenter.getModelFragment(position.toInt())
+        supportFragmentManager.beginTransaction().replace(R.id.container, modelFragment).commit()
+    }
     override fun closeDownloadingModelDialog() {
         progressDownloadingModel?.dismiss()
     }
