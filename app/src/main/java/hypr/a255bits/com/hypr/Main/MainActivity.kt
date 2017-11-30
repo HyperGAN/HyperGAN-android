@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             presenter.image = intent.extras.getString("image")
             presenter.fullImage = intent.extras.getString("fullimage")
             presenter.settingsHelper.setModelImagePath(presenter.image!!)
-            if(presenter.fullImage != null){
+            if (presenter.fullImage != null) {
                 presenter.settingsHelper.setFullImagePath(presenter.fullImage!!)
             }
 
@@ -96,13 +96,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == presenter.SIGN_INTO_GOOGLE_RESULT && resultCode == Activity.RESULT_OK) {
-        }else if(requestCode == 1){
+        } else if (requestCode == 1) {
             val fullImage = data?.getStringExtra("image")
             val facesDetected = data?.getParcelableArrayExtra("faceLocations")
             val facesDetectedPointF = mutableListOf<PointF>()
-            facesDetected?.forEach { item -> facesDetectedPointF.add(item as PointF)}
+            facesDetected?.forEach { item -> facesDetectedPointF.add(item as PointF) }
 
-            supportFragmentManager.beginTransaction().replace(R.id.container, MultiFaceFragment.newInstance(fullImage ,facesDetectedPointF.toTypedArray())).commitAllowingStateLoss()
+            supportFragmentManager.beginTransaction().replace(R.id.container, MultiFaceFragment.newInstance(fullImage, facesDetectedPointF.toTypedArray())).commitAllowingStateLoss()
         }
     }
 
@@ -197,10 +197,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     @Subscribe
-    fun startModelFragment(position: java.lang.Double){
-        val modelFragment = presenter.getModelFragment(position.toInt())
-        supportFragmentManager.beginTransaction().replace(R.id.container, modelFragment).commit()
+    fun startModelFragment(position: java.lang.Double) {
+        val hasBought = presenter.interactor.hasBoughtItem(presenter.interactor.listOfGenerators?.get(position.toInt())?.google_play_id!!)
+        if (hasBought) {
+            val modelFragment = presenter.getModelFragment(position.toInt())
+            supportFragmentManager.beginTransaction().replace(R.id.container, modelFragment).addToBackStack("model").commit()
+        }else{
+            presenter.buyModel(presenter.interactor.listOfGenerators?.get(position.toInt())?.google_play_id!!, position.toInt())
+        }
     }
+
     override fun closeDownloadingModelDialog() {
         progressDownloadingModel?.dismiss()
     }
