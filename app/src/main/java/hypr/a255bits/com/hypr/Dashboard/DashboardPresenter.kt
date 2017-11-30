@@ -9,6 +9,7 @@ class DashboardPresenter(val view: DashboardMVP.view) {
     var buyGenerators: MutableList<BuyGenerator> = mutableListOf()
 
     fun displayListOfModels(generators: Array<Generator>, context: Context) {
+        buyGenerators.clear()
         generators.forEachIndexed { index, generator ->
             val buyGenerator = BuyGenerator(generator.name)
             buyGenerators.add(index, buyGenerator)

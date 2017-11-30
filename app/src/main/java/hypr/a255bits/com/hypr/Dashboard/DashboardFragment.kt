@@ -45,6 +45,7 @@ class DashboardFragment : Fragment(), DashboardMVP.view {
     override fun displayListOfModels(buyGenerators: MutableList<BuyGenerator>, welcomeScreenAdapter: WelcomeScreenAdapter) {
         recyclerview.layoutManager = LinearLayoutManager(activity)
         recyclerview.adapter = welcomeScreenAdapter
+        welcomeScreenAdapter.notifyDataSetChanged()
     }
 
     companion object {
