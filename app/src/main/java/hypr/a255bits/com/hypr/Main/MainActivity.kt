@@ -202,6 +202,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (hasBought) {
             val modelFragment = presenter.getModelFragment(position.toInt())
             supportFragmentManager.beginTransaction().replace(R.id.container, modelFragment).addToBackStack("model").commit()
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }else{
             presenter.buyModel(presenter.interactor.listOfGenerators?.get(position.toInt())?.google_play_id!!, position.toInt())
         }
