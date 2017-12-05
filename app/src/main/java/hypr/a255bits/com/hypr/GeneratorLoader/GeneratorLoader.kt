@@ -3,25 +3,42 @@ package hypr.a255bits.com.hypr.GeneratorLoader
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.util.Log
-import hypr.a255bits.com.hypr.Generator.Generator_
+import hypr.a255bits.com.hypr.Generator.Generator
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface
 import java.io.File
 
-open class GeneratorLoader(val generator: Generator_) {
+open class GeneratorLoader() {
     lateinit var inference: TensorFlowInferenceInterface
     val PB_FILE_PATH: String = "file:///android_asset/generators/expression-model.pb" // TODO generator['model_url']
 
-    var channels = generator.input!!.channels
-    var width = generator.input!!.width
-    var height = generator.input!!.height
-    val z_dimsArray: LongArray = generator.input!!.z_dims!!.map { item -> item.toLong() }.toLongArray()
-    var z_dims: Long = z_dimsArray.fold(1.toLong(), { mul, next -> mul * next })
+    var generator: Generator? = null
+    var channels: Int = 0
+    var width: Int = 0
+    var height: Int = 0
+    var z_dimsArray: LongArray = longArrayOf()
+    var z_dims: Long = 0
+    var raw: FloatArray = floatArrayOf()
+    var index: Int? = 0
 
-    var raw: FloatArray = FloatArray(width * height * channels)
+    fun setIndex(index: Int) {
+        this.index = index
+    }
+
+    fun loadGenerator(generator: Generator) {
+        this.generator = generator
+        this.width = generator.generator?.input?.width!!
+        this.height = generator.generator!!.input?.height!!
+        z_dimsArray = generator.generator!!.input!!.z_dims!!.map { item -> item.toLong() }.toLongArray()
+        z_dims = z_dimsArray.fold(1.toLong(), { mul, next -> mul * next })
+        channels = generator.generator!!.input!!.channels
+        raw = FloatArray(width * height * channels)
+
+    }
 
     fun load(assets: AssetManager) {
         System.loadLibrary("tensorflow_inference")
         this.inference = TensorFlowInferenceInterface(assets, PB_FILE_PATH)
+
     }
 
     fun load(assets: AssetManager, file: File) {
@@ -59,9 +76,12 @@ open class GeneratorLoader(val generator: Generator_) {
         feedInput(bitmap)
         val floatValues = FloatArray(width * height)
 
-        this.inference.run(arrayOf("Tanh_4"))
+        if (index == 0) {
 
-        this.inference.fetch("Tanh_4", floatValues)
+            this.inference.run(arrayOf("Tanh_4"))
+
+            this.inference.fetch("Tanh_4", floatValues)
+        }
 
         return floatValues
     }
@@ -76,7 +96,10 @@ open class GeneratorLoader(val generator: Generator_) {
         this.inference.feed("direction", direction, *z_dimsArray)
 
         val maskDims = longArrayOf(1, width.toLong(), height.toLong(), 1)
-        this.inference.feed("Tanh_1", mask, *maskDims)
+        if (index == 0) {
+
+            this.inference.feed("Tanh_1", mask, *maskDims)
+        }
 
         val dims = longArrayOf(1.toLong(), 1.toLong())
         this.inference.feed("slider", floatArrayOf(slider), *dims)
@@ -117,26 +140,32 @@ open class GeneratorLoader(val generator: Generator_) {
             floatValues[i * 3 + 2] = ((ival and 0xFF) / 255.0f - 0.5f) * 2
         }
         val dims = longArrayOf(1.toLong(), width.toLong(), height.toLong(), channels.toLong())
-        this.inference.feed("input", floatValues, *dims)
+        if (index == 0) {
+
+            this.inference.feed("input", floatValues, *dims)
+        }
     }
 
     fun encode(bitmap: Bitmap): FloatArray {
         feedInput(bitmap)
 
-        this.inference.run(arrayOf("Tanh"))
+        if (index == 0) {
+            this.inference.run(arrayOf("Tanh"))
+        }
 
         val z = FloatArray(z_dims.toInt())
 
-        this.inference.fetch("Tanh", z)
+        if (index == 0) {
+
+            this.inference.fetch("Tanh", z)
+        }
 
         return z
     }
 
     fun random_z(): FloatArray {
         this.inference.run(arrayOf("random_z"))
-
         val z = FloatArray(z_dims.toInt())
-
         this.inference.fetch("random_z", z)
 
         return z
@@ -154,4 +183,5 @@ open class GeneratorLoader(val generator: Generator_) {
         }
         return pixelsInBitmap
     }
+
 }

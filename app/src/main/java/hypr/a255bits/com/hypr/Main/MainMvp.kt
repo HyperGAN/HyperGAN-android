@@ -5,8 +5,9 @@ import android.view.MenuItem
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.storage.FileDownloadTask
 import hypr.a255bits.com.hypr.BuyGenerator
+import hypr.a255bits.com.hypr.Dashboard.DashboardFragment
 import hypr.a255bits.com.hypr.Generator.Generator
-import hypr.a255bits.com.hypr.MultiModels.MultiModels
+import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabResult
 import kotlinx.coroutines.experimental.Deferred
@@ -18,7 +19,7 @@ interface MainMvp {
         fun displayModelDownloadProgress()
         fun closeDownloadingModelDialog()
         fun startCameraActivity(indexInJson: Int)
-        fun startMultipleModels(multiModels: MultiModels)
+        fun startMultipleModels(multiModels: DashboardFragment)
         fun  displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>)
         fun popupSigninGoogle(googleSignInClient: GoogleApiClient)
         fun  buyModelPopup(skus: String, billingHelper: IabHelper?, generatorIndex: Int)
@@ -40,6 +41,7 @@ interface MainMvp {
         fun onNavigationItemSelected(item: MenuItem)
         fun onOptionsItemSelected(item: MenuItem?)
         fun handlePurchase(result: IabResult, generatorIndex: Int)
+        fun getModelFragment(position: Int): ModelFragment?
     }
 
     interface interactor {

@@ -30,7 +30,7 @@ class MultiFacePresenter(val view: MultiFaceMVP.view, val context: Context) : Mu
             this.faceCoordinates = faceLocations!!
             face = imageOfPeoplesFaces.copy(Bitmap.Config.ARGB_8888, true)
             val canvasImageWithFaces = Canvas(face)
-            faceLocations?.forEach { i, facrCoordinate ->
+            faceLocations.forEach { i, facrCoordinate ->
                 val rect = getFaceBoxLocationInImage(facrCoordinate)
                 view.addBoxAroundFace(rect, canvasImageWithFaces)
                 view.addFaceLocationToImage(rect)

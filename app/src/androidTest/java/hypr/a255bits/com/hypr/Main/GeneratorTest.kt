@@ -57,7 +57,7 @@ open class GeneratorTest {
         generator.load(mActivityTestRule.activity.assets)
         val scaled = Bitmap.createScaledBitmap(image, 128, 128, false)
         val encoded = generator.encode(scaled)
-        val imageFace = generator.sampleImageWithoutImage()
+        val imageFace = generator.sampleImageWithoutImage(index)
         return imageFace.toBitmap(generator.width, generator.height)
     }
 

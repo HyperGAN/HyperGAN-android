@@ -18,7 +18,7 @@ class Generator : Parcelable {
     var model_url: String? = null
 
     @Json(name = "generator")
-    var generator: Generator_? = null
+    var generator: Generator_? = Generator_()
 
     @Json(name = "price_in_cents")
     var priceInCents: Int? = null

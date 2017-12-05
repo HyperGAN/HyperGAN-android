@@ -23,35 +23,42 @@ import java.io.IOException
 import kotlin.properties.Delegates
 
 
-class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: ModelInteractor, val context: Context, pbFile: File?) : ModelFragmentMVP.presenter {
+class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFragmentMVP.presenter {
 
-    init {
-        val cont = context
+
+    var imageDisplayedOnScreen: Bitmap? = null
+    val SHARE_IMAGE_PERMISSION_REQUEST = 10
+    val SAVE_IMAGE_PERMISSION_REQUEST: Int = 11
+    var generator: Generator by Delegates.observable(Generator()) { property, oldValue, newValue ->
+        newValue.let { easyGenerator.loadGenerator(newValue)}
+        newValue
+    }
+    var generatorIndex: Int? = null
+    lateinit var person: Person
+    lateinit var view: ModelFragmentMVP.view
+    lateinit var interactor: ModelInteractor
+
+    fun loadGenerator(context: Context, pbFile: File?) {
         launch(UI) {
             val imageBitmap = bg {
-                loadGenerator(pbFile, cont.assets)
+                loadGenerator(pbFile, context.assets)
                 val bitmap = person.fullImage.toBitmap()
-                val faces = getFaceCroppedOutOfImageIfNoFaceGetFullImage(bitmap, cont)
-                val transformedImage: Bitmap? = sampleImage(person, faces, croppedPoint)
+                val faces = getFaceCroppedOutOfImageIfNoFaceGetFullImage(bitmap, context)
+                val transformedImage: Bitmap? = sampleImage(person, faces, interactor.settings.getFaceLocation())
                 return@bg transformedImage
             }
             view.displayFocusedImage(imageBitmap.await())
         }
+        generatorIndex?.let { easyGenerator.setIndex(it) }
     }
 
-    val analytics = Analytics(context)
-    var imageDisplayedOnScreen: Bitmap? = null
-    val SHARE_IMAGE_PERMISSION_REQUEST = 10
-    val SAVE_IMAGE_PERMISSION_REQUEST: Int = 11
-    lateinit var easyGenerator: EasyGeneratorLoader
-    var generator: Generator by Delegates.observable(Generator()) { property, oldValue, newValue ->
-        newValue.let { easyGenerator = EasyGeneratorLoader(it, context) }
-        newValue
+    fun setViews(view: ModelFragmentMVP.view) {
+        this.view = view
     }
-    var generatorIndex: Int? = null
-    val settings = SettingsHelper(context)
-    val croppedPoint = settings.getFaceLocation()
-    lateinit var person: Person
+
+    fun setInteractors(interactor: ModelInteractor) {
+        this.interactor = interactor
+    }
 
     override fun disconnectFaceDetector() {
         interactor.faceDetection.release()
@@ -82,7 +89,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
             image = if (imageWithFaces == null) {
                 imageWithFaces
             } else {
-                getCroppedFaceImagFromImageWithFaces(imageWithFaces)
+                getCroppedFaceImagFromImageWithFaces(imageWithFaces, context)
             }
         } catch (exception: IOException) {
             Log.e("ModelFragment", exception.message)
@@ -90,10 +97,10 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         return image
     }
 
-    private fun getCroppedFaceImagFromImageWithFaces(imageWithFaces: Bitmap): Bitmap? {
+    private fun getCroppedFaceImagFromImageWithFaces(imageWithFaces: Bitmap, context: Context): Bitmap? {
         val croppedFaces: MutableList<FaceLocation> = interactor.getFacesFromBitmap(imageWithFaces, imageWithFaces.width, imageWithFaces.height, context)
         val faceImage = if (isFacesDetected(croppedFaces)) {
-            val faceIndex = settings.getFaceIndex()
+            val faceIndex = interactor.settings.getFaceIndex()
             croppedFaces[faceIndex].croppedFace
         } else {
             imageWithFaces
@@ -108,7 +115,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
     override fun saveImageDisplayedToPhone(context: Context): Boolean {
         var isSaved = false
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            val croppedPoint = settings.getFaceLocation()
+            val croppedPoint = interactor.settings.getFaceLocation()
             if (imageDisplayedOnScreen != null) {
                 val inlineImage = inlineImage(person, imageDisplayedOnScreen!!)
                 val waterMarkImage = interactor.placeWatermarkOnImage(inlineImage)
@@ -127,7 +134,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         val fullImage = person.fullImage
         val faceImage = person.faceImage?.toBitmap()
         val image: Bitmap? = if (faceImage != null) {
-            easyGenerator.inlineImage(person, newCroppedImage, croppedPoint)
+            easyGenerator.inlineImage(person, newCroppedImage, interactor.settings.getFaceLocation())
 //            inliner.setBeforeAfterCropSizingRatio(faceImage, newCroppedImage)
 //            fullImage.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(newCroppedImage, it, croppedPoint) }
         } else {
@@ -154,7 +161,7 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
         return transformedImage.toBitmap(easyGenerator.width, easyGenerator.height)
     }
 
-    override fun onRequestPermissionResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray, context: Context) {
         grantResults.filter { item -> item == PackageManager.PERMISSION_GRANTED }.forEach { item ->
             if (requestCode == SHARE_IMAGE_PERMISSION_REQUEST) {
                 shareImageToOtherApps()
@@ -173,12 +180,12 @@ class ModelFragmentPresenter(val view: ModelFragmentMVP.view, val interactor: Mo
             when (item.itemId) {
                 R.id.saveImage -> {
                     bg { saveImageDisplayedToPhone(context) }.await()
-                    analytics.logEvent(AnalyticsEvent.SAVE_IMAGE)
+                    interactor.analytics.logEvent(AnalyticsEvent.SAVE_IMAGE)
                     context.toast(context.getString(R.string.image_saved_toast))
                 }
                 R.id.shareIamge -> {
                     shareImageToOtherApps()
-                    analytics.logEvent(AnalyticsEvent.SHARE_IMAGE)
+                    interactor.analytics.logEvent(AnalyticsEvent.SHARE_IMAGE)
                 }
             }
         }

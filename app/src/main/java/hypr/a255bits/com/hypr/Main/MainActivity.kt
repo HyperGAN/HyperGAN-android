@@ -17,9 +17,10 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.pawegio.kandroid.start
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
+import hypr.a255bits.com.hypr.Dashboard.DashboardFragment
+import hypr.a255bits.com.hypr.DependencyInjection.MainApplication
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.MultiFaceSelection.MultiFaceFragment
-import hypr.a255bits.com.hypr.MultiModels.MultiModels
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import hypr.a255bits.com.hypr.WelcomeScreen.WelcomeScreen
@@ -44,6 +45,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
         setSupportActionBar(toolbar)
+        MainApplication().onCreate()
         presenter.addModelsToNavBar(applicationContext)
         getInfoFromCameraActivity()
     }
@@ -55,7 +57,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             presenter.image = intent.extras.getString("image")
             presenter.fullImage = intent.extras.getString("fullimage")
             presenter.settingsHelper.setModelImagePath(presenter.image!!)
-            if(presenter.fullImage != null){
+            if (presenter.fullImage != null) {
                 presenter.settingsHelper.setFullImagePath(presenter.fullImage!!)
             }
 
@@ -94,13 +96,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == presenter.SIGN_INTO_GOOGLE_RESULT && resultCode == Activity.RESULT_OK) {
-        }else if(requestCode == 1){
+        } else if (requestCode == 1) {
             val fullImage = data?.getStringExtra("image")
             val facesDetected = data?.getParcelableArrayExtra("faceLocations")
             val facesDetectedPointF = mutableListOf<PointF>()
-            facesDetected?.forEach { item -> facesDetectedPointF.add(item as PointF)}
+            facesDetected?.forEach { item -> facesDetectedPointF.add(item as PointF) }
 
-            supportFragmentManager.beginTransaction().replace(R.id.container, MultiFaceFragment.newInstance(fullImage ,facesDetectedPointF.toTypedArray())).commitAllowingStateLoss()
+            supportFragmentManager.beginTransaction().replace(R.id.container, MultiFaceFragment.newInstance(fullImage, facesDetectedPointF.toTypedArray())).commitAllowingStateLoss()
         }
     }
 
@@ -114,7 +116,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         startActivity(intentFor<CameraActivity>("indexInJson" to indexInJson))
     }
 
-    override fun startMultipleModels(multiModels: MultiModels) {
+    override fun startMultipleModels(multiModels: DashboardFragment) {
         supportFragmentManager.beginTransaction().replace(R.id.container, multiModels).commit()
     }
 
@@ -171,8 +173,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun lockModelIfNotBought(googlePlayId: HashMap<String, String>) {
         val isModelBought = interactor.hasBoughtItem(googlePlayId["Generator"]!!)
-        if (!isModelBought) {
-            presenter.multiModel?.presenter?.lockModel(googlePlayId["Index"]?.toInt()!!)
+        if (isModelBought) {
+            presenter.dashboard?.presenter?.unlockBoughtModel(googlePlayId["Index"]?.toInt()!!)
         }
     }
 
@@ -192,6 +194,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     @Subscribe
     fun unlockModel(generatorIndex: java.lang.Integer) {
         presenter.buyModel(presenter.interactor.listOfGenerators?.get(generatorIndex.toInt())?.google_play_id!!, generatorIndex.toInt())
+    }
+
+    @Subscribe
+    fun startModelFragment(position: java.lang.Double) {
+        val hasBought = presenter.interactor.hasBoughtItem(presenter.interactor.listOfGenerators?.get(position.toInt())?.google_play_id!!)
+        if (hasBought) {
+            val modelFragment = presenter.getModelFragment(position.toInt())
+            supportFragmentManager.beginTransaction().replace(R.id.container, modelFragment).addToBackStack("model").commit()
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        }else{
+            presenter.buyModel(presenter.interactor.listOfGenerators?.get(position.toInt())?.google_play_id!!, position.toInt())
+        }
     }
 
     override fun closeDownloadingModelDialog() {

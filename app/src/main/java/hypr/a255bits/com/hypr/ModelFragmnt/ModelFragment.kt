@@ -3,7 +3,6 @@ package hypr.a255bits.com.hypr.ModelFragmnt
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.*
 import com.pawegio.kandroid.onProgressChanged
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
@@ -16,17 +15,27 @@ import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.cancelButton
 import org.jetbrains.anko.intentFor
+import org.koin.android.contextaware.ContextAwareFragment
+import org.koin.android.ext.android.inject
 import java.io.File
 
 
-class ModelFragment : Fragment(), ModelFragmentMVP.view {
+class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
+    override val contextName: String
+        get() = "generator"
 
     var pbFile: File? = null
-    val interactor by lazy { ModelInteractor(context) }
-    val presenter by lazy { ModelFragmentPresenter(this, interactor, context, pbFile) }
+    val presenter by inject<ModelFragmentPresenter>()
+//    val presenter by lazy { ModelFragmentPresenter(pbFile) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        fragmentManager.addOnBackStackChangedListener {
+
+        }
+        presenter.setInteractors(ModelInteractor(context))
+        presenter.setViews(this)
+        presenter.easyGenerator.loadAssets(context)
         if (arguments != null) {
             presenter.getInfoFromFragmentCreation(arguments)
         }
@@ -36,6 +45,10 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
                               savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true)
         return inflater!!.inflate(R.layout.fragment_model, container, false)
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     override fun lockModel() {
@@ -51,6 +64,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        presenter.loadGenerator(context, pbFile)
         displayImageTransitionSeekbarProgress()
         randomizeModelClickListener()
         chooseImageFromGalleryButtonClickListener()
@@ -118,7 +132,7 @@ class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        presenter.onRequestPermissionResult(requestCode, permissions, grantResults)
+        presenter.onRequestPermissionResult(requestCode, permissions, grantResults, context)
     }
 
     companion object {

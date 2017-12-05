@@ -3,13 +3,11 @@ package hypr.a255bits.com.hypr.WelcomeScreen
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.R
-import kotlinx.android.synthetic.main.fragment_welcome_screen.*
 
 
 class WelcomeScreen : Fragment() {
@@ -36,9 +34,9 @@ class WelcomeScreen : Fragment() {
     }
 
     private fun displayListOfModels() {
-        recyclerView.layoutManager = LinearLayoutManager(activity)
-        val adapter = buyGenerators?.let { WelcomeScreenAdapter(it) }
-        recyclerView.adapter = adapter
+//        recyclerView.layoutManager = LinearLayoutManager(activity)
+//        val adapter = buyGenerators?.let { WelcomeScreenAdapter(it) }
+//        recyclerView.adapter = adapter
     }
 
     override fun onAttach(context: Context?) {

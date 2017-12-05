@@ -1,12 +1,12 @@
 package hypr.a255bits.com.hypr.Main
 
 import android.content.Context
-import android.util.Log
 import android.view.MenuItem
 import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
+import hypr.a255bits.com.hypr.Dashboard.DashboardFragment
 import hypr.a255bits.com.hypr.Generator.Generator
-import hypr.a255bits.com.hypr.MultiModels.MultiModels
+import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.Analytics
 import hypr.a255bits.com.hypr.Util.AnalyticsEvent
@@ -15,6 +15,7 @@ import hypr.a255bits.com.hypr.Util.InAppBilling.IabResult
 import hypr.a255bits.com.hypr.Util.SettingsHelper
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
+import org.jetbrains.anko.toast
 import java.io.File
 
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter {
@@ -28,7 +29,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     private val DOWNLOAD_COMPLETE: Float = 100.0f
     var buyGenerators: MutableList<BuyGenerator> = mutableListOf()
     val analytics by lazy { Analytics(context) }
-    var multiModel: MultiModels? = null
+    var dashboard: DashboardFragment? = null
     var isModelFragmentDisplayed: Boolean = false
     var indexInJson: Int? = 0
     var image: String? = null
@@ -49,15 +50,21 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     override fun handlePurchase(result: IabResult, generatorIndex: Int) {
         if (result.isSuccess) {
-            multiModel?.presenter?.unlockModel(generatorIndex)
+            dashboard?.presenter?.unlockBoughtModel(generatorIndex)
         } else {
-            view.popupSigninGoogle(interactor.googleSignInClient.client)
-            Log.w("IabHelper", "$result")
+            context.toast("Network error")
         }
     }
 
     override fun signInToGoogle(googleSignInClient: GoogleApiClient) {
         view.popupSigninGoogle(googleSignInClient)
+    }
+
+    override fun getModelFragment(position: Int): ModelFragment? {
+        val generator = interactor.listOfGenerators?.get(position)
+        val modelPbFile = File(modelFileNames[position])
+        val fragment = generator?.let { ModelFragment.newInstance(it, image, modelPbFile, position, fullImage) }
+        return fragment
     }
 
     override fun createGeneratorLoader(fileName: String, itemId: Int) {
@@ -73,9 +80,11 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
     override fun buyModel(skus: String, generatorIndex: Int) {
-        if (interactor.googleSignInClient.client.isConnected) {
+        if (interactor.googleSignInClient.client.isConnected && !interactor.hasBoughtItem(skus)) {
             view.buyModelPopup(skus, interactor.billingHelper, generatorIndex)
-        } else {
+        } else if (interactor.hasBoughtItem(skus)) {
+            context.toast("You already bought this item.")
+        }else{
             signInToGoogle(interactor.googleSignInClient.client)
         }
     }
@@ -107,8 +116,8 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
     private fun displayMultiModels(itemId: Int, imageLocationPath: String?, listOfGenerators: List<Generator>?) {
-        val multiModel = MultiModels.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray(), fullImage)
-        this.multiModel = multiModel
+        val multiModel = DashboardFragment.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray(), fullImage)
+        this.dashboard = multiModel
         view.startMultipleModels(multiModel)
     }
 
@@ -160,7 +169,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
     fun stop() {
-        multiModel = null
+        dashboard = null
     }
 
 
