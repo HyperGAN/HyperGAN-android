@@ -2,7 +2,7 @@ package hypr.a255bits.com.hypr.Dashboard
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,7 +43,7 @@ class DashboardFragment : Fragment(), DashboardMVP.view {
     }
 
     override fun displayListOfModels(buyGenerators: MutableList<BuyGenerator>, welcomeScreenAdapter: WelcomeScreenAdapter) {
-        recyclerview.layoutManager = LinearLayoutManager(activity)
+        recyclerview.layoutManager = GridLayoutManager(activity, 2)
         recyclerview.adapter = welcomeScreenAdapter
         welcomeScreenAdapter.notifyDataSetChanged()
     }

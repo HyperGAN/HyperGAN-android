@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.RelativeLayout
 import android.widget.TextView
 import com.pawegio.kandroid.alert
 import hypr.a255bits.com.hypr.BuyGenerator
@@ -41,6 +42,7 @@ class WelcomeScreenAdapter(val generators: MutableList<BuyGenerator>, val contex
         val title: TextView = view.nameOfCard
         val buyButton: Button = view.buyButton
         val card: CardView = view.card
+        val background: RelativeLayout = view.backgroundLayout
 
     }
 }

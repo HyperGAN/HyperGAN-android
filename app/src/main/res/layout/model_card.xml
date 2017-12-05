@@ -18,34 +18,28 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/name"
-                android:textSize="14sp"
-                android:paddingLeft="16dp"
-                android:layout_marginTop="24dp"
-                android:text="Model" />
+            android:layout_height="match_parent"
+            android:id="@+id/backgroundLayout"
+            >
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/nameOfCard"
                 android:text="Expression"
                 android:textSize="24sp"
-                android:layout_below="@id/name"
-                android:paddingLeft="16dp" />
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"/>
+
             <Button
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/buyButton"
                 android:text="Buy"
-                android:paddingRight="12dp"
                 android:textColor="@color/colorAccent"
                 android:background="?attr/selectableItemBackground"
+                android:layout_centerHorizontal="true"
                 android:layout_below="@id/nameOfCard"
                 android:layout_marginBottom="8dp"
-                android:layout_marginLeft="8dp"
                 android:layout_marginTop="16dp"
                 />
         </RelativeLayout>
