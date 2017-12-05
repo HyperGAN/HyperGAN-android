@@ -64,6 +64,7 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        loadingIcon.show()
         presenter.loadGenerator(context, pbFile)
         displayImageTransitionSeekbarProgress()
         randomizeModelClickListener()
@@ -120,6 +121,7 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     override fun displayFocusedImage(imageFromGallery: Bitmap?) {
         imageFromGallery.let {  focusedImage.setImageBitmap(it)}
+        loadingIcon.hide()
     }
 
     override fun shareImageToOtherApps(shareIntent: Intent) {
