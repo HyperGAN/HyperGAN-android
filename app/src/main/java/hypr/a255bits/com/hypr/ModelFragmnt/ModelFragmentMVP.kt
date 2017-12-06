@@ -16,6 +16,7 @@ interface ModelFragmentMVP{
         fun startCameraActivity()
         fun lockModel()
         fun unLockModel()
+        fun rateApp()
     }
     interface presenter{
         fun getFaceCroppedOutOfImageIfNoFaceGetFullImage(imageWithFaces: Bitmap?, context: Context): Bitmap?

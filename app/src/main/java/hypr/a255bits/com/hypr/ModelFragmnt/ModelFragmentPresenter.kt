@@ -115,7 +115,6 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     override fun saveImageDisplayedToPhone(context: Context): Boolean {
         var isSaved = false
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            val croppedPoint = interactor.settings.getFaceLocation()
             if (imageDisplayedOnScreen != null) {
                 val inlineImage = inlineImage(person, imageDisplayedOnScreen!!)
                 val waterMarkImage = interactor.placeWatermarkOnImage(inlineImage)
@@ -169,8 +168,15 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
                 val coroutineContext = context
                 launch(UI) {
                     bg { saveImageDisplayedToPhone(coroutineContext) }.await()
+                    rateApp()
                 }
             }
+        }
+    }
+
+    private fun rateApp() {
+        if(interactor.settings.isFirstTimeSavingImage()){
+            view.rateApp()
         }
     }
 

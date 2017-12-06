@@ -21,6 +21,7 @@ import java.io.File
 
 
 class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
+
     override val contextName: String
         get() = "generator"
 
@@ -49,6 +50,12 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     override fun onResume() {
         super.onResume()
+    }
+
+    override fun rateApp() {
+        activity.alert("Rate Our App!", "What do you think about Hypr? You should rate us!") {
+
+        }
     }
 
     override fun lockModel() {

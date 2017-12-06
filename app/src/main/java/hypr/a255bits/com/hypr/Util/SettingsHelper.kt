@@ -9,6 +9,7 @@ class SettingsHelper(val context: Context) {
     val FIRST_TIME_OPENED = "firstTimeOpened"
     val RESTORE_MODEL_IMAGE = "restoreImage"
     val RESTORE_MODEL_FULL_IMAGE = "restoreFullImage"
+    val FIRST_TIME_SAVE = "firstTimeSave"
     val preference: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     val editor: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
@@ -63,5 +64,13 @@ class SettingsHelper(val context: Context) {
     }
     fun getFaceIndex(): Int {
         return preference.getInt("index", 0)
+    }
+
+    fun isFirstTimeSavingImage(): Boolean {
+        return preference.getBoolean(FIRST_TIME_SAVE, true)
+    }
+    fun setSavedImage(){
+       val edit = editor.edit()
+        edit.putBoolean(FIRST_TIME_SAVE, false)
     }
 }
