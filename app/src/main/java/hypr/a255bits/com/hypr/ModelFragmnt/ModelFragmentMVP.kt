@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Rect
+import android.net.Uri
 import android.view.MenuItem
 import hypr.a255bits.com.hypr.GeneratorLoader.FaceLocation
 import hypr.a255bits.com.hypr.GeneratorLoader.Person
@@ -17,6 +18,7 @@ interface ModelFragmentMVP{
         fun lockModel()
         fun unLockModel()
         fun rateApp()
+        fun openRateAppInPlayStore(uri: Uri?, playStoreLink: Uri)
     }
     interface presenter{
         fun getFaceCroppedOutOfImageIfNoFaceGetFullImage(imageWithFaces: Bitmap?, context: Context): Bitmap?
@@ -28,6 +30,7 @@ interface ModelFragmentMVP{
         fun  readImageToBytes(imagePath: String?): ByteArray?
         fun randomizeModel(progress: Int)
         fun sampleImage(person: Person, image: Bitmap?, croppedPoint: Rect): Bitmap?
+        fun openRateAppInPlayStore(packageName: String?)
     }
     interface interactor{
         fun  getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context): MutableList<FaceLocation>
