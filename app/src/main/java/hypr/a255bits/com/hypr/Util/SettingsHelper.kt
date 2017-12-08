@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Rect
 import android.preference.PreferenceManager
+import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorFacePosition
 
 class SettingsHelper(val context: Context) {
     val FIRST_TIME_OPENED = "firstTimeOpened"
@@ -54,7 +55,7 @@ class SettingsHelper(val context: Context) {
         val y = preference.getFloat("face_y", 0.0f)
         val width = preference.getFloat("face_width", 0.0f)
         val height = preference.getFloat("face_height", 0.0f)
-        return FaceDetection(context).faceToRect(x, y, width, height)
+        return FaceDetection(GeneratorFacePosition()).faceToRect(x, y, width, height)
     }
 
     fun setFaceIndex(index: Int) {

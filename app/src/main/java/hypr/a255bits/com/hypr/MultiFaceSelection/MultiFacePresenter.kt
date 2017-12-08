@@ -13,7 +13,7 @@ import hypr.a255bits.com.hypr.Util.SettingsHelper
 import hypr.a255bits.com.hypr.Util.toByteArray
 import java.io.File
 
-class MultiFacePresenter(val view: MultiFaceMVP.view, val context: Context) : MultiFaceMVP.presenter {
+class MultiFacePresenter(val view: MultiFaceMVP.view, val context: Context, val faceDetection: FaceDetection) : MultiFaceMVP.presenter {
     var imageOfPeoplesFaces: Bitmap? = null
     lateinit var faceCoordinates: SparseArray<Face>
 
@@ -26,7 +26,7 @@ class MultiFacePresenter(val view: MultiFaceMVP.view, val context: Context) : Mu
         var face: Bitmap? = null
         this.imageOfPeoplesFaces = imageOfPeoplesFaces
         if (imageOfPeoplesFaces != null) {
-            val faceLocations = FaceDetection(context).getFaceLocations(imageOfPeoplesFaces, context)
+            val faceLocations = faceDetection.getFaceLocations(imageOfPeoplesFaces, context)
             this.faceCoordinates = faceLocations!!
             face = imageOfPeoplesFaces.copy(Bitmap.Config.ARGB_8888, true)
             val canvasImageWithFaces = Canvas(face)
@@ -63,7 +63,7 @@ class MultiFacePresenter(val view: MultiFaceMVP.view, val context: Context) : Mu
     }
 
     override fun cropFaceFromImage(image: Bitmap, index: Int, context: Context): Bitmap {
-        val images = FaceDetection(context).getListOfFaces(faceCoordinates, image)
+        val images = faceDetection.getListOfFaces(faceCoordinates, image, context)
         SettingsHelper(context).saveFaceLocation(images[index].faceLocation)
         return images[index].croppedFace
     }

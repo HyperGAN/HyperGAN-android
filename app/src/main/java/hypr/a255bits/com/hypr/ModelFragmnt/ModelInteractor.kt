@@ -22,8 +22,7 @@ import com.pawegio.kandroid.BuildConfig
 import com.pawegio.kandroid.start
 
 
-class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
-    val faceDetection = FaceDetection(context)
+class ModelInteractor(val context: Context, val faceDetection: FaceDetection) : ModelFragmentMVP.interactor {
     val analytics = Analytics(context)
     val settings = SettingsHelper(context)
 
@@ -64,7 +63,7 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
     @Throws(IOException::class)
     override fun getFacesFromBitmap(imageWithFaces: Bitmap, width: Int, height: Int, context: Context): MutableList<FaceLocation> {
         val faceLocations: SparseArray<Face>? = faceDetection.getFaceLocations(imageWithFaces, context)
-        return faceDetection.getListOfFaces(faceLocations, imageWithFaces)
+        return faceDetection.getListOfFaces(faceLocations, imageWithFaces, context)
     }
 
     fun placeWatermarkOnImage(bitmap: Bitmap?): Bitmap? {

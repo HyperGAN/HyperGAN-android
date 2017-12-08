@@ -1,13 +1,12 @@
 package hypr.a255bits.com.hypr.GeneratorLoader
 
-import android.content.Context
 import android.graphics.*
 import android.util.Log
 import com.google.android.gms.vision.face.Face
 import com.google.android.gms.vision.face.Landmark
 import hypr.a255bits.com.hypr.Util.FaceDetection
 
-class GeneratorFacePosition(val context: Context) {
+class GeneratorFacePosition() {
     private val XOFFSET_PERCENT = 0.85
     private val YOFFSET_PERCENT = 0.54
     fun cropFaceOutOfBitmap(face: Face, imageWithFaces: Bitmap): FaceLocation? {
@@ -23,7 +22,7 @@ class GeneratorFacePosition(val context: Context) {
         val x2: Int = (right.position.x + offsetX).toInt()
         val y2: Int = (left.position.y + offsetY).toInt()
 
-        val rect = FaceDetection(context).faceToRect(face.position.x, face.position.y, face.width, face.height)
+        val rect = FaceDetection(this).faceToRect(face.position.x, face.position.y, face.width, face.height)
         rect.left = rect.left - offsetX
         rect.right = rect.right + offsetX
         rect.top = rect.top - offsetY
