@@ -17,6 +17,9 @@ import hypr.a255bits.com.hypr.Util.Analytics
 import hypr.a255bits.com.hypr.Util.FaceDetection
 import hypr.a255bits.com.hypr.Util.SettingsHelper
 import java.io.IOException
+import android.support.v4.content.ContextCompat.startActivity
+import com.pawegio.kandroid.BuildConfig
+import com.pawegio.kandroid.start
 
 
 class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
@@ -44,6 +47,18 @@ class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {
         shareIntent.type = "image/jpeg"
         shareIntent.putExtra(Intent.EXTRA_STREAM, parse)
         return shareIntent
+    }
+
+    fun rateApp(){
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "text/plain"
+        intent.putExtra(Intent.EXTRA_SUBJECT, "My application name")
+        var sAux = "\nLet me recommend you this application\n\n"
+        sAux += "https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID}\n\n"
+        intent.putExtra(Intent.EXTRA_TEXT, sAux)
+        val chooser = Intent.createChooser(intent, "choose one")
+        chooser.start(context)
+
     }
 
     @Throws(IOException::class)
