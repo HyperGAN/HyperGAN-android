@@ -31,7 +31,6 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
     var pbFile: File? = null
     val presenter by inject<ModelFragmentPresenter>()
     val faceDetection by inject<FaceDetection>()
-//    val presenter by lazy { ModelFragmentPresenter(pbFile) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
