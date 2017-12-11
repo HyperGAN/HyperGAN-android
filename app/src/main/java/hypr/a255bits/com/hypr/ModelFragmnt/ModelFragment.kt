@@ -59,9 +59,7 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
         activity.alert("Rate Hypr", "What do you think about Hypr?") {
             positiveButton("Rate Us!", {
                 presenter.openRateAppInPlayStore(context.packageName)
-
             })
-
         }.show()
     }
 

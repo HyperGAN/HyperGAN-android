@@ -48,8 +48,8 @@ class MultiFacePresenter(val view: MultiFaceMVP.view, val context: Context, val 
     }
 
     override fun saveImageSoOtherFragmentCanViewIt(image: ByteArray?, filename: String): File {
-        val file = File.createTempFile(filename, "png")
-        ImageSaver().saveImageToFile(file, image)
+        val file = createTempFile(filename, "png")
+        ImageSaver().saveImageToFile(createTempFile(filename, "png"), image)
         return file
     }
 
