@@ -16,6 +16,7 @@ import java.io.File
 class MultiFacePresenter(val view: MultiFaceMVP.view, val context: Context, val faceDetection: FaceDetection) : MultiFaceMVP.presenter {
     var imageOfPeoplesFaces: Bitmap? = null
     lateinit var faceCoordinates: SparseArray<Face>
+    val settings = SettingsHelper(context)
 
 
     override fun displayImageWithFaces(imageOfPeoplesFaces: Bitmap?) {
@@ -42,7 +43,7 @@ class MultiFacePresenter(val view: MultiFaceMVP.view, val context: Context, val 
     override fun sendCroppedFaceToMultiModel(croppedFace: Bitmap, index: Int) {
         val croppedImage = saveImageSoOtherFragmentCanViewIt(croppedFace.toByteArray(), "image")
         val fullImage = saveImageSoOtherFragmentCanViewIt(imageOfPeoplesFaces?.toByteArray(), "fullimage")
-        SettingsHelper(context).setFaceIndex(index)
+        settings.setFaceIndex(index)
         view.sendImageToModel(croppedImage, fullImage)
     }
 
@@ -64,7 +65,7 @@ class MultiFacePresenter(val view: MultiFaceMVP.view, val context: Context, val 
 
     override fun cropFaceFromImage(image: Bitmap, index: Int, context: Context): Bitmap {
         val images = faceDetection.getListOfFaces(faceCoordinates, image, context)
-        SettingsHelper(context).saveFaceLocation(images[index].faceLocation)
+        settings.saveFaceLocation(images[index].faceLocation)
         return images[index].croppedFace
     }
 
