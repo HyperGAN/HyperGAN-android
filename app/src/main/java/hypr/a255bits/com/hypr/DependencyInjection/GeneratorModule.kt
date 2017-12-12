@@ -7,10 +7,14 @@ import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.GeneratorLoader.EasyGeneratorLoader
 import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorFacePosition
 import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragmentPresenter
+import hypr.a255bits.com.hypr.Network.ModelApi
+import hypr.a255bits.com.hypr.Network.ModelService
 import hypr.a255bits.com.hypr.Util.FaceDetection
 import hypr.a255bits.com.hypr.Util.JsonReader
 import org.koin.android.module.AndroidModule
 import org.koin.dsl.context.Context
+import retrofit2.Retrofit
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.lang.reflect.Type
 
 class GeneratorModule : AndroidModule() {
@@ -20,10 +24,21 @@ class GeneratorModule : AndroidModule() {
                 provide { getGeneratorLoader() }
                 provide { ModelFragmentPresenter(get()) }
                 provide { GeneratorFacePosition() }
-                provide {FaceDetection(get())}
+                provide { FaceDetection(get()) }
                 provide { JsonReader(getJsonAdapter()) }
+
+                provide { ModelApi(getModelApiDependencies()) }
             }
         }
+    }
+
+    private fun getModelApiDependencies(): ModelService {
+        val BASE_URL = "https://gist.githubusercontent.com"
+        val retrofit: Retrofit = Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .build()
+        return retrofit.create(ModelService::class.java)
     }
 
     private fun getJsonAdapter(): JsonAdapter<List<Generator>> {
