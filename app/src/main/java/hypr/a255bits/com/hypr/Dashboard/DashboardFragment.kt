@@ -10,6 +10,7 @@ import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.fragment_dashboard.*
+import org.greenrobot.eventbus.EventBus
 
 class DashboardFragment : Fragment(), DashboardMVP.view {
 
@@ -28,6 +29,9 @@ class DashboardFragment : Fragment(), DashboardMVP.view {
             image = arguments.getString(PATH_TO_IMAGE)
             fullImage = arguments.getString(PATH_TO_FULL_IMAGE)
             pathToGenerators = arguments.getStringArray(PATH_TO_GENERATORS)
+            if(indexOfGenerator != null && image != null){
+                EventBus.getDefault().post(indexOfGenerator!!.toDouble())
+            }
         }
     }
 
