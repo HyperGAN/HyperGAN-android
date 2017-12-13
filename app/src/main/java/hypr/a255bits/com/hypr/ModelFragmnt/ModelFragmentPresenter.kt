@@ -237,6 +237,12 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
         } else {
             easyGenerator.sampleImageWithoutImage().toByteArrayImage()
         }
+        if(faceImage == null ){
+            println("null null null, faceImage")
+        }
+        if(fullImage == null){
+            println("null null null, fullimage")
+        }
         this.person = Person(faceImage, fullImageBit)
     }
 }

@@ -34,9 +34,6 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fragmentManager.addOnBackStackChangedListener {
-
-        }
         presenter.setInteractors(ModelInteractor(context, faceDetection.init(context)))
         presenter.setViews(this)
         presenter.easyGenerator.loadAssets(context)
