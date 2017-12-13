@@ -47,8 +47,7 @@ class GeneratorModule : AndroidModule() {
     }
 
     fun getGeneratorLoader(): EasyGeneratorLoader {
-        val easyGen = EasyGeneratorLoader(Generator())
-        return easyGen
+        return EasyGeneratorLoader(Generator())
     }
 
 }
