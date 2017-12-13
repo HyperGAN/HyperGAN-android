@@ -54,7 +54,7 @@ class SettingsHelper(val context: Context) {
         val y = preference.getFloat("face_y", 0.0f)
         val width = preference.getFloat("face_width", 0.0f)
         val height = preference.getFloat("face_height", 0.0f)
-        return FaceDetection(context).faceToRect(x, y, width, height)
+        return FaceCropper().faceToRect(x, y, width, height)
     }
 
     fun setFaceIndex(index: Int) {
