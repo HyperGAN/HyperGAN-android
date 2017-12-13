@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.flurgle.camerakit.CameraView
 import com.pawegio.kandroid.start
+import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorFacePosition
 import hypr.a255bits.com.hypr.Main.MainActivity
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.FaceDetection
@@ -22,12 +23,11 @@ import org.jetbrains.anko.clearTop
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
-import org.koin.android.ext.android.inject
 import java.io.File
 
 class CameraActivity : AppCompatActivity(), CameraMVP.view {
 
-    val faceDetection by inject<FaceDetection>()
+    val faceDetection  = FaceDetection(GeneratorFacePosition())
     val presenter: CameraPresenter by lazy { CameraPresenter(this, applicationContext, faceDetection.init(applicationContext)) }
     private val RESULT_GET_IMAGE: Int = 1
     var indexInJson: Int? = null
