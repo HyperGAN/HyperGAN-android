@@ -27,8 +27,8 @@ import java.io.File
 
 class CameraActivity : AppCompatActivity(), CameraMVP.view {
 
-    val faceDetection  = FaceDetection(GeneratorFacePosition())
-    val presenter: CameraPresenter by lazy { CameraPresenter(this, applicationContext, faceDetection.init(applicationContext)) }
+    val faceDetection  by lazy{ FaceDetection(GeneratorFacePosition(), applicationContext)}
+    val presenter: CameraPresenter by lazy { CameraPresenter(this, applicationContext, faceDetection) }
     private val RESULT_GET_IMAGE: Int = 1
     var indexInJson: Int? = null
     val galleryFileLocation: Uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -63,6 +63,7 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
     }
 
     override fun startMultiFaceSelection(jpeg: ByteArray, facesDetected: MutableList<PointF>) {
+        println("startMultiFace")
         val intent = Intent()
         val image = ImageSaver().saveImageToFile(createTempFile("fullimage", "png"), jpeg)
         intent.putExtra("image", image.path)

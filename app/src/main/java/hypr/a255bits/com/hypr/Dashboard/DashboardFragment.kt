@@ -30,6 +30,7 @@ class DashboardFragment : Fragment(), DashboardMVP.view {
             fullImage = arguments.getString(PATH_TO_FULL_IMAGE)
             pathToGenerators = arguments.getStringArray(PATH_TO_GENERATORS)
             if(indexOfGenerator != null && image != null){
+                println("startModel from DashBoardFragment")
                 EventBus.getDefault().post(indexOfGenerator!!.toDouble())
             }
         }

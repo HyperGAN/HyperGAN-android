@@ -116,6 +116,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
     private fun displayMultiModels(itemId: Int, imageLocationPath: String?, listOfGenerators: List<Generator>?) {
+        println("starting dashboard fragment")
         val multiModel = DashboardFragment.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray(), fullImage)
         this.dashboard = multiModel
         view.startMultipleModels(multiModel)

@@ -12,16 +12,11 @@ import hypr.a255bits.com.hypr.R
 import java.io.IOException
 
 
-class FaceDetection(val generatorFacePosition: GeneratorFacePosition) {
-    lateinit var detector: FaceDetector
-
-    fun init(context: Context): FaceDetection {
-        detector = FaceDetector.Builder(context)
-                .setTrackingEnabled(false)
-                .setLandmarkType(FaceDetector.ALL_LANDMARKS)
-                .build()
-        return this
-    }
+class FaceDetection(val generatorFacePosition: GeneratorFacePosition, context: Context) {
+    val detector: FaceDetector = FaceDetector.Builder(context)
+            .setTrackingEnabled(false)
+            .setLandmarkType(FaceDetector.ALL_LANDMARKS)
+            .build()
 
     fun release() {
         detector.release()

@@ -9,7 +9,6 @@ import hypr.a255bits.com.hypr.GeneratorLoader.GeneratorFacePosition
 import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragmentPresenter
 import hypr.a255bits.com.hypr.Network.ModelApi
 import hypr.a255bits.com.hypr.Network.ModelService
-import hypr.a255bits.com.hypr.Util.FaceDetection
 import hypr.a255bits.com.hypr.Util.JsonReader
 import org.koin.android.module.AndroidModule
 import org.koin.dsl.context.Context
@@ -24,7 +23,6 @@ class GeneratorModule : AndroidModule() {
                 provide { getGeneratorLoader() }
                 provide { ModelFragmentPresenter(get()) }
                 provide { GeneratorFacePosition() }
-                provide { FaceDetection(get()) }
                 provide { JsonReader(getJsonAdapter()) }
 
                 provide { ModelApi(getModelApiDependencies()) }
