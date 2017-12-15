@@ -16,7 +16,6 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.coroutines.experimental.bg
-import org.koin.android.ext.android.getKoin
 import java.io.File
 
 class MainInteractor(val context: Context) : MainMvp.interactor {
@@ -28,7 +27,6 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
 
     var listOfGenerators: List<Generator>? = listOf()
     var modelDownloader = ModelDownloader(FirebaseStorage.getInstance().reference)
-    val jsonReader = context.getKoin().get<JsonReader>()
 
     init {
         googleSignInClient.client.connect()
@@ -89,7 +87,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
 
     override fun getGeneratorsFromNetwork(applicationContext: Context): Deferred<List<Generator>?> {
         return async(UI) {
-            val listOfGenerators = bg { jsonReader.getGeneratorsFromJson(applicationContext) }.await()
+            val listOfGenerators = bg { JsonReader().getGeneratorsFromJson(applicationContext) }.await()
             this@MainInteractor.listOfGenerators = listOfGenerators
             return@async listOfGenerators
         }

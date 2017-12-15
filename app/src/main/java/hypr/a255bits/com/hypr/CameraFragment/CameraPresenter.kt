@@ -9,14 +9,15 @@ import collections.forEach
 import hypr.a255bits.com.hypr.Util.*
 
 
-class CameraPresenter(val view: CameraMVP.view, val context: Context, val faceDetection: FaceDetection) : CameraMVP.presenter {
+class CameraPresenter(val view: CameraMVP.view, val context: Context) : CameraMVP.presenter {
 
     val interactor: CameraInteractor by lazy { CameraInteractor(context) }
     val analytics = Analytics(context)
-
+    val faceDetection = FaceDetection(context)
     override fun sendPictureToModel(jpeg: ByteArray?) {
         val bitmap = BitmapFactory.decodeByteArray(jpeg, 0, jpeg!!.size)
         startModelIfImageHasFace(bitmap, jpeg)
+
     }
 
     private fun startModelIfImageHasFace(bitmap: Bitmap?, jpeg: ByteArray) {
@@ -29,7 +30,7 @@ class CameraPresenter(val view: CameraMVP.view, val context: Context, val faceDe
                     view.startMultiFaceSelection(jpeg, faceLocations)
                 }
                 facesDetected.size() == 1 -> {
-                    val images = faceDetection.getListOfFaces(facesDetected, bitmap, context)
+                    val images = faceDetection.getListOfFaces(facesDetected, bitmap)
                     if (images.isEmpty()) {
                         view.showFaceTooCloseErrorTryAgain()
                     } else {

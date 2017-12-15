@@ -5,12 +5,18 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import hypr.a255bits.com.hypr.Generator.Generator
+import retrofit2.Retrofit
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.io.File
 import java.lang.reflect.Type
 
-class ModelApi(val service: ModelService){
+class ModelApi {
     private val BASE_URL = "https://gist.githubusercontent.com"
-
+    val retrofit: Retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .build()
+    val service: ModelService? = retrofit.create(ModelService::class.java)
     val generatorFileName = "generatorJson.json"
 
     fun listOfModels(context: Context): List<Generator>? {
