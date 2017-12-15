@@ -1,6 +1,7 @@
 package hypr.a255bits.com.hypr.Main
 
 import android.content.Context
+import android.support.v4.app.Fragment
 import android.view.MenuItem
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.storage.FileDownloadTask
@@ -48,7 +49,6 @@ interface MainMvp {
         fun getGeneratorsFromNetwork(applicationContext: Context): Deferred<List<Generator>?>
 
         fun getModelFromFirebase(saveLocation: File, filenameInFirebase: String): FileDownloadTask?
-        fun showProgressOfFirebaseDownload(firebaseDownloader: FileDownloadTask)
         fun stopInAppBilling()
         fun hasBoughtItem(itemId: String): Boolean
     }

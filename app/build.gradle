@@ -75,7 +75,6 @@ dependencies {
     compile 'com.android.support.test.espresso:espresso-core:2.2.2'
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.alexvasilkov:gesture-views:2.3.2'
-    compile 'org.koin:koin-android:0.5.2'
     compile 'com.wang.avi:library:2.1.3'
 }
 

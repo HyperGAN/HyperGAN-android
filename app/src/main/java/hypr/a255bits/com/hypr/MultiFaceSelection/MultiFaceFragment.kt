@@ -16,6 +16,7 @@ import hypr.a255bits.com.hypr.Util.toBitmap
 import kotlinx.android.synthetic.main.fragment_multi_face.*
 import org.jetbrains.anko.clearTop
 import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.newTask
 import java.io.File
 
 class MultiFaceFragment : Fragment(), MultiFaceMVP.view, DrawableImageViewTouchInBoundsListener{
@@ -53,8 +54,10 @@ class MultiFaceFragment : Fragment(), MultiFaceMVP.view, DrawableImageViewTouchI
     var ini = 0
     override fun sendImageToModel(file: File, fullImage: File) {
         ini++
+        println("sendImageToModel from Multi")
         startActivity(activity.intentFor<MainActivity>
-        ("indexInJson" to 0, "image" to file.path, "fullimage" to fullImage.path).clearTop())
+        ("indexInJson" to 0, "image" to file.path, "fullimage" to fullImage.path).clearTop().newTask())
+        activity.finish()
     }
 
     override fun addFaceLocationToImage(rect: Rect) {

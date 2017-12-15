@@ -111,11 +111,11 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
     }
 
     override fun sendImageToModel(image: ByteArray?, croppedFace: Bitmap) {
+        println("sendingImageToModel")
         val fullImage = saveImageSoOtherFragmentCanViewIt(image)
         val croppedFaceFile = ImageSaver().saveImageToFile(createTempFile("fullimage", "jpg"), croppedFace.toByteArray())
 
         startActivity(intentFor<MainActivity>
-//        ("indexInJson" to indexInJson, "image" to fullImage.path).clearTop())
         ("indexInJson" to indexInJson, "image" to croppedFaceFile.path, "fullimage" to fullImage.path).clearTop())
     }
 

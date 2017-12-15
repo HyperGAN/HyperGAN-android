@@ -18,7 +18,6 @@ import com.pawegio.kandroid.start
 import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Dashboard.DashboardFragment
-import hypr.a255bits.com.hypr.DependencyInjection.MainApplication
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.MultiFaceSelection.MultiFaceFragment
 import hypr.a255bits.com.hypr.R
@@ -32,7 +31,7 @@ import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.*
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, MainMvp.view {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, MainMvp.view, DashboardFragment.FragmentCallback {
 
     val interactor by lazy { MainInteractor(applicationContext) }
     val presenter by lazy { MainPresenter(this, interactor, applicationContext) }
@@ -45,14 +44,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
         setSupportActionBar(toolbar)
-        MainApplication().onCreate()
+//        MainApplication().onCreate()
+        println("MainActivity onCreate()")
         presenter.addModelsToNavBar(applicationContext)
         getInfoFromCameraActivity()
     }
 
     private fun getInfoFromCameraActivity() {
-        presenter.isModelFragmentDisplayed = intent.hasExtra("indexInJson")
-        if (presenter.isModelFragmentDisplayed) {
+        if (intent.hasExtra("indexInJson")) {
             presenter.indexInJson = intent.extras.getInt("indexInJson")
             presenter.image = intent.extras.getString("image")
             presenter.fullImage = intent.extras.getString("fullimage")
@@ -85,6 +84,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun goBackToMainActivity() {
+        println("sendImageToModel MainActivity")
         intentFor<MainActivity>().start(applicationContext)
     }
 
@@ -97,6 +97,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == presenter.SIGN_INTO_GOOGLE_RESULT && resultCode == Activity.RESULT_OK) {
         } else if (requestCode == 1) {
+            println("onActivityResult")
             val fullImage = data?.getStringExtra("image")
             val facesDetected = data?.getParcelableArrayExtra("faceLocations")
             val facesDetectedPointF = mutableListOf<PointF>()
@@ -198,15 +199,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @Subscribe
     fun startModelFragment(position: java.lang.Double) {
-        val hasBought = presenter.interactor.hasBoughtItem(presenter.interactor.listOfGenerators?.get(position.toInt())?.google_play_id!!)
+        val indexOfGenerator = position.toInt()
+        val hasBought = presenter.interactor.hasBoughtItem(indexOfGenerator.let { presenter.interactor.listOfGenerators?.get(it)?.google_play_id }!!)
         if (hasBought) {
-            val modelFragment = presenter.getModelFragment(position.toInt())
+            val modelFragment = indexOfGenerator.let { presenter.getModelFragment(it) }
             println("starting modelFragment")
             supportFragmentManager.beginTransaction().replace(R.id.container, modelFragment).addToBackStack("model").commit()
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        }else{
-            presenter.buyModel(presenter.interactor.listOfGenerators?.get(position.toInt())?.google_play_id!!, position.toInt())
+        } else {
+            presenter.buyModel(presenter.interactor.listOfGenerators?.get(indexOfGenerator)?.google_play_id!!, indexOfGenerator)
         }
+    }
+
+    override fun startModel(indexOfGenerator: Int?) {
+
     }
 
     override fun closeDownloadingModelDialog() {

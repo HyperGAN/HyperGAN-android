@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.google.firebase.storage.FileDownloadTask
 import com.google.firebase.storage.FirebaseStorage
+import hypr.a255bits.com.hypr.DependencyInjection.GeneratorModule
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.Network.ModelDownloader
 import hypr.a255bits.com.hypr.R
@@ -14,9 +15,7 @@ import hypr.a255bits.com.hypr.Util.JsonReader
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
-import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.coroutines.experimental.bg
-import org.koin.android.ext.android.getKoin
 import java.io.File
 
 class MainInteractor(val context: Context) : MainMvp.interactor {
@@ -28,7 +27,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
 
     var listOfGenerators: List<Generator>? = listOf()
     var modelDownloader = ModelDownloader(FirebaseStorage.getInstance().reference)
-    val jsonReader = context.getKoin().get<JsonReader>()
+    val jsonReader = JsonReader(GeneratorModule().getJsonAdapter())
 
     init {
         googleSignInClient.client.connect()
@@ -74,17 +73,6 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
             modelDownloader.getFile(saveLocation, it)
         }
 
-    }
-
-    override fun showProgressOfFirebaseDownload(firebaseDownloader: FileDownloadTask) {
-        firebaseDownloader.addOnProgressListener { taskSnapshot ->
-            showDownloadProgress(taskSnapshot.bytesTransferred, taskSnapshot.totalByteCount)
-        }
-    }
-
-    private fun showDownloadProgress(bytesTransferred: Long, totalByteCount: Long) {
-        val percent: Float = (bytesTransferred * 100.0f) / totalByteCount
-        EventBus.getDefault().post(percent)
     }
 
     override fun getGeneratorsFromNetwork(applicationContext: Context): Deferred<List<Generator>?> {

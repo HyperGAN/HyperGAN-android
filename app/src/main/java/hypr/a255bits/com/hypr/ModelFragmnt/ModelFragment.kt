@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.*
 import com.pawegio.kandroid.onProgressChanged
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
@@ -20,14 +21,10 @@ import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.cancelButton
 import org.jetbrains.anko.intentFor
-import org.koin.android.contextaware.ContextAwareFragment
 import java.io.File
 
 
-class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
-
-    override val contextName: String
-        get() = "generator"
+class ModelFragment : Fragment(), ModelFragmentMVP.view {
 
     var pbFile: File? = null
     val presenter by lazy{ModelFragmentPresenter(GeneratorModule().getGeneratorLoader())}
@@ -35,17 +32,13 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter.setInteractors(ModelInteractor(context, faceDetection))
-        presenter.setViews(this)
-        presenter.easyGenerator.loadAssets(context)
-        if (arguments != null) {
-            presenter.getInfoFromFragmentCreation(arguments)
-        }
+
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true)
+        println("ModelFragment create()")
         return inflater!!.inflate(R.layout.fragment_model, container, false)
     }
 
@@ -87,6 +80,12 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loadingIcon.show()
+        presenter.setInteractors(ModelInteractor(context, faceDetection))
+        presenter.setViews(this)
+        presenter.easyGenerator.loadAssets(context)
+        if (arguments != null) {
+            presenter.getInfoFromFragmentCreation(arguments)
+        }
         presenter.loadGenerator(context, pbFile)
         displayImageTransitionSeekbarProgress()
         randomizeModelClickListener()
@@ -138,12 +137,18 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     override fun onDetach() {
         super.onDetach()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
         presenter.disconnectFaceDetector()
     }
 
     override fun displayFocusedImage(imageFromGallery: Bitmap?) {
-        imageFromGallery.let { focusedImage.setImageBitmap(it) }
-        loadingIcon.hide()
+        if(imageFromGallery != null && focusedImage != null){
+            focusedImage.setImageBitmap(imageFromGallery)
+            loadingIcon.hide()
+        }
     }
 
     override fun shareImageToOtherApps(shareIntent: Intent) {

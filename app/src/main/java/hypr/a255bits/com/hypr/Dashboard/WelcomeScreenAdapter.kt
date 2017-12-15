@@ -36,7 +36,8 @@ class WelcomeScreenAdapter(val generators: MutableList<BuyGenerator>, val contex
             }.show()
         }
         holder?.card?.setOnClickListener {
-            EventBus.getDefault().post(position.toDouble()) }
+            EventBus.getDefault().post(position.toDouble())
+        }
     }
 
     class CustomViewHolder(val view: View) : RecyclerView.ViewHolder(view) {

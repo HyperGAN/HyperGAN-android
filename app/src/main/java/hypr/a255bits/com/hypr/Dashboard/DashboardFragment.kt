@@ -1,5 +1,6 @@
 package hypr.a255bits.com.hypr.Dashboard
 
+import android.app.Activity
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
@@ -12,6 +13,7 @@ import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import org.greenrobot.eventbus.EventBus
 
+
 class DashboardFragment : Fragment(), DashboardMVP.view {
 
     private var generators: Array<Generator> = arrayOf()
@@ -20,6 +22,7 @@ class DashboardFragment : Fragment(), DashboardMVP.view {
     private var image: String? = null
     private var fullImage: String? = null
     val presenter by lazy{DashboardPresenter(this)}
+    private var mCallback: FragmentCallback? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +34,7 @@ class DashboardFragment : Fragment(), DashboardMVP.view {
             pathToGenerators = arguments.getStringArray(PATH_TO_GENERATORS)
             if(indexOfGenerator != null && image != null){
                 println("startModel from DashBoardFragment")
-                EventBus.getDefault().post(indexOfGenerator!!.toDouble())
+                EventBus.getDefault().post(indexOfGenerator?.toDouble())
             }
         }
     }
@@ -71,5 +74,20 @@ class DashboardFragment : Fragment(), DashboardMVP.view {
             fragment.arguments = args
             return fragment
         }
+    }
+
+    interface FragmentCallback {
+        fun startModel(indexOfGenerator: Int?)
+    }
+
+    override fun onAttach(activity: Activity?) {
+        super.onAttach(activity)
+
+        try {
+            mCallback = activity as FragmentCallback?
+        } catch (e: ClassCastException) {
+            throw ClassCastException(activity!!.toString() + " must implement OnHeadlineSelectedListener")
+        }
+
     }
 }

@@ -12,14 +12,14 @@ import hypr.a255bits.com.hypr.R
 import java.io.IOException
 
 
-class FaceDetection(val generatorFacePosition: GeneratorFacePosition, context: Context) {
-    val detector: FaceDetector = FaceDetector.Builder(context)
+class FaceDetection(val generatorFacePosition: GeneratorFacePosition, val context: Context) {
+    var detector: FaceDetector = FaceDetector.Builder(context)
             .setTrackingEnabled(false)
             .setLandmarkType(FaceDetector.ALL_LANDMARKS)
             .build()
 
     fun release() {
-        detector.release()
+//        detector.release()
     }
 
     @Throws(IOException::class)
@@ -35,7 +35,16 @@ class FaceDetection(val generatorFacePosition: GeneratorFacePosition, context: C
 
     private fun getLocationOfFaces(imageWithFaces: Bitmap): SparseArray<Face> {
         val frame = Frame.Builder().setBitmap(imageWithFaces).build()
-        return detector.detect(frame)!!
+        val detectFrame = if (detector.isOperational) {
+            detector.detect(frame)!!
+        } else {
+            detector = FaceDetector.Builder(context)
+                    .setTrackingEnabled(false)
+                    .setLandmarkType(FaceDetector.ALL_LANDMARKS)
+                    .build()
+            detector.detect(frame)
+        }
+        return detectFrame
     }
 
     fun getListOfFaces(faceLocations: SparseArray<Face>?, imageWithFaces: Bitmap, context: Context): MutableList<FaceLocation> {
