@@ -25,9 +25,9 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     var billingHelper: IabHelper = IabHelper(context, context.getString(R.string.API_KEY))
     val googleSignInClient = GoogleSignIn(context)
 
-    var listOfGenerators: List<Generator>? = listOf()
     var modelDownloader = ModelDownloader(FirebaseStorage.getInstance().reference)
     val jsonReader = JsonReader(GeneratorModule().getJsonAdapter())
+    var listOfGenerators: List<Generator>? = listOf()
 
     init {
         googleSignInClient.client.connect()
