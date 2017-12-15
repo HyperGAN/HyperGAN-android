@@ -1,15 +1,15 @@
 package hypr.a255bits.com.hypr.GeneratorLoader
 
+import android.content.Context
 import android.graphics.*
 import android.util.Log
 import com.google.android.gms.vision.face.Face
 import com.google.android.gms.vision.face.Landmark
-import hypr.a255bits.com.hypr.Util.FaceCropper
+import hypr.a255bits.com.hypr.Util.FaceDetection
 
-class GeneratorFacePosition() {
+class GeneratorFacePosition(val context: Context) {
     private val XOFFSET_PERCENT = 0.85
     private val YOFFSET_PERCENT = 0.54
-    val face: FaceCropper = FaceCropper()
     fun cropFaceOutOfBitmap(face: Face, imageWithFaces: Bitmap): FaceLocation? {
 
         val left = face.landmarks.first{ it.type == Landmark.LEFT_EYE }
@@ -23,7 +23,7 @@ class GeneratorFacePosition() {
         val x2: Int = (right.position.x + offsetX).toInt()
         val y2: Int = (left.position.y + offsetY).toInt()
 
-        val rect = this.face.faceToRect(face.position.x, face.position.y, face.width, face.height)
+        val rect = FaceDetection(context).faceToRect(face.position.x, face.position.y, face.width, face.height)
         rect.left = rect.left - offsetX
         rect.right = rect.right + offsetX
         rect.top = rect.top - offsetY
@@ -43,7 +43,7 @@ class GeneratorFacePosition() {
         try{
             bitmap = Bitmap.createBitmap(imageWithFaces, x1, y1, w, h)
         }catch(e: IllegalArgumentException){
-            Log.e("GeneratorFacePosition", "FaceCropper too close to camera: ${e.localizedMessage}")
+            Log.e("GeneratorFacePosition", "Face too close to camera: ${e.localizedMessage}")
             return null
         }
         val scaledRect = Rect(x1, y1, x1 + w,y1 + h)

@@ -13,7 +13,6 @@ import com.flurgle.camerakit.CameraView
 import com.pawegio.kandroid.start
 import hypr.a255bits.com.hypr.Main.MainActivity
 import hypr.a255bits.com.hypr.R
-import hypr.a255bits.com.hypr.Util.FaceDetection
 import hypr.a255bits.com.hypr.Util.ImageSaver
 import hypr.a255bits.com.hypr.Util.onPictureTaken
 import hypr.a255bits.com.hypr.Util.toByteArray
@@ -22,13 +21,11 @@ import org.jetbrains.anko.clearTop
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
-import org.koin.android.ext.android.inject
 import java.io.File
 
 class CameraActivity : AppCompatActivity(), CameraMVP.view {
 
-    val faceDetection by inject<FaceDetection>()
-    val presenter: CameraPresenter by lazy { CameraPresenter(this, applicationContext, faceDetection.init(applicationContext)) }
+    val presenter: CameraPresenter by lazy { CameraPresenter(this, applicationContext) }
     private val RESULT_GET_IMAGE: Int = 1
     var indexInJson: Int? = null
     val galleryFileLocation: Uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI

@@ -13,10 +13,9 @@ import hypr.a255bits.com.hypr.Util.SettingsHelper
 import hypr.a255bits.com.hypr.Util.toByteArray
 import java.io.File
 
-class MultiFacePresenter(val view: MultiFaceMVP.view, val context: Context, val faceDetection: FaceDetection) : MultiFaceMVP.presenter {
+class MultiFacePresenter(val view: MultiFaceMVP.view, val context: Context) : MultiFaceMVP.presenter {
     var imageOfPeoplesFaces: Bitmap? = null
     lateinit var faceCoordinates: SparseArray<Face>
-    val settings = SettingsHelper(context)
 
 
     override fun displayImageWithFaces(imageOfPeoplesFaces: Bitmap?) {
@@ -27,7 +26,7 @@ class MultiFacePresenter(val view: MultiFaceMVP.view, val context: Context, val 
         var face: Bitmap? = null
         this.imageOfPeoplesFaces = imageOfPeoplesFaces
         if (imageOfPeoplesFaces != null) {
-            val faceLocations = faceDetection.getFaceLocations(imageOfPeoplesFaces, context)
+            val faceLocations = FaceDetection(context).getFaceLocations(imageOfPeoplesFaces, context)
             this.faceCoordinates = faceLocations!!
             face = imageOfPeoplesFaces.copy(Bitmap.Config.ARGB_8888, true)
             val canvasImageWithFaces = Canvas(face)
@@ -43,13 +42,13 @@ class MultiFacePresenter(val view: MultiFaceMVP.view, val context: Context, val 
     override fun sendCroppedFaceToMultiModel(croppedFace: Bitmap, index: Int) {
         val croppedImage = saveImageSoOtherFragmentCanViewIt(croppedFace.toByteArray(), "image")
         val fullImage = saveImageSoOtherFragmentCanViewIt(imageOfPeoplesFaces?.toByteArray(), "fullimage")
-        settings.setFaceIndex(index)
+        SettingsHelper(context).setFaceIndex(index)
         view.sendImageToModel(croppedImage, fullImage)
     }
 
     override fun saveImageSoOtherFragmentCanViewIt(image: ByteArray?, filename: String): File {
-        val file = createTempFile(filename, "png")
-        ImageSaver().saveImageToFile(createTempFile(filename, "png"), image)
+        val file = File.createTempFile(filename, "png")
+        ImageSaver().saveImageToFile(file, image)
         return file
     }
 
@@ -64,8 +63,8 @@ class MultiFacePresenter(val view: MultiFaceMVP.view, val context: Context, val 
     }
 
     override fun cropFaceFromImage(image: Bitmap, index: Int, context: Context): Bitmap {
-        val images = faceDetection.getListOfFaces(faceCoordinates, image, context)
-        settings.saveFaceLocation(images[index].faceLocation)
+        val images = FaceDetection(context).getListOfFaces(faceCoordinates, image)
+        SettingsHelper(context).saveFaceLocation(images[index].faceLocation)
         return images[index].croppedFace
     }
 
