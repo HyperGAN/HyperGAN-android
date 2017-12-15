@@ -10,17 +10,20 @@ import android.view.ViewGroup
 import hypr.a255bits.com.hypr.DrawableImageViewTouchInBoundsListener
 import hypr.a255bits.com.hypr.Main.MainActivity
 import hypr.a255bits.com.hypr.R
+import hypr.a255bits.com.hypr.Util.FaceDetection
 import hypr.a255bits.com.hypr.Util.toBitmap
 import kotlinx.android.synthetic.main.fragment_multi_face.*
 import org.jetbrains.anko.clearTop
 import org.jetbrains.anko.intentFor
+import org.koin.android.ext.android.inject
 import java.io.File
 
 class MultiFaceFragment : Fragment(), MultiFaceMVP.view, DrawableImageViewTouchInBoundsListener{
 
     private var imageOfPeoplesFaces: File? = null
     private var faceLocations: Array<PointF>? = null
-    private val presenter by lazy{MultiFacePresenter(this, context)}
+    val faceDetection by inject<FaceDetection>()
+    private val presenter by lazy{MultiFacePresenter(this, context, faceDetection.init(context))}
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

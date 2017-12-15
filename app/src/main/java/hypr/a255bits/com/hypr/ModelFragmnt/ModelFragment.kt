@@ -10,6 +10,7 @@ import com.pawegio.kandroid.onProgressChanged
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.R
+import hypr.a255bits.com.hypr.Util.FaceDetection
 import hypr.a255bits.com.hypr.Util.negative1To1
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_model.*
@@ -29,14 +30,14 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     var pbFile: File? = null
     val presenter by inject<ModelFragmentPresenter>()
-//    val presenter by lazy { ModelFragmentPresenter(pbFile) }
+    val faceDetection by inject<FaceDetection>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fragmentManager.addOnBackStackChangedListener {
 
         }
-        presenter.setInteractors(ModelInteractor(context))
+        presenter.setInteractors(ModelInteractor(context, faceDetection.init(context)))
         presenter.setViews(this)
         presenter.easyGenerator.loadAssets(context)
         if (arguments != null) {
@@ -58,9 +59,7 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
         activity.alert("Rate Hypr", "What do you think about Hypr?") {
             positiveButton("Rate Us!", {
                 presenter.openRateAppInPlayStore(context.packageName)
-
             })
-
         }.show()
     }
 
