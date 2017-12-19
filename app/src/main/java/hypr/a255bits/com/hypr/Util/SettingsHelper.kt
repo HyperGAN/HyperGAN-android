@@ -72,5 +72,6 @@ class SettingsHelper(val context: Context) {
     fun setSavedImage(){
        val edit = editor.edit()
         edit.putBoolean(FIRST_TIME_SAVE, false)
+        edit.apply()
     }
 }

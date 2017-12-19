@@ -66,6 +66,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     override fun openRateAppInPlayStore(packageName: String?) {
         val marketLink = Uri.parse("market://details?id=$packageName")
         val playStoreLink = Uri.parse("http://play.google.com/store/apps/details?id=$packageName")
+        interactor.settings.setSavedImage()
         view.openRateAppInPlayStore(marketLink, playStoreLink)
 
 
@@ -125,13 +126,14 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     override fun saveImageDisplayedToPhone(context: Context): Boolean {
         var isSaved = false
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            val imageCopy = Bitmap.createScaledBitmap(imageDisplayedOnScreen, imageDisplayedOnScreen!!.width, imageDisplayedOnScreen!!.height, false)
             if (imageDisplayedOnScreen != null) {
-                val inlineImage = inlineImage(person, imageDisplayedOnScreen!!)
+                val inlineImage = inlineImage(person, imageCopy)
                 val waterMarkImage = interactor.placeWatermarkOnImage(inlineImage)
                 isSaved = ImageSaver().saveImageToInternalStorage(waterMarkImage, context)
 
             } else {
-                isSaved = ImageSaver().saveImageToInternalStorage(imageDisplayedOnScreen, context)
+                isSaved = ImageSaver().saveImageToInternalStorage(imageCopy, context)
             }
         } else {
             view.requestPermissionFromUser(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), SAVE_IMAGE_PERMISSION_REQUEST)
@@ -178,7 +180,6 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
                 val coroutineContext = context
                 launch(UI) {
                     bg { saveImageDisplayedToPhone(coroutineContext) }.await()
-                    rateApp()
                 }
             }
         }
@@ -195,6 +196,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
         launch(UI) {
             when (item.itemId) {
                 R.id.saveImage -> {
+                    rateApp()
                     bg { saveImageDisplayedToPhone(context) }.await()
                     interactor.analytics.logEvent(AnalyticsEvent.SAVE_IMAGE)
                     context.toast(context.getString(R.string.image_saved_toast))
@@ -239,5 +241,9 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
             easyGenerator.sampleImageWithoutImage().toByteArrayImage()
         }
         this.person = Person(faceImage, fullImageBit)
+    }
+
+    fun askToRateAppNextSave() {
+        interactor.settings.setAppOpenedAlready()
     }
 }
