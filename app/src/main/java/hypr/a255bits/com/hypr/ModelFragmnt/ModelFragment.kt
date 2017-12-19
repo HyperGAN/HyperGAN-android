@@ -29,7 +29,6 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     var pbFile: File? = null
     val presenter by inject<ModelFragmentPresenter>()
-//    val presenter by lazy { ModelFragmentPresenter(pbFile) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,10 +54,11 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
     }
 
     override fun rateApp() {
-        activity.alert("Rate Hypr", "What do you think about Hypr?") {
+        activity.alert("", "What do you think about Hypr?") {
             positiveButton("Rate Us!", {
                 presenter.openRateAppInPlayStore(context.packageName)
-
+            })
+            negativeButton("Maybe Later", {
             })
 
         }.show()
