@@ -1,5 +1,5 @@
 [{ 
-  "name": "expression",
+  "name": "Cat",
   "features": ["inline", "mask"],
   "file_size_in_bytes": 1024000000,
   "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
@@ -38,7 +38,7 @@
   }
 },
 { 
-  "name": "halloween",
+  "name": "Halloween",
   "features": ["mask"],
   "file_size_in_bytes": 2048000000,
   "price_in_cents": 1499,
