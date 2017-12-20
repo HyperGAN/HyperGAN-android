@@ -28,14 +28,25 @@ class WelcomeScreenAdapter(val generators: MutableList<BuyGenerator>, val contex
     }
 
     override fun onBindViewHolder(holder: CustomViewHolder?, position: Int) {
+        hideBuyButtonIfBought(position, holder?.buyButton)
         holder?.title?.text = generators[position].name
+        buyButtonClickListener(holder, position)
+        holder?.card?.setOnClickListener {EventBus.getDefault().post(position.toDouble()) }
+    }
+
+    private fun buyButtonClickListener(holder: CustomViewHolder?, position: Int) {
         holder?.buyButton?.setOnClickListener {
             context.alert("Would you like to buy this model?", "Hypr") {
                 positiveButton("Buy", { EventBus.getDefault().post(position) })
                 negativeButton { dismiss() }
             }.show()
         }
-        holder?.card?.setOnClickListener {EventBus.getDefault().post(position.toDouble()) }
+    }
+
+    private fun hideBuyButtonIfBought(position: Int, buyButton: Button?) {
+        if(generators[position].itemBought){
+            buyButton?.visibility = View.INVISIBLE
+        }
     }
 
     class CustomViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
