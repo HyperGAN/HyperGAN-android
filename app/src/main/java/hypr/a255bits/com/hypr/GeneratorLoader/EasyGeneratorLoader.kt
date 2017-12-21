@@ -8,7 +8,7 @@ import hypr.a255bits.com.hypr.ModelFragmnt.InlineImage
 import hypr.a255bits.com.hypr.Util.toBitmap
 import kotlin.properties.Delegates
 
-class EasyGeneratorLoader(var gen: Generator): GeneratorLoader() {
+class EasyGeneratorLoader(var gen: Generator) : GeneratorLoader() {
     var baseImage: Bitmap? = null
     var encoded: FloatArray? = null
     var mask: FloatArray by Delegates.vetoable(floatArrayOf()) { property, oldValue, newValue ->
@@ -17,19 +17,21 @@ class EasyGeneratorLoader(var gen: Generator): GeneratorLoader() {
     var direction: FloatArray? = null
     val inliner = InlineImage()
 
-    fun loadAssets(context: Context){
+    fun loadAssets(context: Context) {
         this.load(context.assets)
     }
 
     fun sampleImageWithImage(person: Person, image: Bitmap?, croppedPoint: Rect): Bitmap? {
         direction = this.random_z()
         val scaled = Bitmap.createScaledBitmap(image, generator?.generator?.output?.width!!, generator?.generator?.output?.height!!, false)
-
         baseImage = scaled
-        encoded = this.encode(scaled)
-
         mask = this.mask(scaled)
-        val image = this.sample(encoded!!, 0.0f, mask, direction!!, scaled).toBitmap(this.width, this.height)
+        val image = if (featureEnabled("encoding")) {
+            encoded = this.encode(scaled)
+            this.sample(encoded!!, 0.0f, mask, direction!!, scaled).toBitmap(this.width, this.height)
+        } else {
+            this.sample(direction!!, 0.0f, mask, direction!!, scaled).toBitmap(this.width, this.height)
+        }
         return inlineImage(person, image, croppedPoint)
     }
 
@@ -38,8 +40,14 @@ class EasyGeneratorLoader(var gen: Generator): GeneratorLoader() {
         mask = this.mask(scaled)
         val direction = this.random_z()
         baseImage = scaled
-        encoded = this.encode(scaled)
-        return this.sampleRandom(encoded!!, 0.0f, direction, mask, scaled)
+        val sample = if(featureEnabled("encoding")){
+            encoded = this.encode(scaled)
+            this.sampleRandom(encoded!!, 0.0f, direction, mask, scaled)
+
+        }else{
+            this.sampleRandom(direction, 0.0f, direction, mask, scaled)
+        }
+        return sample
     }
 
     fun sampleImageWithZValue(slider: Float): IntArray {
