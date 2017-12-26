@@ -7,6 +7,7 @@ import org.greenrobot.eventbus.EventBus
 
 class DashboardPresenter(val view: DashboardMVP.view) {
     var buyGenerators: MutableList<BuyGenerator> = mutableListOf()
+    var adapter: WelcomeScreenAdapter? = null
 
     fun displayListOfModels(generators: Array<Generator>, context: Context) {
         buyGenerators.clear()
@@ -15,7 +16,8 @@ class DashboardPresenter(val view: DashboardMVP.view) {
             buyGenerators.add(index, buyGenerator)
             isItemBought(generator, index)
         }
-        view.displayListOfModels(buyGenerators, WelcomeScreenAdapter(buyGenerators, context))
+        adapter = WelcomeScreenAdapter(buyGenerators, context)
+        view.displayListOfModels(buyGenerators, adapter!!)
     }
 
     fun isItemBought(generator: Generator, index: Int) {
@@ -25,6 +27,12 @@ class DashboardPresenter(val view: DashboardMVP.view) {
 
     fun unlockBoughtModel(index: Int) {
         buyGenerators[index].itemBought = true
+    }
+
+    fun startModelIfFullImageIsPresent(fullImage: String?, indexOfGenerator: Int?) {
+        if(fullImage != null){
+            EventBus.getDefault().post(indexOfGenerator?.toDouble())
+        }
     }
 
 }

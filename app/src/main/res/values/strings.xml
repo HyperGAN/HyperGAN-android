@@ -1,4 +1,8 @@
 <resources>
+    <string name="rate_dialog_title">Rate Hypr</string>
+
+    <string name="rate_dialog_message">If you enjoy Hypr , would you mind taking a moment to rate it? It won\'t take more than a minute. Thanks for your support!</string>
+
     <string name="app_name">hypr</string>
     <string name="choose_image">Choose Image</string>
     <string name="failed_face_detection">Face detection not working</string>

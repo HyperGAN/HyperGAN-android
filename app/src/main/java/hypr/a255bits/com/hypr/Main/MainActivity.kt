@@ -44,14 +44,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
+        presenter.listenForAppStartupForDecidingToRateAppPopup()
         setSupportActionBar(toolbar)
         MainApplication().onCreate()
+
         presenter.addModelsToNavBar(applicationContext)
         getInfoFromCameraActivity()
     }
 
     private fun getInfoFromCameraActivity() {
         presenter.isModelFragmentDisplayed = intent.hasExtra("indexInJson")
+        if(intent.hasExtra("onbackpressed")){
+            presenter.onBackPressed = intent.extras.getBoolean("onbackpressed")
+        }
         if (presenter.isModelFragmentDisplayed) {
             presenter.indexInJson = intent.extras.getInt("indexInJson")
             presenter.image = intent.extras.getString("image")
@@ -85,7 +90,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun goBackToMainActivity() {
-        intentFor<MainActivity>().start(applicationContext)
+        intentFor<MainActivity>("onbackpressed" to true ).start(applicationContext)
     }
 
     fun signinToGoogle(googleSignInClient: GoogleApiClient) {
@@ -102,13 +107,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val facesDetectedPointF = mutableListOf<PointF>()
             facesDetected?.forEach { item -> facesDetectedPointF.add(item as PointF) }
 
-            supportFragmentManager.beginTransaction().replace(R.id.container, MultiFaceFragment.newInstance(fullImage, facesDetectedPointF.toTypedArray())).commitAllowingStateLoss()
+            val transaction = supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.container, MultiFaceFragment.newInstance(fullImage, facesDetectedPointF.toTypedArray())).commitAllowingStateLoss()
+            transaction.addToBackStack(null)
         }
     }
 
     override fun displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>) {
         val fragment: Fragment = WelcomeScreen.newInstance(generators, "")
-        supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.container, fragment).commit()
+        transaction.addToBackStack(null)
         presenter.startModel(0)
     }
 
@@ -117,7 +126,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun startMultipleModels(multiModels: DashboardFragment) {
-        supportFragmentManager.beginTransaction().replace(R.id.container, multiModels).commit()
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.container, multiModels).commit()
+        transaction.addToBackStack(null)
     }
 
     override fun displayBackButton() {
@@ -201,7 +212,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val hasBought = presenter.interactor.hasBoughtItem(presenter.interactor.listOfGenerators?.get(position.toInt())?.google_play_id!!)
         if (hasBought) {
             val modelFragment = presenter.getModelFragment(position.toInt())
-            supportFragmentManager.beginTransaction().replace(R.id.container, modelFragment).addToBackStack("model").commit()
+            val transaction = supportFragmentManager.beginTransaction()
+//            transaction.replace(R.id.container, modelFragment).addToBackStack("model").commit()
+            transaction.replace(R.id.container, modelFragment).addToBackStack("model").commit()
+            transaction.addToBackStack(null)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }else{
             presenter.buyModel(presenter.interactor.listOfGenerators?.get(position.toInt())?.google_play_id!!, position.toInt())

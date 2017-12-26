@@ -7,7 +7,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import com.pawegio.kandroid.onProgressChanged
+import hotchemi.android.rate.AppRate
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
+import hypr.a255bits.com.hypr.DependencyInjection.GeneratorModule
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.negative1To1
@@ -18,7 +20,6 @@ import org.jetbrains.anko.alert
 import org.jetbrains.anko.cancelButton
 import org.jetbrains.anko.intentFor
 import org.koin.android.contextaware.ContextAwareFragment
-import org.koin.android.ext.android.inject
 import java.io.File
 
 
@@ -28,13 +29,11 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
         get() = "generator"
 
     var pbFile: File? = null
-    val presenter by inject<ModelFragmentPresenter>()
+    val presenter by lazy{ModelFragmentPresenter(GeneratorModule().getGeneratorLoader())}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fragmentManager.addOnBackStackChangedListener {
-
-        }
+        AppRate.showRateDialogIfMeetsConditions(activity)
         presenter.setInteractors(ModelInteractor(context))
         presenter.setViews(this)
         presenter.easyGenerator.loadAssets(context)
@@ -54,14 +53,16 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
     }
 
     override fun rateApp() {
-        activity.alert("", "What do you think about Hypr?") {
-            positiveButton("Rate Us!", {
-                presenter.openRateAppInPlayStore(context.packageName)
-            })
-            negativeButton("Maybe Later", {
-            })
+        AppRate.showRateDialogIfMeetsConditions(activity);
 
-        }.show()
+//        activity.alert("", "What do you think about Hypr?") {
+//            positiveButton("Rate Us!", {
+//                presenter.openRateAppInPlayStore(context.packageName)
+//            })
+//            negativeButton("Maybe Later", {
+//            })
+//
+//        }.show()
     }
 
     override fun openRateAppInPlayStore(marketLink: Uri?, playStoreLink: Uri) {
@@ -143,6 +144,7 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
         super.onDetach()
         presenter.disconnectFaceDetector()
     }
+
 
     override fun displayFocusedImage(imageFromGallery: Bitmap?) {
         imageFromGallery.let { focusedImage.setImageBitmap(it) }
