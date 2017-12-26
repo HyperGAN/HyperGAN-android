@@ -42,6 +42,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     lateinit var view: ModelFragmentMVP.view
     lateinit var interactor: ModelInteractor
     var generatorLaunch: Job? = null
+    private var imageManipulatedFromzValue: Bitmap? = null
 
     fun loadGenerator(context: Context, pbFile: File?) {
         generatorLaunch = launch(UI) {
@@ -129,10 +130,10 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     override fun saveImageDisplayedToPhone(context: Context): Boolean {
         var isSaved = false
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            val imageCopy = Bitmap.createScaledBitmap(imageDisplayedOnScreen, imageDisplayedOnScreen!!.width, imageDisplayedOnScreen!!.height, false)
+            val faceImage = person.faceImage?.toBitmap()
+            val imageCopy = faceImage?.copy(faceImage.config, true);
             if (imageDisplayedOnScreen != null) {
-                val inlineImage = inlineImage(person, imageCopy)
-                val waterMarkImage = interactor.placeWatermarkOnImage(inlineImage)
+                val waterMarkImage = interactor.placeWatermarkOnImage(imageDisplayedOnScreen)
                 isSaved = ImageSaver().saveImageToInternalStorage(waterMarkImage, context)
 
             } else {
@@ -227,8 +228,10 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
         return ganImage.toBitmap(easyGenerator.width, easyGenerator.height)
     }
 
+
     fun changeGanImageFromSlider(ganValue: Double) {
         val imageManipluatedFromZValue = manipulateZValueInImage(ganValue)
+        imageManipulatedFromzValue = imageManipluatedFromZValue
         val imagePlacedInsideFullImage = imageManipluatedFromZValue?.let { inlineImage(person, it) }
         view.displayFocusedImage(imagePlacedInsideFullImage)
     }
