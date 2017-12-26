@@ -15,6 +15,7 @@ import hypr.a255bits.com.hypr.GeneratorLoader.FaceLocation
 import hypr.a255bits.com.hypr.GeneratorLoader.Person
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.*
+import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.coroutines.experimental.bg
@@ -40,9 +41,10 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     lateinit var person: Person
     lateinit var view: ModelFragmentMVP.view
     lateinit var interactor: ModelInteractor
+    var generatorLaunch: Job? = null
 
     fun loadGenerator(context: Context, pbFile: File?) {
-        launch(UI) {
+        generatorLaunch = launch(UI) {
             val imageBitmap = bg {
                 loadGenerator(pbFile, context.assets)
                 val bitmap = person.fullImage.toBitmap()
@@ -73,6 +75,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     }
     override fun disconnectFaceDetector() {
         interactor.faceDetection.release()
+        generatorLaunch?.cancel()
     }
 
     override fun readImageToBytes(imagePath: String?): ByteArray? {

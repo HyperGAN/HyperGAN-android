@@ -13,6 +13,7 @@ import hypr.a255bits.com.hypr.Util.AnalyticsEvent
 import hypr.a255bits.com.hypr.Util.ImageSaver
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabResult
 import hypr.a255bits.com.hypr.Util.SettingsHelper
+import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.toast
@@ -35,6 +36,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     var image: String? = null
     var fullImage: String? = null
     val settingsHelper = SettingsHelper(context)
+    var addModel: Job?  = null
 
     init {
         interactor.presenter = this
@@ -138,7 +140,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
 
     override fun addModelsToNavBar(applicationContext: Context) {
-        launch(UI) {
+        addModel = launch(UI) {
             val generators = interactor.getGeneratorsFromNetwork(applicationContext).await()
             saveGeneratorInfo(generators)
             buyGenerators = mutableListOf()
@@ -170,6 +172,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     fun stop() {
         dashboard = null
+        addModel?.cancel()
     }
 
 

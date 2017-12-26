@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.*
 import com.pawegio.kandroid.onProgressChanged
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
+import hypr.a255bits.com.hypr.DependencyInjection.GeneratorModule
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.negative1To1
@@ -18,7 +19,6 @@ import org.jetbrains.anko.alert
 import org.jetbrains.anko.cancelButton
 import org.jetbrains.anko.intentFor
 import org.koin.android.contextaware.ContextAwareFragment
-import org.koin.android.ext.android.inject
 import java.io.File
 
 
@@ -28,7 +28,7 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
         get() = "generator"
 
     var pbFile: File? = null
-    val presenter by inject<ModelFragmentPresenter>()
+    val presenter by lazy{ModelFragmentPresenter(GeneratorModule().getGeneratorLoader())}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -143,6 +143,7 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
         super.onDetach()
         presenter.disconnectFaceDetector()
     }
+
 
     override fun displayFocusedImage(imageFromGallery: Bitmap?) {
         imageFromGallery.let { focusedImage.setImageBitmap(it) }

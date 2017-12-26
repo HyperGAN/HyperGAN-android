@@ -102,13 +102,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val facesDetectedPointF = mutableListOf<PointF>()
             facesDetected?.forEach { item -> facesDetectedPointF.add(item as PointF) }
 
-            supportFragmentManager.beginTransaction().replace(R.id.container, MultiFaceFragment.newInstance(fullImage, facesDetectedPointF.toTypedArray())).commitAllowingStateLoss()
+            val transaction = supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.container, MultiFaceFragment.newInstance(fullImage, facesDetectedPointF.toTypedArray())).commitAllowingStateLoss()
+            transaction.addToBackStack(null)
         }
     }
 
     override fun displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>) {
         val fragment: Fragment = WelcomeScreen.newInstance(generators, "")
-        supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.container, fragment).commit()
+        transaction.addToBackStack(null)
         presenter.startModel(0)
     }
 
@@ -117,7 +121,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun startMultipleModels(multiModels: DashboardFragment) {
-        supportFragmentManager.beginTransaction().replace(R.id.container, multiModels).commit()
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.container, multiModels).commit()
+        transaction.addToBackStack(null)
     }
 
     override fun displayBackButton() {
@@ -201,7 +207,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val hasBought = presenter.interactor.hasBoughtItem(presenter.interactor.listOfGenerators?.get(position.toInt())?.google_play_id!!)
         if (hasBought) {
             val modelFragment = presenter.getModelFragment(position.toInt())
-            supportFragmentManager.beginTransaction().replace(R.id.container, modelFragment).addToBackStack("model").commit()
+            val transaction = supportFragmentManager.beginTransaction()
+//            transaction.replace(R.id.container, modelFragment).addToBackStack("model").commit()
+            transaction.replace(R.id.container, modelFragment).addToBackStack("model").commit()
+            transaction.addToBackStack(null)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }else{
             presenter.buyModel(presenter.interactor.listOfGenerators?.get(position.toInt())?.google_play_id!!, position.toInt())
