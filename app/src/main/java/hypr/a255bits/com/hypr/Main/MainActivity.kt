@@ -52,6 +52,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun getInfoFromCameraActivity() {
         presenter.isModelFragmentDisplayed = intent.hasExtra("indexInJson")
+        if(intent.hasExtra("onbackpressed")){
+            presenter.onBackPressed = intent.extras.getBoolean("onbackpressed")
+        }
         if (presenter.isModelFragmentDisplayed) {
             presenter.indexInJson = intent.extras.getInt("indexInJson")
             presenter.image = intent.extras.getString("image")
@@ -85,7 +88,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun goBackToMainActivity() {
-        intentFor<MainActivity>().start(applicationContext)
+        intentFor<MainActivity>("onbackpressed" to true ).start(applicationContext)
     }
 
     fun signinToGoogle(googleSignInClient: GoogleApiClient) {

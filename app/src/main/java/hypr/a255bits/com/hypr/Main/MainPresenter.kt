@@ -36,7 +36,8 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     var image: String? = null
     var fullImage: String? = null
     val settingsHelper = SettingsHelper(context)
-    var addModel: Job?  = null
+    var addModel: Job? = null
+    var onBackPressed: Boolean? = false
 
     init {
         interactor.presenter = this
@@ -86,7 +87,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             view.buyModelPopup(skus, interactor.billingHelper, generatorIndex)
         } else if (interactor.hasBoughtItem(skus)) {
             context.toast("You already bought this item.")
-        }else{
+        } else {
             signInToGoogle(interactor.googleSignInClient.client)
         }
     }
@@ -118,9 +119,16 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
     private fun displayMultiModels(itemId: Int, imageLocationPath: String?, listOfGenerators: List<Generator>?) {
-        val multiModel = DashboardFragment.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray(), fullImage)
-        this.dashboard = multiModel
-        view.startMultipleModels(multiModel)
+        if (onBackPressed == false) {
+
+            val multiModel = DashboardFragment.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray(), fullImage, false)
+            this.dashboard = multiModel
+            view.startMultipleModels(multiModel)
+        }else{
+            val multiModel = DashboardFragment.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray(), fullImage, true)
+            this.dashboard = multiModel
+            view.startMultipleModels(multiModel)
+        }
     }
 
     fun saveImageSoOtherFragmentCanViewIt(image: ByteArray?): File {

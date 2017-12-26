@@ -18,7 +18,8 @@ class DashboardFragment : Fragment(), DashboardMVP.view {
     private var pathToGenerators: Array<String?> = arrayOf()
     private var image: String? = null
     private var fullImage: String? = null
-    val presenter by lazy{DashboardPresenter(this)}
+    val presenter by lazy { DashboardPresenter(this) }
+    var isBackPressed: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,12 +29,15 @@ class DashboardFragment : Fragment(), DashboardMVP.view {
             image = arguments.getString(PATH_TO_IMAGE)
             fullImage = arguments.getString(PATH_TO_FULL_IMAGE)
             pathToGenerators = arguments.getStringArray(PATH_TO_GENERATORS)
+            isBackPressed = arguments.getBoolean(IS_BACK_PRESS)
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        presenter.startModelIfFullImageIsPresent(fullImage, indexOfGenerator)
+        if (isBackPressed == false) {
+            presenter.startModelIfFullImageIsPresent(fullImage, indexOfGenerator)
+        }
         return inflater!!.inflate(R.layout.fragment_dashboard, container, false)
     }
 
@@ -54,8 +58,9 @@ class DashboardFragment : Fragment(), DashboardMVP.view {
         private val PATH_TO_IMAGE: String? = "pathtoImage"
         private val PATH_TO_GENERATORS: String? = "pathtoGenerator"
         private val PATH_TO_FULL_IMAGE: String = "pathtofullimage"
+        private val IS_BACK_PRESS: String = "isbackpress"
 
-        fun newInstance(generators: List<Generator>?, indexOfGenerator: Int, pathToImage: String?, generatorPaths: Array<String>, fullImage: String?): DashboardFragment {
+        fun newInstance(generators: List<Generator>?, indexOfGenerator: Int, pathToImage: String?, generatorPaths: Array<String>, fullImage: String?, onBackPressed: Boolean): DashboardFragment {
             val fragment = DashboardFragment()
             val args = Bundle()
             args.putParcelableArray(GENERATORS, generators?.toTypedArray())
@@ -63,6 +68,7 @@ class DashboardFragment : Fragment(), DashboardMVP.view {
             args.putString(PATH_TO_IMAGE, pathToImage)
             args.putStringArray(PATH_TO_GENERATORS, generatorPaths)
             args.putString(PATH_TO_FULL_IMAGE, fullImage)
+            args.putBoolean(IS_BACK_PRESS, onBackPressed)
             fragment.arguments = args
             return fragment
         }
