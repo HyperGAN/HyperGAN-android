@@ -183,5 +183,9 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         addModel?.cancel()
     }
 
+    fun listenForAppStartupForDecidingToRateAppPopup() {
+        interactor.rateAppIfMeetConditions()
+    }
+
 
 }

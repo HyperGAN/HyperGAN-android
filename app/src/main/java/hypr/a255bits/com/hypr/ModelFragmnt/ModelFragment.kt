@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import com.pawegio.kandroid.onProgressChanged
+import hotchemi.android.rate.AppRate
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
 import hypr.a255bits.com.hypr.DependencyInjection.GeneratorModule
 import hypr.a255bits.com.hypr.Generator.Generator
@@ -32,9 +33,7 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fragmentManager.addOnBackStackChangedListener {
-
-        }
+        AppRate.showRateDialogIfMeetsConditions(activity)
         presenter.setInteractors(ModelInteractor(context))
         presenter.setViews(this)
         presenter.easyGenerator.loadAssets(context)
@@ -54,14 +53,16 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
     }
 
     override fun rateApp() {
-        activity.alert("", "What do you think about Hypr?") {
-            positiveButton("Rate Us!", {
-                presenter.openRateAppInPlayStore(context.packageName)
-            })
-            negativeButton("Maybe Later", {
-            })
+        AppRate.showRateDialogIfMeetsConditions(activity);
 
-        }.show()
+//        activity.alert("", "What do you think about Hypr?") {
+//            positiveButton("Rate Us!", {
+//                presenter.openRateAppInPlayStore(context.packageName)
+//            })
+//            negativeButton("Maybe Later", {
+//            })
+//
+//        }.show()
     }
 
     override fun openRateAppInPlayStore(marketLink: Uri?, playStoreLink: Uri) {

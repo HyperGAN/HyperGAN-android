@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.google.firebase.storage.FileDownloadTask
 import com.google.firebase.storage.FirebaseStorage
+import hotchemi.android.rate.AppRate
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.Network.ModelDownloader
 import hypr.a255bits.com.hypr.R
@@ -17,6 +18,8 @@ import kotlinx.coroutines.experimental.async
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.coroutines.experimental.bg
 import java.io.File
+
+
 
 class MainInteractor(val context: Context) : MainMvp.interactor {
 
@@ -91,5 +94,19 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
             this@MainInteractor.listOfGenerators = listOfGenerators
             return@async listOfGenerators
         }
+    }
+
+    fun rateAppIfMeetConditions() {
+        AppRate.with(context)
+                .setInstallDays(0) // default 10, 0 means install day.
+                .setLaunchTimes(3) // default 10
+                .setRemindInterval(2) // default 1
+                .setShowLaterButton(true) // default true
+                .setDebug(false) // default false
+                .setOnClickButtonListener { which ->
+                    // callback listener.
+                    Log.d(MainActivity::class.java.name, Integer.toString(which))
+                }
+                .monitor()
     }
 }
