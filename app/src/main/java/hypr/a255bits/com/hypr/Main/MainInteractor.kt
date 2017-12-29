@@ -98,13 +98,12 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
 
     fun rateAppIfMeetConditions() {
         AppRate.with(context)
-                .setInstallDays(0) // default 10, 0 means install day.
-                .setLaunchTimes(3) // default 10
-                .setRemindInterval(2) // default 1
-                .setShowLaterButton(true) // default true
-                .setDebug(false) // default false
+                .setInstallDays(0)
+                .setLaunchTimes(3)
+                .setRemindInterval(2)
+                .setShowLaterButton(true)
+                .setDebug(false)
                 .setOnClickButtonListener { which ->
-                    // callback listener.
                     Log.d(MainActivity::class.java.name, Integer.toString(which))
                 }
                 .monitor()
