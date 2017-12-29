@@ -11,7 +11,6 @@ import hypr.a255bits.com.hypr.Util.*
 
 class CameraPresenter(val view: CameraMVP.view, val context: Context) : CameraMVP.presenter {
 
-    val interactor: CameraInteractor by lazy { CameraInteractor(context) }
     val analytics = Analytics(context)
     val faceDetection = FaceDetection(context)
     override fun sendPictureToModel(jpeg: ByteArray?) {

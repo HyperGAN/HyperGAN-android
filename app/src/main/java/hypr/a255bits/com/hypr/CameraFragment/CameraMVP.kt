@@ -22,5 +22,4 @@ interface CameraMVP{
         fun getImageFromImageFileLocation(imageLocation: Uri)
         fun displayGallery()
     }
-    interface interactor
 }
