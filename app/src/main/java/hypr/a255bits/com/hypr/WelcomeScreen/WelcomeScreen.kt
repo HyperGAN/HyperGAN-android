@@ -1,6 +1,5 @@
 package hypr.a255bits.com.hypr.WelcomeScreen
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -37,14 +36,6 @@ class WelcomeScreen : Fragment() {
 //        recyclerView.layoutManager = LinearLayoutManager(activity)
 //        val adapter = buyGenerators?.let { WelcomeScreenAdapter(it) }
 //        recyclerView.adapter = adapter
-    }
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-    }
-
-    override fun onDetach() {
-        super.onDetach()
     }
 
     companion object {

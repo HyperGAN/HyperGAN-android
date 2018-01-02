@@ -131,7 +131,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
         var isSaved = false
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             val faceImage = person.faceImage?.toBitmap()
-            val imageCopy = faceImage?.copy(faceImage.config, true);
+            val imageCopy = faceImage?.copy(faceImage.config, true)
             if (imageDisplayedOnScreen != null) {
                 val waterMarkImage = interactor.placeWatermarkOnImage(imageDisplayedOnScreen)
                 isSaved = ImageSaver().saveImageToInternalStorage(waterMarkImage, context)

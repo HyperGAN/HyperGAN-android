@@ -11,15 +11,14 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.SparseArray
 import com.google.android.gms.vision.face.Face
+import com.pawegio.kandroid.BuildConfig
 import com.pawegio.kandroid.fromApi
+import com.pawegio.kandroid.start
 import hypr.a255bits.com.hypr.GeneratorLoader.FaceLocation
 import hypr.a255bits.com.hypr.Util.Analytics
 import hypr.a255bits.com.hypr.Util.FaceDetection
 import hypr.a255bits.com.hypr.Util.SettingsHelper
 import java.io.IOException
-import android.support.v4.content.ContextCompat.startActivity
-import com.pawegio.kandroid.BuildConfig
-import com.pawegio.kandroid.start
 
 
 class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {

@@ -1,6 +1,5 @@
 package hypr.a255bits.com.hypr.MultiFaceSelection
 
-import android.content.Context
 import android.graphics.*
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -67,13 +66,6 @@ class MultiFaceFragment : Fragment(), MultiFaceMVP.view, DrawableImageViewTouchI
 
     override fun displayImageWithFaces(imageOfPeople: Bitmap) {
         drawableImageView.bitmap = imageOfPeople
-    }
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-    }
-
-    override fun onDetach() {
-        super.onDetach()
     }
 
     companion object {

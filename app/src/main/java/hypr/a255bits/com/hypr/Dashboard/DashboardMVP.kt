@@ -8,8 +8,5 @@ interface DashboardMVP{
         fun displayListOfModels(buyGenerators: MutableList<BuyGenerator>, welcomeScreenAdapter: WelcomeScreenAdapter)
 
     }
-    interface presenter{
-
-    }
 
 }
