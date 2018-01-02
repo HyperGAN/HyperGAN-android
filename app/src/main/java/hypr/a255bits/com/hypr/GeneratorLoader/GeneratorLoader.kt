@@ -7,7 +7,7 @@ import hypr.a255bits.com.hypr.Generator.Generator
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface
 import java.io.File
 
-open class GeneratorLoader() {
+open class GeneratorLoader {
     lateinit var inference: TensorFlowInferenceInterface
     val PB_FILE_PATH: String = "file:///android_asset/generators/expression-model.pb" // TODO generator['model_url']
 

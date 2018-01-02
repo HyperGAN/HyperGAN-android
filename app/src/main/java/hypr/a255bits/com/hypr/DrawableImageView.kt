@@ -46,7 +46,7 @@ open class DrawableImageView(context: Context?, attrs: AttributeSet?) : ImageVie
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        faceLocation.forEachIndexed() { i, faceLocation ->
+        faceLocation.forEachIndexed { i, faceLocation ->
             if(faceLocation.contains(event?.x!!.toInt(), event.y.toInt())){
                 bitmap?.let { boundsListener?.onBoundsTouch(it, i) }
             }

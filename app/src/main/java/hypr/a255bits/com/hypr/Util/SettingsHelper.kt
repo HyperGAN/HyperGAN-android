@@ -11,21 +11,20 @@ class SettingsHelper(val context: Context) {
     val RESTORE_MODEL_FULL_IMAGE = "restoreFullImage"
     val FIRST_TIME_SAVE = "firstTimeSave"
     val preference: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-    val editor: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     fun isFirstTimeOpenedApp(): Boolean {
         return preference.getBoolean(FIRST_TIME_OPENED, true)
     }
 
     fun setAppOpenedAlready() {
-        editor.edit().putBoolean(FIRST_TIME_OPENED, false).apply()
+        preference.edit().putBoolean(FIRST_TIME_OPENED, false).apply()
     }
 
     fun setModelImagePath(filePath: String) {
-        editor.edit().putString(RESTORE_MODEL_IMAGE, filePath).apply()
+        preference.edit().putString(RESTORE_MODEL_IMAGE, filePath).apply()
     }
     fun setFullImagePath(filePath: String){
-        editor.edit().putString(RESTORE_MODEL_FULL_IMAGE, filePath).apply()
+        preference.edit().putString(RESTORE_MODEL_FULL_IMAGE, filePath).apply()
     }
 
     fun isModelImageRestoreable(): Boolean {
@@ -41,7 +40,7 @@ class SettingsHelper(val context: Context) {
     }
 
     fun saveFaceLocation(face: Rect) {
-            val edit = editor.edit()
+            val edit = preference.edit()
             edit.putFloat("face_x", face.centerX().toFloat())
             edit.putFloat("face_y", face.centerY().toFloat())
             edit.putFloat("face_width", face.width().toFloat())
@@ -58,7 +57,7 @@ class SettingsHelper(val context: Context) {
     }
 
     fun setFaceIndex(index: Int) {
-        val edit = editor.edit()
+        val edit = preference.edit()
         edit.putInt("index", index)
         edit.apply()
     }
@@ -70,7 +69,7 @@ class SettingsHelper(val context: Context) {
         return preference.getBoolean(FIRST_TIME_SAVE, true)
     }
     fun setSavedImage(){
-       val edit = editor.edit()
+       val edit = preference.edit()
         edit.putBoolean(FIRST_TIME_SAVE, false)
         edit.apply()
     }

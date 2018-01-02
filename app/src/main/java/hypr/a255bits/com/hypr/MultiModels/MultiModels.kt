@@ -1,6 +1,5 @@
 package hypr.a255bits.com.hypr.MultiModels
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -64,14 +63,6 @@ class MultiModels : Fragment(), MultiMvp.view {
             adapter?.addControlNamesToToolbar(adapter.generators[position])
         }
         sliding_tabs.setupWithViewPager(viewpager)
-    }
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-    }
-
-    override fun onDetach() {
-        super.onDetach()
     }
 
     companion object {

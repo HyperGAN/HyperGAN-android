@@ -48,12 +48,8 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
         return inflater!!.inflate(R.layout.fragment_model, container, false)
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
     override fun rateApp() {
-        AppRate.showRateDialogIfMeetsConditions(activity);
+        AppRate.showRateDialogIfMeetsConditions(activity)
 
 //        activity.alert("", "What do you think about Hypr?") {
 //            positiveButton("Rate Us!", {

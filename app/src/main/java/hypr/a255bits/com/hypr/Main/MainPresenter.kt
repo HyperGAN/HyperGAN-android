@@ -66,8 +66,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun getModelFragment(position: Int): ModelFragment? {
         val generator = interactor.listOfGenerators?.get(position)
         val modelPbFile = File(modelFileNames[position])
-        val fragment = generator?.let { ModelFragment.newInstance(it, image, modelPbFile, position, fullImage) }
-        return fragment
+        return generator?.let { ModelFragment.newInstance(it, image, modelPbFile, position, fullImage) }
     }
 
     override fun createGeneratorLoader(fileName: String, itemId: Int) {
