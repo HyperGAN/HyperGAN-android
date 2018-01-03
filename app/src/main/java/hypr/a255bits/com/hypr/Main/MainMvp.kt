@@ -25,6 +25,7 @@ interface MainMvp {
         fun  buyModelPopup(skus: String, billingHelper: IabHelper?, generatorIndex: Int)
         fun goBackToMainActivity()
         fun  displayBackButton()
+        fun startFragment(fragmentTransaction: android.support.v4.app.FragmentTransaction)
 
     }
 

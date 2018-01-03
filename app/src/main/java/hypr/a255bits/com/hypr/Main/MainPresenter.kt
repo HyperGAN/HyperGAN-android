@@ -38,6 +38,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     val settingsHelper = SettingsHelper(context)
     var addModel: Job? = null
     var onBackPressed: Boolean? = false
+    var isDoneLoading = false
 
     init {
         interactor.presenter = this
@@ -123,7 +124,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             val multiModel = DashboardFragment.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray(), fullImage, false)
             this.dashboard = multiModel
             view.startMultipleModels(multiModel)
-        }else{
+        } else {
             val multiModel = DashboardFragment.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray(), fullImage, true)
             this.dashboard = multiModel
             view.startMultipleModels(multiModel)
@@ -156,6 +157,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             } else {
                 view.displayGeneratorsOnHomePage(buyGenerators)
             }
+            isDoneLoading = true
         }
     }
 
@@ -184,6 +186,12 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     fun listenForAppStartupForDecidingToRateAppPopup() {
         interactor.rateAppIfMeetConditions()
+    }
+
+    fun startFragment(fragmentTransaction: android.support.v4.app.FragmentTransaction) {
+        if (isDoneLoading) {
+            view.startFragment(fragmentTransaction)
+        }
     }
 
 

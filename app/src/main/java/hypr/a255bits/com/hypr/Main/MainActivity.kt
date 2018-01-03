@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun getInfoFromCameraActivity() {
         presenter.isModelFragmentDisplayed = intent.hasExtra("indexInJson")
-        if(intent.hasExtra("onbackpressed")){
+        if (intent.hasExtra("onbackpressed")) {
             presenter.onBackPressed = intent.extras.getBoolean("onbackpressed")
         }
         if (presenter.isModelFragmentDisplayed) {
@@ -73,6 +73,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         presenter.onOptionsItemSelected(item)
         return super.onOptionsItemSelected(item)
     }
+    override fun startFragment(fragmentTransaction: android.support.v4.app.FragmentTransaction) {
+        fragmentTransaction.commit()
+    }
 
     override fun buyModelPopup(skus: String, billingHelper: IabHelper?, generatorIndex: Int) {
         billingHelper?.launchPurchaseFlow(this, skus, 1001, { result, info ->
@@ -90,7 +93,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun goBackToMainActivity() {
-        intentFor<MainActivity>("onbackpressed" to true ).start(applicationContext)
+        intentFor<MainActivity>("onbackpressed" to true).clearTop().start(applicationContext)
     }
 
     fun signinToGoogle(googleSignInClient: GoogleApiClient) {
@@ -116,7 +119,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>) {
         val fragment: Fragment = WelcomeScreen.newInstance(generators, "")
         val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.container, fragment).commit()
+        val fragTrans = transaction.replace(R.id.container, fragment).commitAllowingStateLoss()
         transaction.addToBackStack(null)
         presenter.startModel(0)
     }
@@ -127,7 +130,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun startMultipleModels(multiModels: DashboardFragment) {
         val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.container, multiModels).commit()
+        transaction.replace(R.id.container, multiModels).commitAllowingStateLoss()
         transaction.addToBackStack(null)
     }
 
@@ -149,15 +152,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         progressDownloadingModel?.show()
 
     }
-
-    override fun onBackPressed() {
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
-    }
-
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         presenter.onNavigationItemSelected(item)
@@ -209,17 +203,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @Subscribe
     fun startModelFragment(position: java.lang.Double) {
-        val hasBought = presenter.interactor.hasBoughtItem(presenter.interactor.listOfGenerators?.get(position.toInt())?.google_play_id!!)
-        if (hasBought) {
-            val modelFragment = presenter.getModelFragment(position.toInt())
-            val transaction = supportFragmentManager.beginTransaction()
-//            transaction.replace(R.id.container, modelFragment).addToBackStack("model").commit()
-            transaction.replace(R.id.container, modelFragment).addToBackStack("model").commit()
-            transaction.addToBackStack(null)
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        }else{
-            presenter.buyModel(presenter.interactor.listOfGenerators?.get(position.toInt())?.google_play_id!!, position.toInt())
-        }
+            val hasBought = presenter.interactor.hasBoughtItem(presenter.interactor.listOfGenerators?.get(position.toInt())?.google_play_id!!)
+            if (hasBought) {
+                val modelFragment = presenter.getModelFragment(position.toInt())
+                val transaction = supportFragmentManager.beginTransaction()
+                val fragmentTransaction = transaction.replace(R.id.container, modelFragment).addToBackStack("model")
+                presenter.startFragment(fragmentTransaction)
+                transaction.addToBackStack(null)
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            } else {
+                presenter.buyModel(presenter.interactor.listOfGenerators?.get(position.toInt())?.google_play_id!!, position.toInt())
+            }
     }
 
     override fun closeDownloadingModelDialog() {
