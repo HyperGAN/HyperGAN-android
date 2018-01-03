@@ -29,17 +29,21 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
         get() = "generator"
 
     var pbFile: File? = null
-    val presenter by lazy{ModelFragmentPresenter(GeneratorModule().getGeneratorLoader())}
+    val presenter by lazy { ModelFragmentPresenter(GeneratorModule().getGeneratorLoader()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AppRate.showRateDialogIfMeetsConditions(activity)
         presenter.setInteractors(ModelInteractor(context))
         presenter.setViews(this)
         presenter.easyGenerator.loadAssets(context)
         if (arguments != null) {
             presenter.getInfoFromFragmentCreation(arguments)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        AppRate.showRateDialogIfMeetsConditions(activity)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
@@ -136,14 +140,13 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onDetach() {
-        super.onDetach()
+    override fun onStop() {
+        super.onStop()
         presenter.disconnectFaceDetector()
     }
 
-
     override fun displayFocusedImage(imageFromGallery: Bitmap?) {
-        imageFromGallery.let { focusedImage.setImageBitmap(it) }
+        focusedImage.let { imageFromGallery.let { focusedImage.setImageBitmap(it) } }
         loadingIcon.hide()
     }
 
