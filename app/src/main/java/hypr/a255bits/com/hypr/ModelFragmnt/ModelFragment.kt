@@ -43,7 +43,6 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     override fun onResume() {
         super.onResume()
-        AppRate.showRateDialogIfMeetsConditions(activity)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
