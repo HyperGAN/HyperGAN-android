@@ -60,7 +60,8 @@ class MultiFaceFragment : Fragment(), MultiFaceMVP.view, DrawableImageViewTouchI
         val paint = Paint()
         paint.color = Color.RED
         paint.style = Paint.Style.STROKE
-        paint.strokeWidth = resolution * 0.0023f
+//        paint.strokeWidth = resolution * 0.0023f
+        paint.strokeWidth = 1f
         canvasImageWithFaces.drawRect(rect, paint)
     }
 
