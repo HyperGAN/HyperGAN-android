@@ -4,6 +4,7 @@
   "file_size_in_bytes": 1024000000,
   "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
   "google_play_id": "",
+  "image": "cat",
   "generator" : {
     "viewer":{
       "type": "FaceViewer",
@@ -43,6 +44,7 @@
   "file_size_in_bytes": 2048000000,
   "price_in_cents": 1499,
   "google_play_id": "com.halloween",
+  "image": "halloween",
   "generator" : {
     "viewer":{
       "type": "FaceViewer",

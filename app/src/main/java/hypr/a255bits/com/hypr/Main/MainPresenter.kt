@@ -164,7 +164,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     private fun saveGeneratorInfo(generators: List<Generator>?) {
         buyGenerators = mutableListOf()
         generators?.forEachIndexed { index, generator ->
-            val buyGenerator = BuyGenerator(generator.name)
+            val buyGenerator = BuyGenerator(generator.name, generator.image)
             buyGenerators.add(buyGenerator)
         }
     }

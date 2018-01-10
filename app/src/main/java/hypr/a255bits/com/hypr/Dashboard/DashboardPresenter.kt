@@ -12,7 +12,7 @@ class DashboardPresenter(val view: DashboardMVP.view) {
     fun displayListOfModels(generators: Array<Generator>, context: Context) {
         buyGenerators.clear()
         generators.forEachIndexed { index, generator ->
-            val buyGenerator = BuyGenerator(generator.name)
+            val buyGenerator = BuyGenerator(generator.name, generator.image)
             buyGenerators.add(index, buyGenerator)
             isItemBought(generator, index)
         }
