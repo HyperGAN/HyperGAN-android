@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun popupSigninGoogle(googleSignInClient: GoogleApiClient) {
-        alert("Would you like to sign into Google?", "sign into Google") {
+        alert(getString(R.string.google_signin_message), getString(R.string.google_signin_title)) {
             okButton { signinToGoogle(googleSignInClient) }
             cancelButton { dialog ->
                 dialog.dismiss()
@@ -145,7 +145,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun displayModelDownloadProgress() {
-        progressDownloadingModel = progressDialog("Downloading Model") {
+        progressDownloadingModel = progressDialog(getString(R.string.downloading_model_message)) {
             setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
             max = 100
         }
