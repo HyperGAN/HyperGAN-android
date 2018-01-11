@@ -146,12 +146,9 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     }
 
     fun inlineImage(person: Person, newCroppedImage: Bitmap): Bitmap? {
-        val fullImage = person.fullImage
         val faceImage = person.faceImage?.toBitmap()
         val image: Bitmap? = if (faceImage != null) {
             easyGenerator.inlineImage(person, newCroppedImage, interactor.settings.getFaceLocation())
-//            inliner.setBeforeAfterCropSizingRatio(faceImage, newCroppedImage)
-//            fullImage.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(newCroppedImage, it, croppedPoint) }
         } else {
             newCroppedImage
         }

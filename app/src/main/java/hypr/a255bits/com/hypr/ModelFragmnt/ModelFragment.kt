@@ -111,7 +111,7 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     private fun lockLayoutClickListener() {
         lockLayout.setOnClickListener {
-            activity.alert("Would you like to buy this model?", "Hypr") {
+            activity.alert(getString(R.string.buy_model_popup_message), "Hypr") {
                 positiveButton("Buy", { EventBus.getDefault().post(presenter.generatorIndex) })
                 cancelButton { dialog -> dialog.dismiss() }
             }.show()

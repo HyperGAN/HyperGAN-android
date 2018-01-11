@@ -56,7 +56,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         if (result.isSuccess) {
             dashboard?.presenter?.unlockBoughtModel(generatorIndex)
         } else {
-            context.toast("Network error")
+            context.toast(context.getString(R.string.network_error))
         }
     }
 
@@ -86,7 +86,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         if (interactor.googleSignInClient.client.isConnected && !interactor.hasBoughtItem(skus)) {
             view.buyModelPopup(skus, interactor.billingHelper, generatorIndex)
         } else if (interactor.hasBoughtItem(skus)) {
-            context.toast("You already bought this item.")
+            context.toast(context.getString(R.string.already_bought))
         } else {
             signInToGoogle(interactor.googleSignInClient.client)
         }
@@ -145,7 +145,6 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun isDownloadComplete(progressPercent: Float): Boolean {
         return progressPercent >= DOWNLOAD_COMPLETE
     }
-
 
     override fun addModelsToNavBar(applicationContext: Context) {
         addModel = launch(UI) {
