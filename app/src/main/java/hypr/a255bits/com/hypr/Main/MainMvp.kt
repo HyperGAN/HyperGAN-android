@@ -1,6 +1,7 @@
 package hypr.a255bits.com.hypr.Main
 
 import android.content.Context
+import android.support.v4.app.Fragment
 import android.view.MenuItem
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.storage.FileDownloadTask
@@ -19,14 +20,13 @@ interface MainMvp {
         fun displayModelDownloadProgress()
         fun closeDownloadingModelDialog()
         fun startCameraActivity(indexInJson: Int)
-        fun startMultipleModels(multiModels: DashboardFragment)
-        fun  displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>)
         fun popupSigninGoogle(googleSignInClient: GoogleApiClient)
         fun  buyModelPopup(skus: String, billingHelper: IabHelper?, generatorIndex: Int)
         fun goBackToMainActivity()
         fun  displayBackButton()
         fun startFragment(fragmentTransaction: android.support.v4.app.FragmentTransaction)
 
+        fun startFragment(fragment: Fragment)
     }
 
     interface presenter {

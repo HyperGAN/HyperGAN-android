@@ -1,6 +1,7 @@
 package hypr.a255bits.com.hypr.Main
 
 import android.content.Context
+import android.support.v4.app.Fragment
 import android.view.MenuItem
 import com.google.android.gms.common.api.GoogleApiClient
 import hypr.a255bits.com.hypr.BuyGenerator
@@ -13,6 +14,7 @@ import hypr.a255bits.com.hypr.Util.AnalyticsEvent
 import hypr.a255bits.com.hypr.Util.ImageSaver
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabResult
 import hypr.a255bits.com.hypr.Util.SettingsHelper
+import hypr.a255bits.com.hypr.WelcomeScreen.WelcomeScreen
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
@@ -120,15 +122,17 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     private fun displayMultiModels(itemId: Int, imageLocationPath: String?, listOfGenerators: List<Generator>?) {
         if (onBackPressed == false) {
-
-            val multiModel = DashboardFragment.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray(), fullImage, false)
-            this.dashboard = multiModel
-            view.startMultipleModels(multiModel)
+            startMultiModel(listOfGenerators, itemId, imageLocationPath, false)
         } else {
-            val multiModel = DashboardFragment.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray(), fullImage, true)
-            this.dashboard = multiModel
-            view.startMultipleModels(multiModel)
+            startMultiModel(listOfGenerators, itemId, imageLocationPath, true)
         }
+    }
+
+    private fun startMultiModel(listOfGenerators: List<Generator>?, itemId: Int, imageLocationPath: String?, onBackPressed: Boolean) {
+        val multiModel = DashboardFragment.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray(), fullImage, onBackPressed)
+        this.dashboard = multiModel
+//        view.startMultipleModels(multiModel)
+        view.startFragment(multiModel)
     }
 
     fun saveImageSoOtherFragmentCanViewIt(image: ByteArray?): File {
@@ -154,10 +158,17 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             if (image != null) {
                 image?.let { createMultiModels(indexInJson!!, it) }
             } else {
-                view.displayGeneratorsOnHomePage(buyGenerators)
+                displayGeneratorsOnHomePage(buyGenerators)
             }
             isDoneLoading = true
         }
+    }
+
+    fun displayGeneratorsOnHomePage(buyGenerator: MutableList<BuyGenerator>){
+        val fragment: Fragment = WelcomeScreen.newInstance(buyGenerators, "")
+        view.startFragment(fragment)
+        startModel(0)
+
     }
 
     private fun saveGeneratorInfo(generators: List<Generator>?) {
@@ -172,7 +183,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         if (item.itemId in 0..100) {
 //            attemptToStartModel(item.itemId)
         } else if (item.itemId == R.id.homeButton) {
-            view.displayGeneratorsOnHomePage(buyGenerators)
+            displayGeneratorsOnHomePage(buyGenerators)
             analytics.logEvent(AnalyticsEvent.CHOOSE_HOME_NAV_OPTION)
         }
         analytics.logEvent(AnalyticsEvent.CHOOSE_SIDE_NAV_OPTION)

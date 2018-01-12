@@ -15,15 +15,12 @@ import android.widget.Spinner
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.common.api.GoogleApiClient
 import com.pawegio.kandroid.start
-import hypr.a255bits.com.hypr.BuyGenerator
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
-import hypr.a255bits.com.hypr.Dashboard.DashboardFragment
 import hypr.a255bits.com.hypr.DependencyInjection.MainApplication
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.MultiFaceSelection.MultiFaceFragment
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
-import hypr.a255bits.com.hypr.WelcomeScreen.WelcomeScreen
 import kotlinx.android.synthetic.main.activity_main2.*
 import kotlinx.android.synthetic.main.app_bar_main2.*
 import org.greenrobot.eventbus.EventBus
@@ -116,21 +113,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    override fun displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>) {
-        val fragment: Fragment = WelcomeScreen.newInstance(generators, "")
-        val transaction = supportFragmentManager.beginTransaction()
-        val fragTrans = transaction.replace(R.id.container, fragment).commitAllowingStateLoss()
-        transaction.addToBackStack(null)
-        presenter.startModel(0)
-    }
-
     override fun startCameraActivity(indexInJson: Int) {
         startActivity(intentFor<CameraActivity>("indexInJson" to indexInJson))
     }
 
-    override fun startMultipleModels(multiModels: DashboardFragment) {
+    override fun startFragment(fragment: Fragment){
         val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.container, multiModels).commitAllowingStateLoss()
+        transaction.replace(R.id.container, fragment).commitAllowingStateLoss()
         transaction.addToBackStack(null)
     }
 
