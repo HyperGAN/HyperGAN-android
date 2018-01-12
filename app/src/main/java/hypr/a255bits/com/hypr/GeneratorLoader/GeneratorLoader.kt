@@ -9,7 +9,6 @@ import java.io.File
 
 open class GeneratorLoader {
     lateinit var inference: TensorFlowInferenceInterface
-    val PB_FILE_PATH: String = "file:///android_asset/generators/expression-model.pb" // TODO generator['model_url']
 
     var generator: Generator? = null
     var channels: Int = 0
@@ -28,8 +27,8 @@ open class GeneratorLoader {
     }
 
     fun loadGenerator(generator: Generator) {
-        this.inference = TensorFlowInferenceInterface(this.assets, PB_FILE_PATH)
         this.generator = generator
+        this.inference = TensorFlowInferenceInterface(this.assets, this.generator!!.model_url)
         this.width = generator.generator?.input?.width!!
         this.height = generator.generator!!.input?.height!!
         z_dimsArray = generator.generator!!.input!!.z_dims!!.map { item -> item.toLong() }.toLongArray()
