@@ -71,13 +71,13 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
     override fun createGeneratorLoader(fileName: String, itemId: Int) {
-        val file = File(fileName)
+        /*val file = File(fileName)
         if (!file.exists()) {
             val pbFilePointer = interactor.getModelFromFirebase(file, "optimized_weight_conv.pb")
             pbFilePointer?.addOnSuccessListener { taskSnapshot ->
                 analytics.logEvent(AnalyticsEvent.GENERATOR_DOWNLOAD)
             }
-        }
+        }*/
 
         displayMultiModels(itemId, null, interactor.listOfGenerators)
     }

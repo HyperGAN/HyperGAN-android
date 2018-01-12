@@ -20,6 +20,7 @@ open class GeneratorLoader {
     var raw: FloatArray = floatArrayOf()
     var index: Int? = 0
     var direction: FloatArray? = null
+    var assets: AssetManager? = null
 
 
     fun setIndex(index: Int) {
@@ -27,6 +28,7 @@ open class GeneratorLoader {
     }
 
     fun loadGenerator(generator: Generator) {
+        this.inference = TensorFlowInferenceInterface(this.assets, PB_FILE_PATH)
         this.generator = generator
         this.width = generator.generator?.input?.width!!
         this.height = generator.generator!!.input?.height!!
@@ -38,8 +40,8 @@ open class GeneratorLoader {
     }
 
     fun load(assets: AssetManager) {
+        this.assets = assets
         System.loadLibrary("tensorflow_inference")
-        this.inference = TensorFlowInferenceInterface(assets, PB_FILE_PATH)
     }
 
     fun load(assets: AssetManager, file: File) {
