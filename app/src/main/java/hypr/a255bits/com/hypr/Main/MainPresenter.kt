@@ -23,7 +23,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     val ZERO_PERCENT: Float = 0.0f
     val SIGN_INTO_GOOGLE_RESULT: Int = 12
-    val modelFileNames = listOf("expression-model.pb", "halloween-model.pb").map {
+    val modelFileNames = listOf("expression-model.pb", "hd-face.pb").map {
         File(context.filesDir, it).absolutePath
     }
 
