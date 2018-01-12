@@ -19,6 +19,9 @@ import hypr.a255bits.com.hypr.Util.Analytics
 import hypr.a255bits.com.hypr.Util.FaceDetection
 import hypr.a255bits.com.hypr.Util.SettingsHelper
 import java.io.IOException
+import android.support.v4.content.ContextCompat.startActivity
+import com.pawegio.kandroid.BuildConfig
+import com.pawegio.kandroid.start
 
 
 class ModelInteractor(val context: Context) : ModelFragmentMVP.interactor {

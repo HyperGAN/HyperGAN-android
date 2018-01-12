@@ -14,7 +14,6 @@ class EasyGeneratorLoader(var gen: Generator) : GeneratorLoader() {
     var mask: FloatArray by Delegates.vetoable(floatArrayOf()) { property, oldValue, newValue ->
         featureEnabled("mask")
     }
-    var direction: FloatArray? = null
     val inliner = InlineImage()
 
     fun loadAssets(context: Context) {
@@ -22,9 +21,9 @@ class EasyGeneratorLoader(var gen: Generator) : GeneratorLoader() {
     }
 
     fun sampleImageWithImage(person: Person, image: Bitmap?, croppedPoint: Rect): Bitmap? {
-        direction = this.random_z()
         val scaled = Bitmap.createScaledBitmap(image, generator?.generator?.output?.width!!, generator?.generator?.output?.height!!, false)
         baseImage = scaled
+<<<<<<< HEAD
         mask = this.mask(scaled)
         val image = if (featureEnabled("encoding")) {
             encoded = this.encode(scaled)
@@ -32,14 +31,21 @@ class EasyGeneratorLoader(var gen: Generator) : GeneratorLoader() {
         } else {
             this.sample(direction!!, 0.0f, mask, direction!!, scaled).toBitmap(this.width, this.height)
         }
+=======
+        encoded = this.encode(scaled)
+        this.encoded = encoded
+
+        //mask = this.mask(scaled)
+        val image = this.sampleTensor("add_90", encoded!!, 0.0f, mask, scaled).toBitmap(this.width, this.height)
+>>>>>>> new-model-1
         return inlineImage(person, image, croppedPoint)
     }
 
     fun sampleImageWithoutImage(): IntArray {
         val scaled = Bitmap.createBitmap(generator?.generator?.output?.width!!, generator?.generator?.output?.height!!, Bitmap.Config.ARGB_8888)
-        mask = this.mask(scaled)
-        val direction = this.random_z()
+        //mask = this.mask(scaled)
         baseImage = scaled
+<<<<<<< HEAD
         val sample = if(featureEnabled("encoding")){
             encoded = this.encode(scaled)
             this.sampleRandom(encoded!!, 0.0f, direction, mask, scaled)
@@ -48,11 +54,14 @@ class EasyGeneratorLoader(var gen: Generator) : GeneratorLoader() {
             this.sampleRandom(direction, 0.0f, direction, mask, scaled)
         }
         return sample
+=======
+        encoded = this.encode(scaled)
+        return this.sampleRandom(encoded!!, 0.0f, mask, scaled)
+>>>>>>> new-model-1
     }
 
     fun sampleImageWithZValue(slider: Float): IntArray {
-        val direction = this.direction ?: this.random_z()
-        return this.sample(this.encoded!!, slider, mask, direction, baseImage!!)
+        return this.sampleTensor( "add_90", this.encoded!!, slider, mask, baseImage!!)
     }
 
     fun inlineImage(person: Person, newCroppedImage: Bitmap, croppedPoint: Rect): Bitmap? {

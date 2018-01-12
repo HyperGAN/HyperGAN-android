@@ -76,6 +76,28 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
         }
     }
 
+    override fun rateApp() {
+        activity.alert("Rate Hypr", "What do you think about Hypr?") {
+            positiveButton("Rate Us!", {
+                presenter.openRateAppInPlayStore(context.packageName)
+
+            })
+
+        }.show()
+    }
+
+    override fun openRateAppInPlayStore(marketLink: Uri?, playStoreLink: Uri) {
+        val goToMarket = Intent(Intent.ACTION_VIEW, marketLink)
+        goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or
+                Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
+                Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+        try {
+            startActivity(goToMarket)
+        } catch (e: ActivityNotFoundException) {
+            startActivity(Intent(Intent.ACTION_VIEW, playStoreLink))
+        }
+    }
+
     override fun lockModel() {
         lockLayout.visibility = View.VISIBLE
         imageTransitionSeekBar.isEnabled = false
@@ -145,7 +167,11 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
     }
 
     override fun displayFocusedImage(imageFromGallery: Bitmap?) {
+<<<<<<< HEAD
         focusedImage.let { imageFromGallery.let { focusedImage.setImageBitmap(it) } }
+=======
+        imageFromGallery.let { focusedImage.setImageBitmap(it) }
+>>>>>>> new-model-1
         loadingIcon.hide()
     }
 

@@ -1,8 +1,9 @@
 [{ 
-  "name": "Cat",
+  "name": "Expression",
   "features": ["inline", "mask", "encoding"],
   "file_size_in_bytes": 1024000000,
   "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
+  "description": "Change your expression.  Or choose a random one.",
   "google_play_id": "",
   "generator" : {
     "viewer":{
@@ -22,7 +23,7 @@
    ]
     },
     "input" : {
-      "z_dims": [1.0, 8.0, 8.0, 160.0],
+      "z_dims": [1.0, 300.0],
       "type": "image",
       "width": 256,
       "height": 256,
@@ -38,11 +39,12 @@
   }
 },
 { 
-  "name": "Halloween",
-  "features": ["mask", "encoding"],
+  "name": "Face HD",
+  "features": [],
   "file_size_in_bytes": 2048000000,
   "price_in_cents": 1499,
   "google_play_id": "com.halloween",
+  "description": "Generate an infinite amount of 512x512 people.",
   "generator" : {
     "viewer":{
       "type": "FaceViewer",
