@@ -43,7 +43,8 @@ class EasyGeneratorLoader(var gen: Generator) : GeneratorLoader() {
             this.sampleRandom(encoded!!, 0.0f, mask!!, scaled!!)
 
         }else{
-            this.sampleRandom(direction!!, 0.0f, mask!!, scaled!!)
+            encoded = this.random_z()
+            this.sampleRandom(encoded!!, 0.0f, mask!!, scaled!!)
         }
         return sample
     }
