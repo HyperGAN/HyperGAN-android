@@ -11,7 +11,6 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.SparseArray
 import com.google.android.gms.vision.face.Face
-import com.pawegio.kandroid.BuildConfig
 import com.pawegio.kandroid.fromApi
 import com.pawegio.kandroid.start
 import hypr.a255bits.com.hypr.GeneratorLoader.FaceLocation

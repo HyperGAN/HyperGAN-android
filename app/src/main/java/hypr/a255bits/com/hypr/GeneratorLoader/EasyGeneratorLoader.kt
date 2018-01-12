@@ -23,21 +23,14 @@ class EasyGeneratorLoader(var gen: Generator) : GeneratorLoader() {
     fun sampleImageWithImage(person: Person, image: Bitmap?, croppedPoint: Rect): Bitmap? {
         val scaled = Bitmap.createScaledBitmap(image, generator?.generator?.output?.width!!, generator?.generator?.output?.height!!, false)
         baseImage = scaled
-<<<<<<< HEAD
         mask = this.mask(scaled)
         val image = if (featureEnabled("encoding")) {
             encoded = this.encode(scaled)
-            this.sample(encoded!!, 0.0f, mask, direction!!, scaled).toBitmap(this.width, this.height)
+            this.encoded = encoded
+            this.sampleTensor("add_90",encoded!!, 0.0f, mask, scaled).toBitmap(this.width, this.height)
         } else {
-            this.sample(direction!!, 0.0f, mask, direction!!, scaled).toBitmap(this.width, this.height)
+            this.sampleTensor("add_90",direction!!,0.0f, mask, scaled).toBitmap(this.width, this.height)
         }
-=======
-        encoded = this.encode(scaled)
-        this.encoded = encoded
-
-        //mask = this.mask(scaled)
-        val image = this.sampleTensor("add_90", encoded!!, 0.0f, mask, scaled).toBitmap(this.width, this.height)
->>>>>>> new-model-1
         return inlineImage(person, image, croppedPoint)
     }
 
@@ -45,19 +38,14 @@ class EasyGeneratorLoader(var gen: Generator) : GeneratorLoader() {
         val scaled = Bitmap.createBitmap(generator?.generator?.output?.width!!, generator?.generator?.output?.height!!, Bitmap.Config.ARGB_8888)
         //mask = this.mask(scaled)
         baseImage = scaled
-<<<<<<< HEAD
         val sample = if(featureEnabled("encoding")){
             encoded = this.encode(scaled)
-            this.sampleRandom(encoded!!, 0.0f, direction, mask, scaled)
+            this.sampleRandom(encoded!!, 0.0f, mask!!, scaled!!)
 
         }else{
-            this.sampleRandom(direction, 0.0f, direction, mask, scaled)
+            this.sampleRandom(direction!!, 0.0f, mask!!, scaled!!)
         }
         return sample
-=======
-        encoded = this.encode(scaled)
-        return this.sampleRandom(encoded!!, 0.0f, mask, scaled)
->>>>>>> new-model-1
     }
 
     fun sampleImageWithZValue(slider: Float): IntArray {
