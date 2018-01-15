@@ -121,17 +121,12 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
     private fun displayMultiModels(itemId: Int, imageLocationPath: String?, listOfGenerators: List<Generator>?) {
-        if (onBackPressed == false) {
-            startMultiModel(listOfGenerators, itemId, imageLocationPath, false)
-        } else {
-            startMultiModel(listOfGenerators, itemId, imageLocationPath, true)
-        }
+        onBackPressed?.let { startMultiModel(listOfGenerators, itemId, imageLocationPath, it) }
     }
 
     private fun startMultiModel(listOfGenerators: List<Generator>?, itemId: Int, imageLocationPath: String?, onBackPressed: Boolean) {
         val multiModel = DashboardFragment.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray(), fullImage, onBackPressed)
         this.dashboard = multiModel
-//        view.startMultipleModels(multiModel)
         view.startFragment(multiModel)
     }
 
