@@ -197,7 +197,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val modelFragment = presenter.getModelFragment(position.toInt())
                 val transaction = supportFragmentManager.beginTransaction()
                 val fragmentTransaction = transaction.replace(R.id.container, modelFragment).addToBackStack("model")
-                presenter.startFragment(fragmentTransaction)
+                presenter.startFragmentWhenDoneLoading(fragmentTransaction)
                 transaction.addToBackStack(null)
                 supportActionBar?.setDisplayHomeAsUpEnabled(true)
             } else {

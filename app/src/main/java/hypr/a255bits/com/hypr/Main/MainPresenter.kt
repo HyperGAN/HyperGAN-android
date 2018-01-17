@@ -121,17 +121,12 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
     private fun displayMultiModels(itemId: Int, imageLocationPath: String?, listOfGenerators: List<Generator>?) {
-        if (onBackPressed == false) {
-            startMultiModel(listOfGenerators, itemId, imageLocationPath, false)
-        } else {
-            startMultiModel(listOfGenerators, itemId, imageLocationPath, true)
-        }
+        onBackPressed?.let { startMultiModel(listOfGenerators, itemId, imageLocationPath, it) }
     }
 
     private fun startMultiModel(listOfGenerators: List<Generator>?, itemId: Int, imageLocationPath: String?, onBackPressed: Boolean) {
         val multiModel = DashboardFragment.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray(), fullImage, onBackPressed)
         this.dashboard = multiModel
-//        view.startMultipleModels(multiModel)
         view.startFragment(multiModel)
     }
 
@@ -158,13 +153,13 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             if (image != null) {
                 image?.let { createMultiModels(indexInJson!!, it) }
             } else {
-                displayGeneratorsOnHomePage(buyGenerators)
+                displayGeneratorsOnHomePage()
             }
             isDoneLoading = true
         }
     }
 
-    fun displayGeneratorsOnHomePage(buyGenerator: MutableList<BuyGenerator>){
+    fun displayGeneratorsOnHomePage() {
         val fragment: Fragment = WelcomeScreen.newInstance(buyGenerators, "")
         view.startFragment(fragment)
         startModel(0)
@@ -180,10 +175,8 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
     override fun onNavigationItemSelected(item: MenuItem) {
-        if (item.itemId in 0..100) {
-//            attemptToStartModel(item.itemId)
-        } else if (item.itemId == R.id.homeButton) {
-            displayGeneratorsOnHomePage(buyGenerators)
+        if (item.itemId == R.id.homeButton) {
+            displayGeneratorsOnHomePage()
             analytics.logEvent(AnalyticsEvent.CHOOSE_HOME_NAV_OPTION)
         }
         analytics.logEvent(AnalyticsEvent.CHOOSE_SIDE_NAV_OPTION)
@@ -198,7 +191,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         interactor.rateAppIfMeetConditions()
     }
 
-    fun startFragment(fragmentTransaction: android.support.v4.app.FragmentTransaction) {
+    fun startFragmentWhenDoneLoading(fragmentTransaction: android.support.v4.app.FragmentTransaction) {
         if (isDoneLoading) {
             view.startFragment(fragmentTransaction)
         }
