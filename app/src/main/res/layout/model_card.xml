@@ -19,6 +19,7 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:id="@+id/cardImage"
             android:scaleType="fitXY"
             android:src="@drawable/men"/>
 
