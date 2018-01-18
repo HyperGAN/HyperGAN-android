@@ -35,7 +35,7 @@ class DashboardFragment : Fragment(), DashboardMVP.view {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        if (isBackPressed == false) {
+        if (!isBackPressed) {
             presenter.startModelIfFullImageIsPresent(fullImage, indexOfGenerator)
         }
         return inflater!!.inflate(R.layout.fragment_dashboard, container, false)

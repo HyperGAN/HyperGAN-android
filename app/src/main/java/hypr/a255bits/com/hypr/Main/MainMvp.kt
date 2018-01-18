@@ -5,8 +5,6 @@ import android.support.v4.app.Fragment
 import android.view.MenuItem
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.storage.FileDownloadTask
-import hypr.a255bits.com.hypr.BuyGenerator
-import hypr.a255bits.com.hypr.Dashboard.DashboardFragment
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
