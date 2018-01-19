@@ -12,38 +12,31 @@ import hypr.a255bits.com.hypr.R
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 
 class DashboardFragment : Fragment(), DashboardMVP.view {
-
-    private var generators: Array<Generator> = arrayOf()
-    private var indexOfGenerator: Int? = null
-    private var pathToGenerators: Array<String?> = arrayOf()
-    private var image: String? = null
-    private var fullImage: String? = null
-    val presenter by lazy { DashboardPresenter(this) }
-    var isBackPressed: Boolean = false
+   val presenter by lazy { DashboardPresenter(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            generators = arguments.getParcelableArray(GENERATORS) as Array<Generator>
-            indexOfGenerator = arguments.getInt(INDEX_OF_GENERATOR_IN_USE)
-            image = arguments.getString(PATH_TO_IMAGE)
-            fullImage = arguments.getString(PATH_TO_FULL_IMAGE)
-            pathToGenerators = arguments.getStringArray(PATH_TO_GENERATORS)
-            isBackPressed = arguments.getBoolean(IS_BACK_PRESS)
+            presenter.generators = arguments.getParcelableArray(GENERATORS) as Array<Generator>
+            presenter.indexOfGenerator = arguments.getInt(INDEX_OF_GENERATOR_IN_USE)
+            presenter.image = arguments.getString(PATH_TO_IMAGE)
+            presenter.fullImage = arguments.getString(PATH_TO_FULL_IMAGE)
+            presenter.pathToGenerators = arguments.getStringArray(PATH_TO_GENERATORS)
+            presenter.isBackPressed = arguments.getBoolean(IS_BACK_PRESS)
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        if (!isBackPressed) {
-            presenter.startModelIfFullImageIsPresent(fullImage, indexOfGenerator)
+        if (!presenter.isBackPressed) {
+            presenter.startModelIfFullImageIsPresent()
         }
         return inflater!!.inflate(R.layout.fragment_dashboard, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        presenter.displayListOfModels(generators, context)
+        presenter.displayListOfModels(context)
     }
 
     override fun displayListOfModels(buyGenerators: MutableList<BuyGenerator>, welcomeScreenAdapter: WelcomeScreenAdapter) {
