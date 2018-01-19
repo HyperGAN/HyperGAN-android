@@ -96,7 +96,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
         }
     }
 
-    fun rateAppIfMeetConditions() {
+    fun rateAppInit() {
         AppRate.with(context)
                 .setInstallDays(0)
                 .setLaunchTimes(3)

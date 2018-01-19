@@ -188,7 +188,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
     fun listenForAppStartupForDecidingToRateAppPopup() {
-        interactor.rateAppIfMeetConditions()
+        interactor.rateAppInit()
     }
 
     fun startFragmentWhenDoneLoading(fragmentTransaction: android.support.v4.app.FragmentTransaction) {
