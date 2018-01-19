@@ -49,15 +49,6 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     override fun rateApp() {
         AppRate.showRateDialogIfMeetsConditions(activity)
-
-//        activity.alert("", "What do you think about Hypr?") {
-//            positiveButton("Rate Us!", {
-//                presenter.openRateAppInPlayStore(context.packageName)
-//            })
-//            negativeButton("Maybe Later", {
-//            })
-//
-//        }.show()
     }
 
     override fun openRateAppInPlayStore(marketLink: Uri?, playStoreLink: Uri) {
