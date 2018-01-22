@@ -50,13 +50,13 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
         val hasBoughtItem = if (itemId.isEmpty()) {
             true
         } else {
-            val inventory = query(true, mutableListOf(itemId), null)
+            val inventory = query(mutableListOf(itemId))
             inventory.hasPurchase(itemId)
         }
         return hasBoughtItem
     }
 
-    fun query(query: Boolean, skus: MutableList<String>, moreSubsSkus: List<String>?): Inventory {
+    fun query(skus: MutableList<String>): Inventory {
         return if (billingHelper.isConnected) {
             billingHelper.queryInventory(true, skus, null)
         } else {
