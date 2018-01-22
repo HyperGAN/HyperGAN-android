@@ -20,9 +20,7 @@ import org.greenrobot.eventbus.EventBus
 
 class WelcomeScreenAdapter(val generators: MutableList<BuyGenerator>, val context: Context, val generatorImages: List<Bitmap>) : RecyclerView.Adapter<WelcomeScreenAdapter.CustomViewHolder>() {
 
-    override fun getItemCount(): Int {
-        return generators.size
-    }
+    override fun getItemCount(): Int = generators.size
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): CustomViewHolder {
         val view = LayoutInflater.from(parent?.context).inflate(R.layout.model_card, parent, false)
@@ -31,8 +29,13 @@ class WelcomeScreenAdapter(val generators: MutableList<BuyGenerator>, val contex
 
     override fun onBindViewHolder(holder: CustomViewHolder?, position: Int) {
         hideBuyButtonIfBought(position, holder?.buyButton)
-        holder?.title?.text = generators[position].name
         buyButtonClickListener(holder, position)
+
+        populateListItem(holder, position)
+    }
+
+    private fun populateListItem(holder: CustomViewHolder?, position: Int) {
+        holder?.title?.text = generators[position].name
         holder?.card?.setOnClickListener {EventBus.getDefault().post(position.toDouble()) }
         holder?.cardImage?.setImageBitmap(generatorImages[position])
     }
