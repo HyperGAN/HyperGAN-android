@@ -6,7 +6,7 @@ import com.google.firebase.storage.StorageReference
 import java.io.File
 
 
-class ModelDownloader(val storageReference: StorageReference) {
+class ModelDownloader {
 
     fun getFile(file: File, storageName: String): FileDownloadTask {
         val storageRef: StorageReference = FirebaseStorage.getInstance().getReferenceFromUrl(storageName)

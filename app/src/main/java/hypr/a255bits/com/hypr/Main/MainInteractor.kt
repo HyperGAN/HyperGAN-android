@@ -3,7 +3,6 @@ package hypr.a255bits.com.hypr.Main
 import android.content.Context
 import android.util.Log
 import com.google.firebase.storage.FileDownloadTask
-import com.google.firebase.storage.FirebaseStorage
 import hotchemi.android.rate.AppRate
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.Network.ModelDownloader
@@ -29,7 +28,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     val googleSignInClient = GoogleSignIn(context)
 
     var listOfGenerators: List<Generator>? = listOf()
-    var modelDownloader = ModelDownloader(FirebaseStorage.getInstance().reference)
+    var modelDownloader = ModelDownloader()
 
     init {
         googleSignInClient.client.connect()
