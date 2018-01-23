@@ -57,6 +57,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun handlePurchase(result: IabResult, generatorIndex: Int) {
         if (result.isSuccess) {
             dashboard?.presenter?.unlockBoughtModel(generatorIndex)
+            analytics.logEvent(AnalyticsEvent.BOUGHT_ITEM)
         } else {
             context.toast(context.getString(R.string.network_error))
         }
@@ -86,6 +87,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     override fun buyModel(skus: String, generatorIndex: Int) {
         if (interactor.googleSignInClient.client.isConnected && !interactor.hasBoughtItem(skus)) {
+            analytics.logEvent(AnalyticsEvent.CLICK_BUY_BUTTON)
             view.buyModelPopup(skus, interactor.billingHelper, generatorIndex)
         } else if (interactor.hasBoughtItem(skus)) {
             context.toast(context.getString(R.string.already_bought))
