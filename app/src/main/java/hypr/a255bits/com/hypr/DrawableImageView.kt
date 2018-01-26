@@ -42,7 +42,7 @@ open class DrawableImageView(context: Context?, attrs: AttributeSet?) : ImageVie
         val centreX = (width - scaledBitmap!!.width) / 2
         val centreY = (height - scaledBitmap!!.height) / 2
         canvas?.drawBitmap(scaledBitmap, centreX.toFloat(), centreY.toFloat(), paint)
-        scaleTouchInputBoxesToImagePosition(scaledBitmap!!, centreX, centreY)
+        scaleTouchInputBoxesToImagePosition(scaledBitmap!!, centreY)
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -55,7 +55,7 @@ open class DrawableImageView(context: Context?, attrs: AttributeSet?) : ImageVie
         return super.onTouchEvent(event)
     }
 
-    private fun scaleTouchInputBoxesToImagePosition(bit: Bitmap, centreX: Int, centreY: Int) {
+    private fun scaleTouchInputBoxesToImagePosition(bit: Bitmap, centreY: Int) {
         faceLocation.forEach { rect ->
             val widthRatio = bit.width.toFloat() / bitmap!!.width.toFloat()
             val heightRatio = ((bit.height.toFloat())) / (bitmap!!.height.toFloat())
