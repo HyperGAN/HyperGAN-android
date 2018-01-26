@@ -14,7 +14,6 @@ open class DrawableImageView(context: Context?, attrs: AttributeSet?) : ImageVie
     var bitmap: Bitmap? = null
     val paint = Paint()
     var scaledBitmap: Bitmap? = null
-    val oldFaceLocations = mutableListOf<Rect>()
     private val faceLocation = mutableListOf<Rect>()
     val touchPaint = Paint()
     private var boundsListener: DrawableImageViewTouchInBoundsListener? = null
@@ -39,9 +38,6 @@ open class DrawableImageView(context: Context?, attrs: AttributeSet?) : ImageVie
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        faceLocation.forEach { item ->
-            oldFaceLocations.add(Rect(item))
-        }
         scaledBitmap = bitmap?.let { scaleBitmap(it) }
         val centreX = (width - scaledBitmap!!.width) / 2
         val centreY = (height - scaledBitmap!!.height) / 2
