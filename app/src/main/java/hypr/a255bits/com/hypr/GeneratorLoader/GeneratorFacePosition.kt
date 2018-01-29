@@ -38,18 +38,18 @@ class GeneratorFacePosition(val context: Context) {
         val canvas = Canvas(mutableBitmap)
         canvas.drawRect(rect, faceBoxColor)
 
-        var w: Int = x2-x1
-        var h: Int = y2-y1
+        var faceWidth: Int = x2-x1
+        var faceHeight: Int = y2-y1
 
 
         var bitmap: Bitmap
         try{
-            bitmap = Bitmap.createBitmap(imageWithFaces, x1, y1, w, h)
+            bitmap = Bitmap.createBitmap(imageWithFaces, x1, y1, faceWidth, faceHeight)
         }catch(e: IllegalArgumentException){
             Log.e("GeneratorFacePosition", "Face too close to camera: ${e.localizedMessage}")
             return null
         }
-        val scaledRect = Rect(x1, y1, x1 + w,y1 + h)
+        val scaledRect = Rect(x1, y1, x1 + faceWidth,y1 + faceHeight)
         val maxSize:Int = intArrayOf(bitmap.height, bitmap.width).min()!!
         val resizedBitmap = getResizedBitmap(bitmap, maxSize, maxSize)
         return FaceLocation(resizedBitmap, scaledRect)

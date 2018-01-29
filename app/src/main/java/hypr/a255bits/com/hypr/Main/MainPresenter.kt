@@ -57,6 +57,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun handlePurchase(result: IabResult, generatorIndex: Int) {
         if (result.isSuccess) {
             dashboard?.presenter?.unlockBoughtModel(generatorIndex)
+            dashboard?.presenter?.refreshList()
             analytics.logEvent(AnalyticsEvent.BOUGHT_ITEM)
         } else {
             context.toast(context.getString(R.string.network_error))
