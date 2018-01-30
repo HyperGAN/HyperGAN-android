@@ -106,7 +106,7 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
     }
 
     override fun startCameraActivity() {
-        val intent = activity.intentFor<CameraActivity>("indexInJson" to 0)
+        val intent = activity.intentFor<CameraActivity>("indexInJson" to presenter.generatorIndex)
         EventBus.getDefault().post(intent)
     }
 
