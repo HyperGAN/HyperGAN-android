@@ -176,9 +176,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     }
 
     private fun rateApp() {
-        if (interactor.settings.isFirstTimeSavingImage()) {
-            view.rateApp()
-        }
+        view.rateApp()
     }
 
 
@@ -192,6 +190,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
                     context.toast(context.getString(R.string.image_saved_toast))
                 }
                 R.id.shareIamge -> {
+                    rateApp()
                     shareImageToOtherApps()
                     interactor.analytics.logEvent(AnalyticsEvent.SHARE_IMAGE)
                 }

@@ -138,7 +138,6 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     override fun shareImageToOtherApps(shareIntent: Intent) {
         startActivity(Intent.createChooser(shareIntent, getString(R.string.share_image)))
-        AppRate.showRateDialogIfMeetsConditions(activity)
     }
 
     override fun requestPermissionFromUser(permissions: Array<String>, REQUEST_CODE: Int) {
