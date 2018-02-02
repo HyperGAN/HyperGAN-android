@@ -71,7 +71,6 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
     override fun unLockModel() {
         lockLayout.visibility = View.INVISIBLE
         imageTransitionSeekBar.isEnabled = true
-
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
