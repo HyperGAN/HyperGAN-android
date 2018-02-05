@@ -202,15 +202,15 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
         view.startCameraActivity()
     }
 
-    fun getGeneratorImage(ganValue: Double): IntArray {
+    fun getGeneratorImage(ganValue: Double): Bitmap? {
         val ganImage = easyGenerator.sampleImageWithZValue(ganValue.toFloat())
         imageDisplayedOnScreen = ganImage.toBitmap(easyGenerator.width, easyGenerator.height)
-        return ganImage
+        return imageDisplayedOnScreen
     }
 
     fun manipulateZValueInImage(ganValue: Double): Bitmap? {
         val ganImage = getGeneratorImage(ganValue)
-        return ganImage.toBitmap(easyGenerator.width, easyGenerator.height)
+        return ganImage
     }
 
 
