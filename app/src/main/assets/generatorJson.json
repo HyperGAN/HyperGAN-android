@@ -37,32 +37,5 @@
     
     }
   }
-},
-{ 
-  "name": "Face HD",
-  "features": [],
-  "file_size_in_bytes": 2048000000,
-  "google_play_id": "com.halloween",
-  "model_url": "file:///android_asset/generators/hd-face.pb",
-  "description": "Generate an infinite amount of 512x512 people.",
-  "generator" : {
-    "viewer":{
-      "type": "FaceViewer",
-      "operation": "crop",
-      "controls":  []
-    },
-    "input" : {
-      "z_dims": [1.0, 8.0, 8.0, 160.0],
-      "type": "image",
-      "width": 256,
-      "height": 256,
-      "channels": 3
-    },
-    "output": {
-      "type": "image",
-      "width": 256,
-      "height": 256,
-      "channels" : 3
-    }
-  }
-}]
+}
+]
