@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <hypr.a255bits.com.hypr.DrawableImageView
+    <hypr.gan.com.hypr.DrawableImageView
         android:id="@+id/drawableImageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

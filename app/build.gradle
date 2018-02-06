@@ -10,7 +10,7 @@ android {
     compileSdkVersion 27
     buildToolsVersion '27.0.1'
     defaultConfig {
-        applicationId "hypr.a255bits.com.hypr"
+        applicationId 'hypr.gan.com.hypr'
         minSdkVersion 17
         targetSdkVersion 25
         versionCode 1
@@ -35,6 +35,8 @@ android {
             assets.srcDirs = ['src/main/assets']
             manifest.srcFile 'src/main/AndroidManifest.xml'
         }
+    }
+    productFlavors {
     }
 }
 

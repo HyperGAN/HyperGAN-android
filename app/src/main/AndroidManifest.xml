@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="hypr.a255bits.com.hypr">
+    package="hypr.gan.com.hypr">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -20,7 +20,7 @@
             android:value="face" />
 
         <activity
-            android:name=".Main.MainActivity"
+            android:name=".gan.com.hypr.Main.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -30,9 +30,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CameraFragment.CameraActivity"
+            android:name=".gan.com.hypr.CameraFragment.CameraActivity"
             android:label="@string/title_activity_main"
-            android:parentActivityName=".Main.MainActivity"
+            android:parentActivityName=".gan.com.hypr.Main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 

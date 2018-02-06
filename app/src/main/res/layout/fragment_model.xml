@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="hypr.a255bits.com.hypr.ModelFragmnt.ModelFragment">
+    tools:context="hypr.gan.com.hypr.ModelFragmnt.ModelFragment">
 
     <include layout="@layout/activity_main" />
     <com.wang.avi.AVLoadingIndicatorView

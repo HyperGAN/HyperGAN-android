@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="hypr.a255bits.com.hypr.Main.MainActivity">
+    tools:context="hypr.gan.com.hypr.Main.MainActivity">
 
 
     <android.support.design.widget.AppBarLayout
