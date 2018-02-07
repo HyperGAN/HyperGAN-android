@@ -16,6 +16,7 @@ import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.*
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.toast
@@ -176,9 +177,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     }
 
     private fun rateApp() {
-        if (interactor.settings.isFirstTimeSavingImage()) {
-            view.rateApp()
-        }
+        view.rateApp()
     }
 
 
@@ -192,6 +191,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
                     context.toast(context.getString(R.string.image_saved_toast))
                 }
                 R.id.shareIamge -> {
+                    rateApp()
                     shareImageToOtherApps()
                     interactor.analytics.logEvent(AnalyticsEvent.SHARE_IMAGE)
                 }
@@ -205,21 +205,25 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
 
     fun getGeneratorImage(ganValue: Double): IntArray {
         val ganImage = easyGenerator.sampleImageWithZValue(ganValue.toFloat())
-        imageDisplayedOnScreen = ganImage.toBitmap(easyGenerator.width, easyGenerator.height)
         return ganImage
     }
 
-    fun manipulateZValueInImage(ganValue: Double): Bitmap? {
+    fun manipulateZValueInImage(ganValue: Double): IntArray {
         val ganImage = getGeneratorImage(ganValue)
-        return ganImage.toBitmap(easyGenerator.width, easyGenerator.height)
+        return ganImage
     }
 
-
     fun changeGanImageFromSlider(ganValue: Double) {
-        val imageManipluatedFromZValue = manipulateZValueInImage(ganValue)
-        imageManipulatedFromzValue = imageManipluatedFromZValue
-        val imagePlacedInsideFullImage = imageManipluatedFromZValue?.let { inlineImage(person, it) }
-        view.displayFocusedImage(imagePlacedInsideFullImage)
+        async(UI) {
+
+            val imageManipluatedFromZValue = manipulateZValueInImage(ganValue)
+            val imagePlacedInsideFullImage = bg {
+                val ganImage = imageManipluatedFromZValue.toBitmap(easyGenerator.width, easyGenerator.height)
+                imageManipulatedFromzValue = ganImage
+                ganImage.let { inlineImage(person, it) }
+            }
+            view.displayFocusedImage(imagePlacedInsideFullImage.await())
+        }
     }
 
     fun getInfoFromFragmentCreation(arguments: Bundle) {

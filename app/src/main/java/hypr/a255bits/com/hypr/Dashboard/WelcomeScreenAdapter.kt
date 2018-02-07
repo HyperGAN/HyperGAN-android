@@ -42,7 +42,7 @@ class WelcomeScreenAdapter(val generators: MutableList<BuyGenerator>, val contex
 
     private fun buyButtonClickListener(holder: CustomViewHolder?, position: Int) {
         holder?.buyButton?.setOnClickListener {
-            context.alert("Would you like to buy this model?", "Hypr") {
+            context.alert(context.getString(R.string.buy_model_popup_message), "Hypr") {
                 positiveButton("Buy", { EventBus.getDefault().post(position) })
                 negativeButton { dismiss() }
             }.show()

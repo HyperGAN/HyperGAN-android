@@ -42,5 +42,9 @@ class DashboardPresenter(val view: DashboardMVP.view) {
         }
     }
 
+    fun refreshList() {
+        adapter?.notifyDataSetChanged()
+    }
+
 
 }
