@@ -39,6 +39,10 @@ class SettingsHelper(val context: Context) {
     fun getFullImagePath(): String{
        return preference.getString(RESTORE_MODEL_FULL_IMAGE, "")
     }
+    fun resetImagePaths(){
+        preference.edit().putString(RESTORE_MODEL_IMAGE, "").apply()
+        preference.edit().putString(RESTORE_MODEL_FULL_IMAGE, "").apply()
+    }
 
     fun saveFaceLocation(face: Rect) {
             val edit = editor.edit()

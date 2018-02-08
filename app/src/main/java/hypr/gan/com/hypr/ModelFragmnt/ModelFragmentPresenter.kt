@@ -9,19 +9,24 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import com.pawegio.kandroid.start
 import hypr.gan.com.hypr.Generator.Generator
 import hypr.gan.com.hypr.GeneratorLoader.EasyGeneratorLoader
 import hypr.gan.com.hypr.GeneratorLoader.FaceLocation
 import hypr.gan.com.hypr.GeneratorLoader.Person
+import hypr.gan.com.hypr.Main.MainActivity
 import hypr.gan.com.hypr.R
 import hypr.gan.com.hypr.Util.*
+import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.coroutines.experimental.bg
+import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.toast
 import java.io.File
 import java.io.IOException
+import java.lang.IllegalArgumentException
 import kotlin.properties.Delegates
 
 
@@ -43,11 +48,21 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
 
     fun loadGenerator(context: Context, pbFile: File?) {
         launch(UI) {
-            val imageBitmap = bg {
+            val imageBitmap: Deferred<Bitmap?> = bg {
                 loadGenerator(pbFile, context.assets)
-                val bitmap = person.fullImage.toBitmap()
+                val bitmap = person.fullImage?.toBitmap()
                 val faces = getFaceCroppedOutOfImageIfNoFaceGetFullImage(bitmap, context)
-                val transformedImage: Bitmap? = sampleImage(person, faces, interactor.settings.getFaceLocation())
+
+                val transformedImage: Bitmap? = try {
+                    sampleImage(person, faces, interactor.settings.getFaceLocation())
+                } catch (e: IllegalArgumentException) {
+                    e.printStackTrace()
+                    ImageSaver().deleteImagesFromFragment()
+                    SettingsHelper(context).resetImagePaths()
+                    context.intentFor<MainActivity>().start(context)
+                    faces
+//                    sampleImage(person, null, interactor.settings.getFaceLocation())
+                }
                 return@bg transformedImage
             }
             view.displayFocusedImage(imageBitmap.await())
