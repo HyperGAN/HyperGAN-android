@@ -19,4 +19,10 @@
     <string name="select_image_with_face">Please select an image with a face</string>
     <string name="image_saved_toast">Image Saved!</string>
     <string name="face_too_close_camera_error">Face too close to screen, please try again.</string>
+    <string name="buy_model_popup_message">Would you like to buy this model?</string>
+    <string name="google_signin_message">Would you like to sign into Google?</string>
+    <string name="google_signin_title">Sign into Google</string>
+    <string name="downloading_model_message">Downloadnig Model</string>
+    <string name="already_bought">You already bought this item.</string>
+    <string name="network_error">Network Error</string>
 </resources>

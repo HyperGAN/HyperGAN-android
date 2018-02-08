@@ -41,10 +41,6 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true)
@@ -54,8 +50,7 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
     override fun rateApp() {
         activity.alert("Rate Hypr", "What do you think about Hypr?") {
             positiveButton("Rate Us!", {
-                presenter.openRateAppInPlayStore(context.packageName)
-
+                AppRate.showRateDialogIfMeetsConditions(activity)
             })
 
         }.show()
@@ -81,7 +76,6 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
     override fun unLockModel() {
         lockLayout.visibility = View.INVISIBLE
         imageTransitionSeekBar.isEnabled = true
-
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -108,7 +102,7 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     private fun lockLayoutClickListener() {
         lockLayout.setOnClickListener {
-            activity.alert("Would you like to buy this model?", "Hypr") {
+            activity.alert(getString(R.string.buy_model_popup_message), "Hypr") {
                 positiveButton("Buy", { EventBus.getDefault().post(presenter.generatorIndex) })
                 cancelButton { dialog -> dialog.dismiss() }
             }.show()
@@ -116,7 +110,7 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
     }
 
     override fun startCameraActivity() {
-        val intent = activity.intentFor<CameraActivity>("indexInJson" to 0)
+        val intent = activity.intentFor<CameraActivity>("indexInJson" to presenter.generatorIndex)
         EventBus.getDefault().post(intent)
     }
 
@@ -148,7 +142,6 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     override fun shareImageToOtherApps(shareIntent: Intent) {
         startActivity(Intent.createChooser(shareIntent, getString(R.string.share_image)))
-        AppRate.showRateDialogIfMeetsConditions(activity)
     }
 
     override fun requestPermissionFromUser(permissions: Array<String>, REQUEST_CODE: Int) {

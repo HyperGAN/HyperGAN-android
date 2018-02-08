@@ -3,20 +3,27 @@ package hypr.gan.com.hypr.Dashboard
 import android.content.Context
 import hypr.gan.com.hypr.BuyGenerator
 import hypr.gan.com.hypr.Generator.Generator
+import android.graphics.BitmapFactory
 import org.greenrobot.eventbus.EventBus
 
 class DashboardPresenter(val view: DashboardMVP.view) {
     var buyGenerators: MutableList<BuyGenerator> = mutableListOf()
     var adapter: WelcomeScreenAdapter? = null
+    var generators: Array<Generator> = arrayOf()
+    var indexOfGenerator: Int? = null
+    var pathToGenerators: Array<String?> = arrayOf()
+    var image: String? = null
+    var fullImage: String? = null
+    var isBackPressed: Boolean = false
 
-    fun displayListOfModels(generators: Array<Generator>, context: Context) {
+    fun displayListOfModels(context: Context) {
         buyGenerators.clear()
         generators.forEachIndexed { index, generator ->
             val buyGenerator = BuyGenerator(generator.name)
             buyGenerators.add(index, buyGenerator)
             isItemBought(generator, index)
         }
-        adapter = WelcomeScreenAdapter(buyGenerators, context)
+        adapter = WelcomeScreenAdapter(buyGenerators, context, generators.map { BitmapFactory.decodeResource(context.resources, context.resources.getIdentifier(it.image, "drawable", context.packageName))})
         view.displayListOfModels(buyGenerators, adapter!!)
     }
 
@@ -29,10 +36,15 @@ class DashboardPresenter(val view: DashboardMVP.view) {
         buyGenerators[index].itemBought = true
     }
 
-    fun startModelIfFullImageIsPresent(fullImage: String?, indexOfGenerator: Int?) {
+    fun startModelIfFullImageIsPresent() {
         if(fullImage != null){
             EventBus.getDefault().post(indexOfGenerator?.toDouble())
         }
     }
+
+    fun refreshList() {
+        adapter?.notifyDataSetChanged()
+    }
+
 
 }

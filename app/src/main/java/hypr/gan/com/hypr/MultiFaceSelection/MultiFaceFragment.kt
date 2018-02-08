@@ -56,11 +56,10 @@ class MultiFaceFragment : Fragment(), MultiFaceMVP.view, DrawableImageViewTouchI
     }
 
     override fun addBoxAroundFace(rect: Rect, canvasImageWithFaces: Canvas) {
-        val resolution = canvasImageWithFaces.width + canvasImageWithFaces.height
         val paint = Paint()
         paint.color = Color.RED
         paint.style = Paint.Style.STROKE
-        paint.strokeWidth = resolution * 0.0023f
+        paint.strokeWidth = 1f
         canvasImageWithFaces.drawRect(rect, paint)
     }
 

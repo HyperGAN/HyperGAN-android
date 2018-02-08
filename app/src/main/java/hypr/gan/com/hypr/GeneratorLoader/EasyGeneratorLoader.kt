@@ -3,6 +3,7 @@ package hypr.gan.com.hypr.GeneratorLoader
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Rect
+import hypr.a255bits.com.hypr.GeneratorLoader.Feature
 import hypr.gan.com.hypr.Generator.Generator
 import hypr.gan.com.hypr.ModelFragmnt.InlineImage
 import hypr.gan.com.hypr.Util.toBitmap
@@ -12,7 +13,7 @@ class EasyGeneratorLoader(var gen: Generator) : GeneratorLoader() {
     var baseImage: Bitmap? = null
     var encoded: FloatArray? = null
     var mask: FloatArray by Delegates.vetoable(floatArrayOf()) { property, oldValue, newValue ->
-        featureEnabled("mask")
+        featureEnabled(Feature.MASK)
     }
     val inliner = InlineImage()
 
@@ -23,8 +24,8 @@ class EasyGeneratorLoader(var gen: Generator) : GeneratorLoader() {
     fun sampleImageWithImage(person: Person, image: Bitmap?, croppedPoint: Rect): Bitmap? {
         val scaled = Bitmap.createScaledBitmap(image, generator?.generator?.output?.width!!, generator?.generator?.output?.height!!, false)
         baseImage = scaled
-        mask = this.mask(scaled)
-        val image = if (featureEnabled("encoding")) {
+        mask = mask(scaled)
+        val image = if (featureEnabled(Feature.ENCODING)) {
             encoded = this.encode(scaled)
             this.encoded = encoded
             this.sampleTensor("add_90",encoded!!, 0.0f, mask, scaled).toBitmap(this.width, this.height)
@@ -38,7 +39,7 @@ class EasyGeneratorLoader(var gen: Generator) : GeneratorLoader() {
         val scaled = Bitmap.createBitmap(generator?.generator?.output?.width!!, generator?.generator?.output?.height!!, Bitmap.Config.ARGB_8888)
         //mask = this.mask(scaled)
         baseImage = scaled
-        val sample = if(featureEnabled("encoding")){
+        val sample = if(featureEnabled(Feature.ENCODING)){
             encoded = this.encode(scaled)
             this.sampleRandom(encoded!!, 0.0f, mask!!, scaled!!)
 
@@ -55,7 +56,7 @@ class EasyGeneratorLoader(var gen: Generator) : GeneratorLoader() {
 
     fun inlineImage(person: Person, newCroppedImage: Bitmap, croppedPoint: Rect): Bitmap? {
         val image: Bitmap?
-        if (featureEnabled("inline")) {
+        if (featureEnabled(Feature.INLINE)) {
             val fullImage = person.fullImage
             val faceImage = person.faceImage?.toBitmap()
             image = if (faceImage != null) {

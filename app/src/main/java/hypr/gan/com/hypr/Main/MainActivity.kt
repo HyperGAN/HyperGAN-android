@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun popupSigninGoogle(googleSignInClient: GoogleApiClient) {
-        alert("Would you like to sign into Google?", "sign into Google") {
+        alert(getString(R.string.google_signin_message), getString(R.string.google_signin_title)) {
             okButton { signinToGoogle(googleSignInClient) }
             cancelButton { dialog ->
                 dialog.dismiss()
@@ -116,21 +116,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    override fun displayGeneratorsOnHomePage(generators: MutableList<BuyGenerator>) {
-        val fragment: Fragment = WelcomeScreen.newInstance(generators, "")
-        val transaction = supportFragmentManager.beginTransaction()
-        val fragTrans = transaction.replace(R.id.container, fragment).commitAllowingStateLoss()
-        transaction.addToBackStack(null)
-        presenter.startModel(0)
-    }
-
     override fun startCameraActivity(indexInJson: Int) {
         startActivity(intentFor<CameraActivity>("indexInJson" to indexInJson))
     }
 
-    override fun startMultipleModels(multiModels: DashboardFragment) {
+    override fun startFragment(fragment: Fragment){
         val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.container, multiModels).commitAllowingStateLoss()
+        transaction.replace(R.id.container, fragment).commitAllowingStateLoss()
         transaction.addToBackStack(null)
     }
 
@@ -145,7 +137,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun displayModelDownloadProgress() {
-        progressDownloadingModel = progressDialog("Downloading Model") {
+        progressDownloadingModel = progressDialog(getString(R.string.downloading_model_message)) {
             setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
             max = 100
         }
@@ -208,7 +200,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val modelFragment = presenter.getModelFragment(position.toInt())
                 val transaction = supportFragmentManager.beginTransaction()
                 val fragmentTransaction = transaction.replace(R.id.container, modelFragment).addToBackStack("model")
-                presenter.startFragment(fragmentTransaction)
+                presenter.startFragmentWhenDoneLoading(fragmentTransaction)
                 transaction.addToBackStack(null)
                 supportActionBar?.setDisplayHomeAsUpEnabled(true)
             } else {

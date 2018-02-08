@@ -3,7 +3,6 @@ package hypr.gan.com.hypr.Main
 import android.content.Context
 import android.util.Log
 import com.google.firebase.storage.FileDownloadTask
-import com.google.firebase.storage.FirebaseStorage
 import hotchemi.android.rate.AppRate
 import hypr.gan.com.hypr.Generator.Generator
 import hypr.gan.com.hypr.Network.ModelDownloader
@@ -29,7 +28,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
     val googleSignInClient = GoogleSignIn(context)
 
     var listOfGenerators: List<Generator>? = listOf()
-    var modelDownloader = ModelDownloader(FirebaseStorage.getInstance().reference)
+    var modelDownloader = ModelDownloader()
 
     init {
         googleSignInClient.client.connect()
@@ -51,13 +50,13 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
         val hasBoughtItem = if (itemId.isEmpty()) {
             true
         } else {
-            val inventory = query(true, mutableListOf(itemId), null)
+            val inventory = query(mutableListOf(itemId))
             inventory.hasPurchase(itemId)
         }
         return hasBoughtItem
     }
 
-    fun query(query: Boolean, skus: MutableList<String>, moreSubsSkus: List<String>?): Inventory {
+    fun query(skus: MutableList<String>): Inventory {
         return if (billingHelper.isConnected) {
             billingHelper.queryInventory(true, skus, null)
         } else {
@@ -96,7 +95,7 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
         }
     }
 
-    fun rateAppIfMeetConditions() {
+    fun rateAppInit() {
         AppRate.with(context)
                 .setInstallDays(0)
                 .setLaunchTimes(3)

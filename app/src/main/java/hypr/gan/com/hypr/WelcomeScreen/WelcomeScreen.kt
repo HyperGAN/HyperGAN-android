@@ -33,9 +33,6 @@ class WelcomeScreen : Fragment() {
     }
 
     private fun displayListOfModels() {
-//        recyclerView.layoutManager = LinearLayoutManager(activity)
-//        val adapter = buyGenerators?.let { WelcomeScreenAdapter(it) }
-//        recyclerView.adapter = adapter
     }
 
     companion object {

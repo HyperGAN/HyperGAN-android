@@ -16,6 +16,7 @@ import hypr.gan.com.hypr.GeneratorLoader.Person
 import hypr.gan.com.hypr.R
 import hypr.gan.com.hypr.Util.*
 import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.toast
@@ -24,22 +25,21 @@ import java.io.IOException
 import kotlin.properties.Delegates
 
 
-
-
 class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFragmentMVP.presenter {
 
 
-    var imageDisplayedOnScreen: Bitmap? = null
+    private var imageDisplayedOnScreen: Bitmap? = null
     val SHARE_IMAGE_PERMISSION_REQUEST = 10
     val SAVE_IMAGE_PERMISSION_REQUEST: Int = 11
     var generator: Generator by Delegates.observable(Generator()) { property, oldValue, newValue ->
-        newValue.let { easyGenerator.loadGenerator(newValue)}
+        newValue.let { easyGenerator.loadGenerator(newValue) }
         newValue
     }
     var generatorIndex: Int? = null
     lateinit var person: Person
     lateinit var view: ModelFragmentMVP.view
     lateinit var interactor: ModelInteractor
+    private var imageManipulatedFromzValue: Bitmap? = null
 
     fun loadGenerator(context: Context, pbFile: File?) {
         launch(UI) {
@@ -63,13 +63,14 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
         this.interactor = interactor
     }
 
-    override fun openRateAppInPlayStore(packageName: String?) {
+    fun openRateAppInPlayStore(packageName: String?) {
         val marketLink = Uri.parse("market://details?id=$packageName")
         val playStoreLink = Uri.parse("http://play.google.com/store/apps/details?id=$packageName")
         view.openRateAppInPlayStore(marketLink, playStoreLink)
 
 
     }
+
     override fun disconnectFaceDetector() {
         interactor.faceDetection.release()
     }
@@ -128,6 +129,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     override fun saveImageDisplayedToPhone(context: Context): Boolean {
         var isSaved = false
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            val faceImage = person.faceImage?.toBitmap()
             if (imageDisplayedOnScreen != null) {
                 val inlineImage = inlineImage(person, imageDisplayedOnScreen!!)
                 val waterMarkImage = interactor.placeWatermarkOnImage(inlineImage)
@@ -135,6 +137,8 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
 
             } else {
                 isSaved = ImageSaver().saveImageToInternalStorage(imageDisplayedOnScreen, context)
+                val imageCopy = faceImage?.copy(faceImage.config, true)
+                isSaved = ImageSaver().saveImageToInternalStorage(imageCopy, context)
             }
         } else {
             view.requestPermissionFromUser(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), SAVE_IMAGE_PERMISSION_REQUEST)
@@ -143,12 +147,9 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     }
 
     fun inlineImage(person: Person, newCroppedImage: Bitmap): Bitmap? {
-        val fullImage = person.fullImage
         val faceImage = person.faceImage?.toBitmap()
         val image: Bitmap? = if (faceImage != null) {
             easyGenerator.inlineImage(person, newCroppedImage, interactor.settings.getFaceLocation())
-//            inliner.setBeforeAfterCropSizingRatio(faceImage, newCroppedImage)
-//            fullImage.toBitmap()?.let { inliner.inlineCroppedImageToFullImage(newCroppedImage, it, croppedPoint) }
         } else {
             newCroppedImage
         }
@@ -188,9 +189,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     }
 
     private fun rateApp() {
-        if(interactor.settings.isFirstTimeSavingImage()){
-            view.rateApp()
-        }
+        view.rateApp()
     }
 
 
@@ -203,6 +202,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
                     context.toast(context.getString(R.string.image_saved_toast))
                 }
                 R.id.shareIamge -> {
+                    rateApp()
                     shareImageToOtherApps()
                     interactor.analytics.logEvent(AnalyticsEvent.SHARE_IMAGE)
                 }
@@ -216,19 +216,25 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
 
     fun getGeneratorImage(ganValue: Double): IntArray {
         val ganImage = easyGenerator.sampleImageWithZValue(ganValue.toFloat())
-        imageDisplayedOnScreen = ganImage.toBitmap(easyGenerator.width, easyGenerator.height)
         return ganImage
     }
 
-    fun manipulateZValueInImage(ganValue: Double): Bitmap? {
+    fun manipulateZValueInImage(ganValue: Double): IntArray {
         val ganImage = getGeneratorImage(ganValue)
-        return ganImage.toBitmap(easyGenerator.width, easyGenerator.height)
+        return ganImage
     }
 
     fun changeGanImageFromSlider(ganValue: Double) {
-        val imageManipluatedFromZValue = manipulateZValueInImage(ganValue)
-        val imagePlacedInsideFullImage = imageManipluatedFromZValue?.let { inlineImage(person, it) }
-        view.displayFocusedImage(imagePlacedInsideFullImage)
+        async(UI) {
+
+            val imageManipluatedFromZValue = manipulateZValueInImage(ganValue)
+            val imagePlacedInsideFullImage = bg {
+                val ganImage = imageManipluatedFromZValue.toBitmap(easyGenerator.width, easyGenerator.height)
+                imageManipulatedFromzValue = ganImage
+                ganImage.let { inlineImage(person, it) }
+            }
+            view.displayFocusedImage(imagePlacedInsideFullImage.await())
+        }
     }
 
     fun getInfoFromFragmentCreation(arguments: Bundle) {

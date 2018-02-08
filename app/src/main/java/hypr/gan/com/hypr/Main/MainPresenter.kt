@@ -1,6 +1,7 @@
 package hypr.gan.com.hypr.Main
 
 import android.content.Context
+import android.support.v4.app.Fragment
 import android.view.MenuItem
 import com.google.android.gms.common.api.GoogleApiClient
 import hypr.gan.com.hypr.BuyGenerator
@@ -13,6 +14,7 @@ import hypr.gan.com.hypr.Util.AnalyticsEvent
 import hypr.gan.com.hypr.Util.ImageSaver
 import hypr.gan.com.hypr.Util.InAppBilling.IabResult
 import hypr.gan.com.hypr.Util.SettingsHelper
+import hypr.gan.com.hypr.WelcomeScreen.WelcomeScreen
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
@@ -55,8 +57,10 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun handlePurchase(result: IabResult, generatorIndex: Int) {
         if (result.isSuccess) {
             dashboard?.presenter?.unlockBoughtModel(generatorIndex)
+            dashboard?.presenter?.refreshList()
+            analytics.logEvent(AnalyticsEvent.BOUGHT_ITEM)
         } else {
-            context.toast("Network error")
+            context.toast(context.getString(R.string.network_error))
         }
     }
 
@@ -84,9 +88,10 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     override fun buyModel(skus: String, generatorIndex: Int) {
         if (interactor.googleSignInClient.client.isConnected && !interactor.hasBoughtItem(skus)) {
+            analytics.logEvent(AnalyticsEvent.CLICK_BUY_BUTTON)
             view.buyModelPopup(skus, interactor.billingHelper, generatorIndex)
         } else if (interactor.hasBoughtItem(skus)) {
-            context.toast("You already bought this item.")
+            context.toast(context.getString(R.string.already_bought))
         } else {
             signInToGoogle(interactor.googleSignInClient.client)
         }
@@ -119,16 +124,13 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
     private fun displayMultiModels(itemId: Int, imageLocationPath: String?, listOfGenerators: List<Generator>?) {
-        if (onBackPressed == false) {
+        onBackPressed?.let { startMultiModel(listOfGenerators, itemId, imageLocationPath, it) }
+    }
 
-            val multiModel = DashboardFragment.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray(), fullImage, false)
-            this.dashboard = multiModel
-            view.startMultipleModels(multiModel)
-        } else {
-            val multiModel = DashboardFragment.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray(), fullImage, true)
-            this.dashboard = multiModel
-            view.startMultipleModels(multiModel)
-        }
+    private fun startMultiModel(listOfGenerators: List<Generator>?, itemId: Int, imageLocationPath: String?, onBackPressed: Boolean) {
+        val multiModel = DashboardFragment.newInstance(listOfGenerators, itemId, imageLocationPath, modelFileNames.toTypedArray(), fullImage, onBackPressed)
+        this.dashboard = multiModel
+        view.startFragment(multiModel)
     }
 
     fun saveImageSoOtherFragmentCanViewIt(image: ByteArray?): File {
@@ -146,7 +148,6 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         return progressPercent >= DOWNLOAD_COMPLETE
     }
 
-
     override fun addModelsToNavBar(applicationContext: Context) {
         addModel = launch(UI) {
             val generators = interactor.getGeneratorsFromNetwork(applicationContext).await()
@@ -155,10 +156,17 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             if (image != null) {
                 image?.let { createMultiModels(indexInJson!!, it) }
             } else {
-                view.displayGeneratorsOnHomePage(buyGenerators)
+                displayGeneratorsOnHomePage()
             }
             isDoneLoading = true
         }
+    }
+
+    fun displayGeneratorsOnHomePage() {
+        val fragment: Fragment = WelcomeScreen.newInstance(buyGenerators, "")
+        view.startFragment(fragment)
+        startModel(0)
+
     }
 
     private fun saveGeneratorInfo(generators: List<Generator>?) {
@@ -170,10 +178,8 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
     override fun onNavigationItemSelected(item: MenuItem) {
-        if (item.itemId in 0..100) {
-//            attemptToStartModel(item.itemId)
-        } else if (item.itemId == R.id.homeButton) {
-            view.displayGeneratorsOnHomePage(buyGenerators)
+        if (item.itemId == R.id.homeButton) {
+            displayGeneratorsOnHomePage()
             analytics.logEvent(AnalyticsEvent.CHOOSE_HOME_NAV_OPTION)
         }
         analytics.logEvent(AnalyticsEvent.CHOOSE_SIDE_NAV_OPTION)
@@ -185,10 +191,10 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
     fun listenForAppStartupForDecidingToRateAppPopup() {
-        interactor.rateAppIfMeetConditions()
+        interactor.rateAppInit()
     }
 
-    fun startFragment(fragmentTransaction: android.support.v4.app.FragmentTransaction) {
+    fun startFragmentWhenDoneLoading(fragmentTransaction: android.support.v4.app.FragmentTransaction) {
         if (isDoneLoading) {
             view.startFragment(fragmentTransaction)
         }

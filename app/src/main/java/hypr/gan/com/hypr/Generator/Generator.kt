@@ -25,4 +25,7 @@ class Generator : Parcelable {
 
     @Json(name = "google_play_id")
     var google_play_id: String = ""
+
+    @Json(name = "image")
+    var image: String = ""
 }
