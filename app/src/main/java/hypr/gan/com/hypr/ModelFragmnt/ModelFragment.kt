@@ -41,6 +41,10 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
         }
     }
 
+    override fun finishActivity() {
+        activity.finish()
+    }
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true)

@@ -17,10 +17,10 @@ import hypr.gan.com.hypr.GeneratorLoader.Person
 import hypr.gan.com.hypr.Main.MainActivity
 import hypr.gan.com.hypr.R
 import hypr.gan.com.hypr.Util.*
-import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
+import org.jetbrains.anko.clearTop
 import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.toast
@@ -48,7 +48,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
 
     fun loadGenerator(context: Context, pbFile: File?) {
         launch(UI) {
-            val imageBitmap: Deferred<Bitmap?> = bg {
+            val imageBitmap: Bitmap? = bg {
                 loadGenerator(pbFile, context.assets)
                 val bitmap = person.fullImage?.toBitmap()
                 val faces = getFaceCroppedOutOfImageIfNoFaceGetFullImage(bitmap, context)
@@ -59,13 +59,14 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
                     e.printStackTrace()
                     ImageSaver().deleteImagesFromFragment()
                     SettingsHelper(context).resetImagePaths()
-                    context.intentFor<MainActivity>().start(context)
-                    faces
+                    context.intentFor<MainActivity>().clearTop().start(context)
+                    view.finishActivity()
+                    null
 //                    sampleImage(person, null, interactor.settings.getFaceLocation())
                 }
                 return@bg transformedImage
-            }
-            view.displayFocusedImage(imageBitmap.await())
+            }.await()
+            imageBitmap?.let {  view.displayFocusedImage(it)}
         }
         generatorIndex?.let { easyGenerator.setIndex(it) }
     }
