@@ -137,6 +137,7 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
     override fun onStop() {
         super.onStop()
         presenter.disconnectFaceDetector()
+        presenter.loadGeneratorLauncher?.cancel()
     }
 
     override fun displayFocusedImage(imageFromGallery: Bitmap?) {

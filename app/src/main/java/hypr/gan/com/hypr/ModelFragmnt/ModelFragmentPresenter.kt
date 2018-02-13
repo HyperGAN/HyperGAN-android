@@ -17,6 +17,8 @@ import hypr.gan.com.hypr.GeneratorLoader.Person
 import hypr.gan.com.hypr.Main.MainActivity
 import hypr.gan.com.hypr.R
 import hypr.gan.com.hypr.Util.*
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
@@ -45,28 +47,32 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     lateinit var view: ModelFragmentMVP.view
     lateinit var interactor: ModelInteractor
     private var imageManipulatedFromzValue: Bitmap? = null
+    var loadGeneratorLauncher: Job? = null
 
     fun loadGenerator(context: Context, pbFile: File?) {
-        launch(UI) {
-            val imageBitmap: Bitmap? = bg {
+        loadGeneratorLauncher = launch(UI) {
+            val imageBitmap: Deferred<Bitmap?> = bg {
                 loadGenerator(pbFile, context.assets)
                 val bitmap = person.fullImage?.toBitmap()
                 val faces = getFaceCroppedOutOfImageIfNoFaceGetFullImage(bitmap, context)
-
-                val transformedImage: Bitmap? = try {
-                    sampleImage(person, faces, interactor.settings.getFaceLocation())
-                } catch (e: IllegalArgumentException) {
-                    e.printStackTrace()
-                    ImageSaver().deleteImagesFromFragment()
-                    SettingsHelper(context).resetImagePaths()
-                    context.intentFor<MainActivity>().clearTop().start(context)
-                    view.finishActivity()
-                    null
-//                    sampleImage(person, null, interactor.settings.getFaceLocation())
+                return@bg sampleImage(person, faces, interactor.settings.getFaceLocation())
+            }
+            try {
+                val image = imageBitmap.await()
+                if (image != null) {
+                    view.displayFocusedImage(image)
                 }
-                return@bg transformedImage
-            }.await()
-            imageBitmap?.let {  view.displayFocusedImage(it)}
+
+            } catch (e: IllegalArgumentException) {
+                println("bitmap null")
+                e.printStackTrace()
+                ImageSaver().deleteImagesFromFragment()
+                SettingsHelper(context).resetImagePaths()
+                context.intentFor<MainActivity>().clearTop().start(context)
+                view.finishActivity()
+                println("imagebitmap null end ")
+
+            }
         }
         generatorIndex?.let { easyGenerator.setIndex(it) }
     }

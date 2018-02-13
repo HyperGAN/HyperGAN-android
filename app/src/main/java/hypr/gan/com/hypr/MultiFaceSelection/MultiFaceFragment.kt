@@ -49,6 +49,7 @@ class MultiFaceFragment : Fragment(), MultiFaceMVP.view, DrawableImageViewTouchI
     override fun sendImageToModel(file: File, fullImage: File) {
         startActivity(activity.intentFor<MainActivity>
         ("indexInJson" to 0, "image" to file.path, "fullimage" to fullImage.path).clearTop())
+        activity.finish()
     }
 
     override fun addFaceLocationToImage(rect: Rect) {
