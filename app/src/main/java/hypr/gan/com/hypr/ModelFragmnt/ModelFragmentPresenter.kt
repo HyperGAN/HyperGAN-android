@@ -53,7 +53,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
         loadGeneratorLauncher = launch(UI) {
             val imageBitmap: Deferred<Bitmap?> = bg {
                 loadGenerator(pbFile, context.assets)
-                val bitmap = person.fullImage?.toBitmap()
+                val bitmap = person.fullImage.toBitmap()
                 val faces = getFaceCroppedOutOfImageIfNoFaceGetFullImage(bitmap, context)
                 return@bg sampleImage(person, faces, interactor.settings.getFaceLocation())
             }
@@ -71,6 +71,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
                 context.intentFor<MainActivity>().clearTop().start(context)
                 view.finishActivity()
                 println("imagebitmap null end ")
+                context.toast("There was an error..")
 
             }
         }
