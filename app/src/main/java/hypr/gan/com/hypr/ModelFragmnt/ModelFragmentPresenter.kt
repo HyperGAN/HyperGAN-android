@@ -69,7 +69,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
                 ImageSaver().deleteImagesFromFragment()
                 SettingsHelper(context).resetImagePaths()
                 context.intentFor<MainActivity>().clearTop().start(context)
-                view.finishActivity()
+//                view.finishActivity()
                 println("imagebitmap null end ")
                 context.toast("There was an error..")
 
