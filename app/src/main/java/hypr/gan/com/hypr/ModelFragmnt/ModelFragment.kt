@@ -29,10 +29,11 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
         get() = "generator"
 
     var pbFile: File? = null
-    val presenter by lazy { ModelFragmentPresenter(GeneratorModule().getGeneratorLoader()) }
+    val presenter by lazy { ModelFragmentPresenter(GeneratorModule().getGeneratorLoader(), context) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val file = File("expression")
         presenter.setInteractors(ModelInteractor(context))
         presenter.setViews(this)
         presenter.easyGenerator.loadAssets(context)

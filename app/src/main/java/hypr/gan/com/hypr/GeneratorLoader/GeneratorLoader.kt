@@ -1,11 +1,13 @@
 package hypr.gan.com.hypr.GeneratorLoader
 
+import android.content.Context
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.util.Log
 import hypr.gan.com.hypr.Generator.Generator
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface
 import java.io.File
+import java.io.FileInputStream
 
 open class GeneratorLoader {
     lateinit var inference: TensorFlowInferenceInterface
@@ -26,9 +28,12 @@ open class GeneratorLoader {
         this.index = index
     }
 
-    fun loadGenerator(generator: Generator) {
+    fun loadGenerator(generator: Generator, context: Context) {
         this.generator = generator
-        this.inference = TensorFlowInferenceInterface(this.assets, this.generator!!.model_url)
+        val filename = "expression-model.pb"
+        val file = File(context.filesDir, filename).absolutePath
+//        this.inference = TensorFlowInferenceInterface(this.assets, this.generator!!.model_url)
+        this.inference = TensorFlowInferenceInterface(FileInputStream(File(file)))
         this.width = generator.generator?.input?.width!!
         this.height = generator.generator!!.input?.height!!
         z_dimsArray = generator.generator!!.input!!.z_dims!!.map { item -> item.toLong() }.toLongArray()

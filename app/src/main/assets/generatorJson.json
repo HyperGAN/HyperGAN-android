@@ -2,7 +2,7 @@
   "name": "Expression",
   "features": ["inline", "mask", "encoding"],
   "file_size_in_bytes": 1024000000,
-  "model_url": "file:///android_asset/generators/expression-model.pb",
+  "model_url": "gs://hypr-572dc.appspot.com/expression-model.pb",
   "description": "Change your expression.  Or choose a random one.",
   "google_play_id": "",
   "image": "cat",

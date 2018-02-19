@@ -32,14 +32,14 @@ import java.lang.IllegalArgumentException
 import kotlin.properties.Delegates
 
 
-class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFragmentMVP.presenter {
+class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader, val context: Context) : ModelFragmentMVP.presenter {
 
 
     private var imageDisplayedOnScreen: Bitmap? = null
     val SHARE_IMAGE_PERMISSION_REQUEST = 10
     val SAVE_IMAGE_PERMISSION_REQUEST: Int = 11
     var generator: Generator by Delegates.observable(Generator()) { property, oldValue, newValue ->
-        newValue.let { easyGenerator.loadGenerator(newValue) }
+        newValue.let { easyGenerator.loadGenerator(newValue, context) }
         newValue
     }
     var generatorIndex: Int? = null
@@ -69,7 +69,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
                 ImageSaver().deleteImagesFromFragment()
                 SettingsHelper(context).resetImagePaths()
                 context.intentFor<MainActivity>().clearTop().start(context)
-//                view.finishActivity()
+                view.finishActivity()
                 println("imagebitmap null end ")
                 context.toast("There was an error..")
 

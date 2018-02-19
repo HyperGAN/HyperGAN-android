@@ -15,15 +15,12 @@ import android.widget.Spinner
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.common.api.GoogleApiClient
 import com.pawegio.kandroid.start
-import hypr.gan.com.hypr.BuyGenerator
 import hypr.gan.com.hypr.CameraFragment.CameraActivity
-import hypr.gan.com.hypr.Dashboard.DashboardFragment
 import hypr.gan.com.hypr.DependencyInjection.MainApplication
 import hypr.gan.com.hypr.Generator.Generator
 import hypr.gan.com.hypr.MultiFaceSelection.MultiFaceFragment
 import hypr.gan.com.hypr.R
 import hypr.gan.com.hypr.Util.InAppBilling.IabHelper
-import hypr.gan.com.hypr.WelcomeScreen.WelcomeScreen
 import kotlinx.android.synthetic.main.activity_main2.*
 import kotlinx.android.synthetic.main.app_bar_main2.*
 import org.greenrobot.eventbus.EventBus

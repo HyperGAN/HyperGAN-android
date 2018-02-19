@@ -1,7 +1,6 @@
 package hypr.gan.com.hypr.Main
 
 import android.content.Context
-import android.support.v4.app.Fragment
 import android.view.MenuItem
 import com.google.android.gms.common.api.GoogleApiClient
 import hypr.gan.com.hypr.BuyGenerator
@@ -14,7 +13,6 @@ import hypr.gan.com.hypr.Util.AnalyticsEvent
 import hypr.gan.com.hypr.Util.ImageSaver
 import hypr.gan.com.hypr.Util.InAppBilling.IabResult
 import hypr.gan.com.hypr.Util.SettingsHelper
-import hypr.gan.com.hypr.WelcomeScreen.WelcomeScreen
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
@@ -75,15 +73,23 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
     override fun createGeneratorLoader(fileName: String, itemId: Int) {
-        /*val file = File(fileName)
+        val file = File(fileName)
         if (!file.exists()) {
-            val pbFilePointer = interactor.getModelFromFirebase(file, "optimized_weight_conv.pb")
+            val pbFilePointer = interactor.getModelFromFirebase(file, interactor.listOfGenerators!![0].model_url!!)
             pbFilePointer?.addOnSuccessListener { taskSnapshot ->
+                println("trans: ${taskSnapshot.bytesTransferred}")
                 analytics.logEvent(AnalyticsEvent.GENERATOR_DOWNLOAD)
+                if (image != null) {
+//                    image?.let { createMultiModels(indexInJson!!, it) }
+                    displayMultiModels(itemId, null, interactor.listOfGenerators)
+                } else {
+                    displayMultiModels(itemId, null, interactor.listOfGenerators)
+                }
             }
-        }*/
+        }else{
+            displayMultiModels(itemId, null, interactor.listOfGenerators)
+        }
 
-        displayMultiModels(itemId, null, interactor.listOfGenerators)
     }
 
     override fun buyModel(skus: String, generatorIndex: Int) {
@@ -153,18 +159,15 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
             val generators = interactor.getGeneratorsFromNetwork(applicationContext).await()
             saveGeneratorInfo(generators)
             buyGenerators = mutableListOf()
-            if (image != null) {
-                image?.let { createMultiModels(indexInJson!!, it) }
-            } else {
-                displayGeneratorsOnHomePage()
-            }
+            displayGeneratorsOnHomePage()
+
             isDoneLoading = true
         }
     }
 
     fun displayGeneratorsOnHomePage() {
-        val fragment: Fragment = WelcomeScreen.newInstance(buyGenerators, "")
-        view.startFragment(fragment)
+//        val fragment: Fragment = WelcomeScreen.newInstance(buyGenerators, "")
+//        view.startFragment(fragment)
         startModel(0)
 
     }
