@@ -64,13 +64,11 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader, val context
                 }
 
             } catch (e: IllegalArgumentException) {
-                println("bitmap null")
                 e.printStackTrace()
                 ImageSaver().deleteImagesFromFragment()
                 SettingsHelper(context).resetImagePaths()
                 context.intentFor<MainActivity>().clearTop().start(context)
                 view.finishActivity()
-                println("imagebitmap null end ")
                 context.toast("There was an error..")
 
             }
