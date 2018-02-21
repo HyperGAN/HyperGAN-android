@@ -120,7 +120,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun startFragment(fragment: Fragment){
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.container, fragment).commitAllowingStateLoss()
-        transaction.addToBackStack(null)
     }
 
     override fun displayBackButton() {
