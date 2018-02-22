@@ -32,7 +32,6 @@ open class GeneratorLoader {
         this.generator = generator
         val filename = "expression-model.pb"
         val file = File(context.filesDir, filename).absolutePath
-//        this.inference = TensorFlowInferenceInterface(this.assets, this.generator!!.model_url)
         this.inference = TensorFlowInferenceInterface(FileInputStream(File(file)))
         this.width = generator.generator?.input?.width!!
         this.height = generator.generator!!.input?.height!!
