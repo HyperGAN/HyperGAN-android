@@ -1,9 +1,9 @@
 package hypr.gan.com.hypr.Dashboard
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import hypr.gan.com.hypr.BuyGenerator
 import hypr.gan.com.hypr.Generator.Generator
-import android.graphics.BitmapFactory
 import org.greenrobot.eventbus.EventBus
 
 class DashboardPresenter(val view: DashboardMVP.view) {
@@ -23,7 +23,7 @@ class DashboardPresenter(val view: DashboardMVP.view) {
             buyGenerators.add(index, buyGenerator)
             isItemBought(generator, index)
         }
-        adapter = WelcomeScreenAdapter(buyGenerators, context, generators.map { BitmapFactory.decodeResource(context.resources, context.resources.getIdentifier(it.image, "drawable", context.packageName))})
+        adapter = WelcomeScreenAdapter(buyGenerators, context, generators.map { BitmapFactory.decodeResource(context.resources, context.resources.getIdentifier(it.image, "drawable", context.packageName))}, generators.map {it.description})
         view.displayListOfModels(buyGenerators, adapter!!)
     }
 

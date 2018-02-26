@@ -43,6 +43,7 @@
   "name": "Halloween",
   "features": ["mask", "encoding"],
   "file_size_in_bytes": 2048000000,
+  "description": "Choose from halloween images. An example description.",
   "price_in_cents": 1499,
   "google_play_id": "com.halloween",
   "image": "halloween",

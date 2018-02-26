@@ -28,4 +28,7 @@ class Generator : Parcelable {
 
     @Json(name = "image")
     var image: String = ""
+
+    @Json(name = "description")
+    var description: String = ""
 }

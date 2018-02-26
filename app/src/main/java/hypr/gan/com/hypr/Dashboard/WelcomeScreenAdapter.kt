@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.model_card.view.*
 import org.greenrobot.eventbus.EventBus
 
 
-class WelcomeScreenAdapter(val generators: MutableList<BuyGenerator>, val context: Context, val generatorImages: List<Bitmap>) : RecyclerView.Adapter<WelcomeScreenAdapter.CustomViewHolder>() {
+class WelcomeScreenAdapter(val generators: MutableList<BuyGenerator>, val context: Context, val generatorImages: List<Bitmap>, val modelDescriptions: List<String>) : RecyclerView.Adapter<WelcomeScreenAdapter.CustomViewHolder>() {
 
     override fun getItemCount(): Int = generators.size
 
@@ -41,8 +41,9 @@ class WelcomeScreenAdapter(val generators: MutableList<BuyGenerator>, val contex
     }
 
     private fun buyButtonClickListener(holder: CustomViewHolder?, position: Int) {
+        val description = modelDescriptions[position]
         holder?.buyButton?.setOnClickListener {
-            context.alert(context.getString(R.string.buy_model_popup_message), "Hypr") {
+            context.alert(context.getString(R.string.buy_model_popup_message) + " \n\n$description", generators[position].name) {
                 positiveButton("Buy", { EventBus.getDefault().post(position) })
                 negativeButton { dismiss() }
             }.show()
