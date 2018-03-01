@@ -69,7 +69,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader, val context
                 SettingsHelper(context).resetImagePaths()
                 context.intentFor<MainActivity>().clearTop().start(context)
                 view.finishActivity()
-                context.toast("There was an error..")
+//                context.toast("There was an error..")
 
             }
         }
