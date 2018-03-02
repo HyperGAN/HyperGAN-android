@@ -48,6 +48,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader, val context
     lateinit var interactor: ModelInteractor
     private var imageManipulatedFromzValue: Bitmap? = null
     var loadGeneratorLauncher: Job? = null
+    val imageSaver = ImageSaver()
 
     fun loadGenerator(context: Context, pbFile: File?) {
         loadGeneratorLauncher = launch(UI) {
@@ -65,7 +66,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader, val context
 
             } catch (e: IllegalArgumentException) {
                 e.printStackTrace()
-                ImageSaver().deleteImagesFromFragment()
+                imageSaver.deleteImagesFromFragment()
                 SettingsHelper(context).resetImagePaths()
                 context.intentFor<MainActivity>().clearTop().start(context)
                 view.finishActivity()
@@ -154,12 +155,12 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader, val context
             if (imageDisplayedOnScreen != null) {
                 val inlineImage = inlineImage(person, imageDisplayedOnScreen!!)
                 val waterMarkImage = interactor.placeWatermarkOnImage(inlineImage)
-                isSaved = ImageSaver().saveImageToInternalStorage(waterMarkImage, context)
+                isSaved = imageSaver.saveImageToInternalStorage(waterMarkImage, context)
 
             } else {
-                isSaved = ImageSaver().saveImageToInternalStorage(imageDisplayedOnScreen, context)
+                isSaved = imageSaver.saveImageToInternalStorage(imageDisplayedOnScreen, context)
                 val imageCopy = faceImage?.copy(faceImage.config, true)
-                isSaved = ImageSaver().saveImageToInternalStorage(imageCopy, context)
+                isSaved = imageSaver.saveImageToInternalStorage(imageCopy, context)
             }
         } else {
             view.requestPermissionFromUser(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), SAVE_IMAGE_PERMISSION_REQUEST)
@@ -236,13 +237,11 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader, val context
     }
 
     fun getGeneratorImage(ganValue: Double): IntArray {
-        val ganImage = easyGenerator.sampleImageWithZValue(ganValue.toFloat())
-        return ganImage
+        return easyGenerator.sampleImageWithZValue(ganValue.toFloat())
     }
 
     fun manipulateZValueInImage(ganValue: Double): IntArray {
-        val ganImage = getGeneratorImage(ganValue)
-        return ganImage
+        return getGeneratorImage(ganValue)
     }
 
     fun changeGanImageFromSlider(ganValue: Double) {
