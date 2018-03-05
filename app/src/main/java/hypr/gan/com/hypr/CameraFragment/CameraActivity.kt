@@ -9,8 +9,8 @@ import android.os.Bundle
 import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import com.flurgle.camerakit.CameraView
 import com.pawegio.kandroid.start
+import com.wonderkiln.camerakit.CameraView
 import hypr.gan.com.hypr.Main.MainActivity
 import hypr.gan.com.hypr.R
 import hypr.gan.com.hypr.Util.ImageSaver

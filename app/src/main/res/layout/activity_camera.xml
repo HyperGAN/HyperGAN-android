@@ -8,7 +8,7 @@
     tools:context="hypr.gan.com.hypr.CameraFragment.CameraActivity">
 
 
-    <com.flurgle.camerakit.CameraView
+    <com.wonderkiln.camerakit.CameraView
         android:id="@+id/cameraView"
         android:layout_width="0dp"
         android:layout_height="0dp"

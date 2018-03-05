@@ -4,8 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.support.v4.view.ViewPager
-import com.flurgle.camerakit.CameraListener
-import com.flurgle.camerakit.CameraView
+import com.wonderkiln.camerakit.*
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 
@@ -29,12 +28,20 @@ inline fun ViewPager.onPageSelected(crossinline listener: (position: Int) -> Uni
     })
 }
 inline fun CameraView.onPictureTaken(crossinline listener: (jpeg: ByteArray?) -> Unit){
-   setCameraListener(object: CameraListener(){
-       override fun onPictureTaken(jpeg: ByteArray?) {
-           super.onPictureTaken(jpeg)
-           listener(jpeg)
-       }
-   })
+    addCameraKitListener(object: CameraKitEventListener {
+        override fun onVideo(p0: CameraKitVideo?) {}
+        override fun onEvent(p0: CameraKitEvent?) {}
+        override fun onImage(p0: CameraKitImage?) {
+            listener(p0?.jpeg)
+        }
+        override fun onError(p0: CameraKitError?) {}
+    })
+//   setCameraListener(object: CameraListener(){
+//       override fun onPictureTaken(jpeg: ByteArray?) {
+//           super.onPictureTaken(jpeg)
+//           listener(jpeg)
+//       }
+//   })
 }
 
 fun ByteArray.toBitmap(): Bitmap? {

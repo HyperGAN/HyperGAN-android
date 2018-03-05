@@ -29,36 +29,35 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
         get() = "generator"
 
     var pbFile: File? = null
-    val presenter by lazy { ModelFragmentPresenter(GeneratorModule().getGeneratorLoader(), context) }
+    val presenter by lazy { ModelFragmentPresenter(GeneratorModule().getGeneratorLoader(), context!!) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val file = File("expression")
-        presenter.setInteractors(ModelInteractor(context))
+        presenter.setInteractors(ModelInteractor(context!!))
         presenter.setViews(this)
-        presenter.easyGenerator.loadAssets(context)
+        presenter.easyGenerator.loadAssets(context!!)
         if (arguments != null) {
-            presenter.getInfoFromFragmentCreation(arguments)
+            presenter.getInfoFromFragmentCreation(arguments!!)
         }
     }
 
     override fun finishActivity() {
-        activity.finish()
+        activity?.finish()
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true)
-        return inflater!!.inflate(R.layout.fragment_model, container, false)
+        return inflater.inflate(R.layout.fragment_model, container, false)
     }
 
     override fun rateApp() {
-        activity.alert("Rate Hypr", "What do you think about Hypr?") {
+        activity?.alert("Rate Hypr", "What do you think about Hypr?") {
             positiveButton("Rate Us!", {
                 AppRate.showRateDialogIfMeetsConditions(activity)
             })
 
-        }.show()
+        }?.show()
     }
 
     override fun openRateAppInPlayStore(marketLink: Uri?, playStoreLink: Uri) {
@@ -83,10 +82,10 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
         imageTransitionSeekBar.isEnabled = true
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loadingIcon.show()
-        presenter.loadGenerator(context, pbFile)
+        presenter.loadGenerator(context!!, pbFile)
         displayImageTransitionSeekbarProgress()
         randomizeModelClickListener()
         chooseImageFromGalleryButtonClickListener()
@@ -107,15 +106,15 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     private fun lockLayoutClickListener() {
         lockLayout.setOnClickListener {
-            activity.alert(getString(R.string.buy_model_popup_message), "Hypr") {
+            activity?.alert(getString(R.string.buy_model_popup_message), "Hypr") {
                 positiveButton("Buy", { EventBus.getDefault().post(presenter.generatorIndex) })
                 cancelButton { dialog -> dialog.dismiss() }
-            }.show()
+            }?.show()
         }
     }
 
     override fun startCameraActivity() {
-        val intent = activity.intentFor<CameraActivity>("indexInJson" to presenter.generatorIndex)
+        val intent = activity?.intentFor<CameraActivity>("indexInJson" to presenter.generatorIndex)
         EventBus.getDefault().post(intent)
     }
 
@@ -131,7 +130,7 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        presenter.onOptionsItemSelected(item, context)
+        presenter.onOptionsItemSelected(item, context!!)
         return super.onOptionsItemSelected(item)
     }
 
@@ -156,7 +155,7 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        presenter.onRequestPermissionResult(requestCode, permissions, grantResults, context)
+        presenter.onRequestPermissionResult(requestCode, permissions, grantResults, context!!)
     }
 
     companion object {

@@ -17,17 +17,16 @@ class WelcomeScreen : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            buyGenerators = arguments.getParcelableArray(ARG_PARAM1) as Array<BuyGenerator>
-            mParam2 = arguments.getString(ARG_PARAM2)
+            buyGenerators = arguments?.getParcelableArray(ARG_PARAM1) as Array<BuyGenerator>
+            mParam2 = arguments?.getString(ARG_PARAM2)
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_welcome_screen, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_welcome_screen, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         displayListOfModels()
     }

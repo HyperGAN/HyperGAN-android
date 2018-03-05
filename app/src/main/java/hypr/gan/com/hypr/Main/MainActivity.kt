@@ -11,6 +11,7 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.SubMenu
+import android.view.View
 import android.widget.Spinner
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.common.api.GoogleApiClient
@@ -66,6 +67,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    override fun displayLoadingIcon() {
+        loadingIcon.visibility = View.VISIBLE
+    }
+    override fun stopLoadingIcon() {
+        loadingIcon.visibility = View.GONE
+    }
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         presenter.onOptionsItemSelected(item)
         return super.onOptionsItemSelected(item)

@@ -75,8 +75,10 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     override fun createGeneratorLoader(fileName: String, itemId: Int) {
         val file = File(fileName)
         if (!file.exists()) {
+            view.displayLoadingIcon()
             val pbFilePointer = interactor.getModelFromFirebase(file, interactor.listOfGenerators!![0].model_url!!)
             pbFilePointer?.addOnSuccessListener { taskSnapshot ->
+                view.stopLoadingIcon()
                 println("trans: ${taskSnapshot.bytesTransferred}")
                 analytics.logEvent(AnalyticsEvent.GENERATOR_DOWNLOAD)
                 if (image != null) {
@@ -182,7 +184,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     override fun onNavigationItemSelected(item: MenuItem) {
         if (item.itemId == R.id.homeButton) {
-            displayGeneratorsOnHomePage()
+//            displayGeneratorsOnHomePage()
             analytics.logEvent(AnalyticsEvent.CHOOSE_HOME_NAV_OPTION)
         }
         analytics.logEvent(AnalyticsEvent.CHOOSE_SIDE_NAV_OPTION)

@@ -5,8 +5,6 @@ import android.support.v4.app.Fragment
 import android.view.MenuItem
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.storage.FileDownloadTask
-import hypr.gan.com.hypr.BuyGenerator
-import hypr.gan.com.hypr.Dashboard.DashboardFragment
 import hypr.gan.com.hypr.Generator.Generator
 import hypr.gan.com.hypr.ModelFragmnt.ModelFragment
 import hypr.gan.com.hypr.Util.InAppBilling.IabHelper
@@ -27,6 +25,8 @@ interface MainMvp {
         fun startFragment(fragmentTransaction: android.support.v4.app.FragmentTransaction)
 
         fun startFragment(fragment: Fragment)
+        fun displayLoadingIcon()
+        fun stopLoadingIcon()
     }
 
     interface presenter {
