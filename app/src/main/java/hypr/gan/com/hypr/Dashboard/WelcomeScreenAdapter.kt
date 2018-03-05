@@ -35,9 +35,12 @@ class WelcomeScreenAdapter(val generators: MutableList<BuyGenerator>, val contex
     }
 
     private fun populateListItem(holder: CustomViewHolder?, position: Int) {
-        holder?.title?.text = generators[position].name
-        holder?.card?.setOnClickListener {EventBus.getDefault().post(position.toDouble()) }
-        holder?.cardImage?.setImageBitmap(generatorImages[position])
+        with(holder!!){
+            title.text = generators[position].name
+            card.setOnClickListener {EventBus.getDefault().post(position.toDouble()) }
+            cardImage.setImageBitmap(generatorImages[position])
+
+        }
     }
 
     private fun buyButtonClickListener(holder: CustomViewHolder?, position: Int) {
