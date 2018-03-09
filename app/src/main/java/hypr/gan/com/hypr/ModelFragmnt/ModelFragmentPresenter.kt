@@ -67,14 +67,16 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader, val context
             } catch (e: IllegalArgumentException) {
                 e.printStackTrace()
                 imageSaver.deleteImagesFromFragment()
-                SettingsHelper(context).resetImagePaths()
-                context.intentFor<MainActivity>().clearTop().start(context)
-                view.finishActivity()
-//                context.toast("There was an error..")
-
+                resetAppToBeginning()
             }
         }
         generatorIndex?.let { easyGenerator.setIndex(it) }
+    }
+
+    private fun resetAppToBeginning() {
+        SettingsHelper(context).resetImagePaths()
+        context.intentFor<MainActivity>().clearTop().start(context)
+        view.finishActivity()
     }
 
     fun setViews(view: ModelFragmentMVP.view) {

@@ -6,7 +6,6 @@ import android.content.Intent
 import android.graphics.PointF
 import android.os.Bundle
 import android.support.design.widget.NavigationView
-import android.support.multidex.MultiDex
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
@@ -43,42 +42,45 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
-        MultiDex.install(this)
+        MainApplication().onCreate()
         presenter.listenForAppStartupForDecidingToRateAppPopup()
         setSupportActionBar(toolbar)
-        MainApplication().onCreate()
-
         presenter.addModelsToNavBar(applicationContext)
         getInfoFromCameraActivity()
     }
 
     private fun getInfoFromCameraActivity() {
-        presenter.isModelFragmentDisplayed = intent.hasExtra("indexInJson")
-        if (intent.hasExtra("onbackpressed")) {
-            presenter.onBackPressed = intent.extras.getBoolean("onbackpressed")
-        }
-        if (presenter.isModelFragmentDisplayed) {
-            presenter.indexInJson = intent.extras.getInt("indexInJson")
-            presenter.image = intent.extras.getString("image")
-            presenter.fullImage = intent.extras.getString("fullimage")
-            presenter.settingsHelper.setModelImagePath(presenter.image!!)
-            if (presenter.fullImage != null) {
-                presenter.settingsHelper.setFullImagePath(presenter.fullImage!!)
+        with(presenter) {
+            isModelFragmentDisplayed = intent.hasExtra("indexInJson")
+            if (intent.hasExtra("onbackpressed")) {
+                onBackPressed = intent.extras.getBoolean("onbackpressed")
             }
+            if (isModelFragmentDisplayed) {
+                indexInJson = intent.extras.getInt("indexInJson")
+                image = intent.extras.getString("image")
+                fullImage = intent.extras.getString("fullimage")
+                settingsHelper.setModelImagePath(image!!)
+                if (fullImage != null) {
+                    settingsHelper.setFullImagePath(fullImage!!)
+                }
 
+            }
         }
     }
 
     override fun displayLoadingIcon() {
         loadingIcon.visibility = View.VISIBLE
     }
+
     override fun stopLoadingIcon() {
         loadingIcon.visibility = View.GONE
     }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         presenter.onOptionsItemSelected(item)
         return super.onOptionsItemSelected(item)
     }
+
     override fun startFragment(fragmentTransaction: android.support.v4.app.FragmentTransaction) {
         fragmentTransaction.commit()
     }
@@ -126,7 +128,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         startActivity(intentFor<CameraActivity>("indexInJson" to indexInJson))
     }
 
-    override fun startFragment(fragment: Fragment){
+    override fun startFragment(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.container, fragment).commitAllowingStateLoss()
     }
@@ -200,17 +202,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @Subscribe
     fun startModelFragment(position: java.lang.Double) {
-            val hasBought = presenter.interactor.hasBoughtItem(presenter.interactor.listOfGenerators?.get(position.toInt())?.google_play_id!!)
-            if (hasBought) {
-                val modelFragment = presenter.getModelFragment(position.toInt())
-                val transaction = supportFragmentManager.beginTransaction()
-                val fragmentTransaction = transaction.replace(R.id.container, modelFragment).addToBackStack("model")
-                presenter.startFragmentWhenDoneLoading(fragmentTransaction)
-                transaction.addToBackStack(null)
-                supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            } else {
-                presenter.buyModel(presenter.interactor.listOfGenerators?.get(position.toInt())?.google_play_id!!, position.toInt())
-            }
+        val hasBought = presenter.interactor.hasBoughtItem(presenter.interactor.listOfGenerators?.get(position.toInt())?.google_play_id!!)
+        if (hasBought) {
+            val modelFragment = presenter.getModelFragment(position.toInt())
+            val transaction = supportFragmentManager.beginTransaction()
+            val fragmentTransaction = transaction.replace(R.id.container, modelFragment).addToBackStack("model")
+            presenter.startFragmentWhenDoneLoading(fragmentTransaction)
+            transaction.addToBackStack(null)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        } else {
+            presenter.buyModel(presenter.interactor.listOfGenerators?.get(position.toInt())?.google_play_id!!, position.toInt())
+        }
     }
 
     override fun closeDownloadingModelDialog() {
