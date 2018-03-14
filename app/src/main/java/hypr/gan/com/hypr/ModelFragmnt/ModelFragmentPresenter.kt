@@ -259,16 +259,16 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader, val context
         }
     }
 
-    fun getInfoFromFragmentCreation(arguments: Bundle) {
-        generator = arguments.getParcelable(ModelFragment.MODEL_CONTROLS)
-        val faceImage = readImageToBytes(arguments.getString(ModelFragment.IMAGE_PARAM))
-        generatorIndex = arguments.getInt(ModelFragment.GENERATOR_INDEX)
-        val fullImage: String? = arguments.getString(ModelFragment.FULL_IMAGE_LOCATION)
+    fun getInfoFromFragmentCreation(arguments: Bundle) = with(arguments){
+        generator = getParcelable(ModelFragment.MODEL_CONTROLS)
+        val faceImage = readImageToBytes(getString(ModelFragment.IMAGE_PARAM))
+        generatorIndex = getInt(ModelFragment.GENERATOR_INDEX)
+        val fullImage: String? = getString(ModelFragment.FULL_IMAGE_LOCATION)
         val fullImageBit = if (fullImage != null) {
             File(fullImage).readBytes()
         } else {
             easyGenerator.sampleImageWithoutImage().toByteArrayImage()
         }
-        this.person = Person(faceImage, fullImageBit)
+        person = Person(faceImage, fullImageBit)
     }
 }

@@ -88,7 +88,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
                     displayMultiModels(itemId, null, interactor.listOfGenerators)
                 }
             }
-        }else{
+        } else {
             displayMultiModels(itemId, null, interactor.listOfGenerators)
         }
 
@@ -109,11 +109,11 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
         interactor.stopInAppBilling()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?) {
-        when (item?.itemId) {
-            android.R.id.home -> {
-                view.goBackToMainActivity()
-            }
+    override fun onOptionsItemSelected(item: MenuItem?) = when (item?.itemId) {
+        android.R.id.home -> {
+            view.goBackToMainActivity()
+        }
+        else -> {
         }
     }
 

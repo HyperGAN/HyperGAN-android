@@ -34,13 +34,10 @@ class WelcomeScreenAdapter(val generators: MutableList<BuyGenerator>, val contex
         populateListItem(holder, position)
     }
 
-    private fun populateListItem(holder: CustomViewHolder?, position: Int) {
-        with(holder!!){
-            title.text = generators[position].name
-            card.setOnClickListener {EventBus.getDefault().post(position.toDouble()) }
-            cardImage.setImageBitmap(generatorImages[position])
-
-        }
+    private fun populateListItem(holder: CustomViewHolder?, position: Int) = with(holder!!) {
+        title.text = generators[position].name
+        card.setOnClickListener { EventBus.getDefault().post(position.toDouble()) }
+        cardImage.setImageBitmap(generatorImages[position])
     }
 
     private fun buyButtonClickListener(holder: CustomViewHolder?, position: Int) {
@@ -54,7 +51,7 @@ class WelcomeScreenAdapter(val generators: MutableList<BuyGenerator>, val contex
     }
 
     private fun hideBuyButtonIfBought(position: Int, buyButton: Button?) {
-        if(generators[position].itemBought){
+        if (generators[position].itemBought) {
             buyButton?.visibility = View.INVISIBLE
         }
     }

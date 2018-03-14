@@ -49,22 +49,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         getInfoFromCameraActivity()
     }
 
-    private fun getInfoFromCameraActivity() {
-        with(presenter) {
-            isModelFragmentDisplayed = intent.hasExtra("indexInJson")
-            if (intent.hasExtra("onbackpressed")) {
-                onBackPressed = intent.extras.getBoolean("onbackpressed")
+    private fun getInfoFromCameraActivity() = with(presenter) {
+        isModelFragmentDisplayed = intent.hasExtra("indexInJson")
+        if (intent.hasExtra("onbackpressed")) {
+            onBackPressed = intent.extras.getBoolean("onbackpressed")
+        }
+        if (isModelFragmentDisplayed) {
+            indexInJson = intent.extras.getInt("indexInJson")
+            image = intent.extras.getString("image")
+            fullImage = intent.extras.getString("fullimage")
+            settingsHelper.setModelImagePath(image!!)
+            if (fullImage != null) {
+                settingsHelper.setFullImagePath(fullImage!!)
             }
-            if (isModelFragmentDisplayed) {
-                indexInJson = intent.extras.getInt("indexInJson")
-                image = intent.extras.getString("image")
-                fullImage = intent.extras.getString("fullimage")
-                settingsHelper.setModelImagePath(image!!)
-                if (fullImage != null) {
-                    settingsHelper.setFullImagePath(fullImage!!)
-                }
 
-            }
         }
     }
 

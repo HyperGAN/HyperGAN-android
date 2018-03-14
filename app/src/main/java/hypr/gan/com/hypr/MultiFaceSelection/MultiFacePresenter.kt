@@ -52,14 +52,12 @@ class MultiFacePresenter(val view: MultiFaceMVP.view, val context: Context) : Mu
         return file
     }
 
-    private fun getFaceBoxLocationInImage(face: Face): Rect {
-        return with(face) {
-            val left: Int = (position.x - (0)).toInt()
-            val right: Int = (position.x + (width)).toInt()
-            val top: Int = (position.y - (0)).toInt()
-            val bottom: Int = (position.y + (height)).toInt()
-            Rect(left, top, right, bottom)
-        }
+    private fun getFaceBoxLocationInImage(face: Face): Rect = with(face) {
+        val left: Int = (position.x - (0)).toInt()
+        val right: Int = (position.x + (width)).toInt()
+        val top: Int = (position.y - (0)).toInt()
+        val bottom: Int = (position.y + (height)).toInt()
+        return Rect(left, top, right, bottom)
     }
 
     override fun cropFaceFromImage(image: Bitmap, index: Int, context: Context): Bitmap {
