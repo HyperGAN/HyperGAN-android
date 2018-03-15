@@ -22,20 +22,15 @@ class MultiFacePresenter(val view: MultiFaceMVP.view, val context: Context) : Mu
     }
 
     override fun addFaceBoxesToMultipleFacesImage(context: Context, imageOfPeoplesFaces: Bitmap?): Bitmap? {
-//        var face: Bitmap? = null
         this.imageOfPeoplesFaces = imageOfPeoplesFaces
         if (imageOfPeoplesFaces != null) {
             val faceLocations = FaceDetection(context).getFaceLocations(imageOfPeoplesFaces, context)
             this.faceCoordinates = faceLocations!!
-//            face = imageOfPeoplesFaces.copy(Bitmap.Config.ARGB_8888, true)
-//            val canvasImageWithFaces = Canvas(face)
-            faceLocations.forEach { i, facrCoordinate ->
+            faceLocations.forEach {i, facrCoordinate ->
                 val rect = getFaceBoxLocationInImage(facrCoordinate)
-//                view.addBoxAroundFace(rect, canvasImageWithFaces)
                 view.addFaceLocationToImage(rect)
             }
         }
-//        return face
         return imageOfPeoplesFaces
     }
 

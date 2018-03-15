@@ -59,12 +59,14 @@ open class DrawableImageView(context: Context?, attrs: AttributeSet?) : ImageVie
         faceLocation.forEach { rect ->
             val widthRatio = bit.width.toFloat() / bitmap!!.width.toFloat()
             val heightRatio = ((bit.height.toFloat())) / (bitmap!!.height.toFloat())
-            rect.right = (rect.right * widthRatio).toInt()
-            rect.left = (rect.left * widthRatio).toInt()
-            rect.bottom = (rect.bottom * heightRatio).toInt()
-            rect.bottom += centreY
-            rect.top = (rect.top * heightRatio).toInt()
-            rect.top += centreY
+            with(rect) {
+                right = (right * widthRatio).toInt()
+                left = (left * widthRatio).toInt()
+                bottom = (bottom * heightRatio).toInt()
+                bottom += centreY
+                top = (top * heightRatio).toInt()
+                top += centreY
+            }
         }
     }
 

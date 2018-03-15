@@ -200,13 +200,14 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader, val context
 
     override fun onRequestPermissionResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray, context: Context) {
         grantResults.filter { item -> item == PackageManager.PERMISSION_GRANTED }.forEach { item ->
-            if (requestCode == SHARE_IMAGE_PERMISSION_REQUEST) {
-                shareImageToOtherApps()
-            } else if (requestCode == SAVE_IMAGE_PERMISSION_REQUEST) {
-                val coroutineContext = context
-                launch(UI) {
-                    bg { saveImageDisplayedToPhone(coroutineContext) }.await()
-                    rateApp()
+            when (requestCode) {
+                SHARE_IMAGE_PERMISSION_REQUEST -> shareImageToOtherApps()
+                SAVE_IMAGE_PERMISSION_REQUEST -> {
+                    val coroutineContext = context
+                    launch(UI) {
+                        bg { saveImageDisplayedToPhone(coroutineContext) }.await()
+                        rateApp()
+                    }
                 }
             }
         }
@@ -259,7 +260,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader, val context
         }
     }
 
-    fun getInfoFromFragmentCreation(arguments: Bundle) = with(arguments){
+    fun getInfoFromFragmentCreation(arguments: Bundle) = with(arguments) {
         generator = getParcelable(ModelFragment.MODEL_CONTROLS)
         val faceImage = readImageToBytes(getString(ModelFragment.IMAGE_PARAM))
         generatorIndex = getInt(ModelFragment.GENERATOR_INDEX)
