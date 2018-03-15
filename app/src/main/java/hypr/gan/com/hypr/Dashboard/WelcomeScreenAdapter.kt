@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -12,6 +11,7 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.pawegio.kandroid.alert
+import com.pawegio.kandroid.inflateLayout
 import hypr.gan.com.hypr.BuyGenerator
 import hypr.gan.com.hypr.R
 import kotlinx.android.synthetic.main.model_card.view.*
@@ -23,7 +23,7 @@ class WelcomeScreenAdapter(val generators: MutableList<BuyGenerator>, val contex
     override fun getItemCount(): Int = generators.size
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): CustomViewHolder {
-        val view = LayoutInflater.from(parent?.context).inflate(R.layout.model_card, parent, false)
+        val view = context.inflateLayout(R.layout.model_card, parent, false)
         return CustomViewHolder(view)
     }
 
