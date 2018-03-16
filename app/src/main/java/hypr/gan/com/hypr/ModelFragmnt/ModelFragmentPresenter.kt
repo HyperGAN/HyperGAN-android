@@ -222,6 +222,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader, val context
         launch(UI) {
             when (item.itemId) {
                 R.id.saveImage -> {
+                    rateApp()
                     bg { saveImageDisplayedToPhone(context) }.await()
                     interactor.analytics.logEvent(AnalyticsEvent.SAVE_IMAGE)
                     context.toast(context.getString(R.string.image_saved_toast))
