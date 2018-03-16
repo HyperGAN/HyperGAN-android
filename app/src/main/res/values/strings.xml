@@ -25,4 +25,5 @@
     <string name="downloading_model_message">Downloadnig Model</string>
     <string name="already_bought">You already bought this item.</string>
     <string name="network_error">Network Error</string>
+    <string name="tap_on_a_face_to_begin">Tap on a face to begin</string>
 </resources>
