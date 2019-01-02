@@ -2,6 +2,7 @@ package hypr.a255bits.com.hypr.MultiModels
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,22 +29,21 @@ class MultiModels : Fragment(), MultiMvp.view {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            generators = arguments.getParcelableArray(GENERATORS) as Array<Generator>
-            indexOfGenerator = arguments.getInt(INDEX_OF_GENERATOR_IN_USE)
-            image = arguments.getString(PATH_TO_IMAGE)
-            fullImage = arguments.getString(PATH_TO_FULL_IMAGE)
-            pathToGenerators = arguments.getStringArray(PATH_TO_GENERATORS)
+            generators = arguments?.getParcelableArray(GENERATORS) as Array<Generator>
+            indexOfGenerator = arguments?.getInt(INDEX_OF_GENERATOR_IN_USE)
+            image = arguments?.getString(PATH_TO_IMAGE)
+            fullImage = arguments?.getString(PATH_TO_FULL_IMAGE)
+            pathToGenerators = arguments?.getStringArray(PATH_TO_GENERATORS) as Array<String?>
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater!!.inflate(R.layout.fragment_multi_models, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        presenter.startModelsList(generators, fragmentManager, image, pathToGenerators, fullImage)
+        presenter.startModelsList(generators, fragmentManager as FragmentManager, image, pathToGenerators, fullImage)
         disableModelsIfNotBought(generators)
     }
 

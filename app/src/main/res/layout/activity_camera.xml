@@ -8,11 +8,16 @@
     tools:context="hypr.a255bits.com.hypr.CameraFragment.CameraActivity">
 
 
-    <com.flurgle.camerakit.CameraView
+    <com.camerakit.CameraKitView
         android:id="@+id/cameraView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:ckPermissions="picture"
+        android:adjustViewBounds="true"
+        android:keepScreenOn="true"
+        app:camera_flash="auto"
+        app:camera_facing="back"
+        app:camera_focus="continuous"
+        app:camera_permissions="camera"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"

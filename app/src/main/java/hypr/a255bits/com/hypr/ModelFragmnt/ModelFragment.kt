@@ -1,6 +1,7 @@
 package hypr.a255bits.com.hypr.ModelFragmnt
 
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -33,16 +34,14 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter.setInteractors(ModelInteractor(context))
+        presenter.setInteractors(ModelInteractor(context as Context))
         presenter.setViews(this)
-        presenter.easyGenerator.loadAssets(context)
-        if (arguments != null) {
-            presenter.getInfoFromFragmentCreation(arguments)
-        }
+        presenter.easyGenerator.loadAssets(context as Context)
+        presenter.getInfoFromFragmentCreation(arguments as Bundle)
+
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true)
         return inflater!!.inflate(R.layout.fragment_model, container, false)
     }
@@ -73,10 +72,10 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
         imageTransitionSeekBar.isEnabled = true
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loadingIcon.show()
-        presenter.loadGenerator(context, pbFile)
+        presenter.loadGenerator(context as Context, pbFile)
         displayImageTransitionSeekbarProgress()
         randomizeModelClickListener()
         chooseImageFromGalleryButtonClickListener()
@@ -97,15 +96,15 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     private fun lockLayoutClickListener() {
         lockLayout.setOnClickListener {
-            activity.alert(getString(R.string.buy_model_popup_message), "Hypr") {
+            activity?.alert(getString(R.string.buy_model_popup_message), "Hypr") {
                 positiveButton("Buy", { EventBus.getDefault().post(presenter.generatorIndex) })
                 cancelButton { dialog -> dialog.dismiss() }
-            }.show()
+            }?.show()
         }
     }
 
     override fun startCameraActivity() {
-        val intent = activity.intentFor<CameraActivity>("indexInJson" to presenter.generatorIndex)
+        val intent = activity?.intentFor<CameraActivity>("indexInJson" to presenter.generatorIndex)
         EventBus.getDefault().post(intent)
     }
 
@@ -121,7 +120,7 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        presenter.onOptionsItemSelected(item, context)
+        presenter.onOptionsItemSelected(item, context as Context)
         return super.onOptionsItemSelected(item)
     }
 
@@ -145,7 +144,7 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        presenter.onRequestPermissionResult(requestCode, permissions, grantResults, context)
+        presenter.onRequestPermissionResult(requestCode, permissions, grantResults, context as Context)
     }
 
     companion object {

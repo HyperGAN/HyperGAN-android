@@ -1,5 +1,6 @@
 package hypr.a255bits.com.hypr.Dashboard
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
@@ -17,26 +18,26 @@ class DashboardFragment : Fragment(), DashboardMVP.view {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            presenter.generators = arguments.getParcelableArray(GENERATORS) as Array<Generator>
-            presenter.indexOfGenerator = arguments.getInt(INDEX_OF_GENERATOR_IN_USE)
-            presenter.image = arguments.getString(PATH_TO_IMAGE)
-            presenter.fullImage = arguments.getString(PATH_TO_FULL_IMAGE)
-            presenter.pathToGenerators = arguments.getStringArray(PATH_TO_GENERATORS)
-            presenter.isBackPressed = arguments.getBoolean(IS_BACK_PRESS)
+            presenter.generators = arguments?.getParcelableArray(GENERATORS) as Array<Generator>
+            presenter.indexOfGenerator = arguments?.getInt(INDEX_OF_GENERATOR_IN_USE)
+            presenter.image = arguments?.getString(PATH_TO_IMAGE)
+            presenter.fullImage = arguments?.getString(PATH_TO_FULL_IMAGE)
+
+            presenter.pathToGenerators = arguments?.getStringArray(PATH_TO_GENERATORS) as Array<String?>
+            presenter.isBackPressed = arguments?.getBoolean(IS_BACK_PRESS) as Boolean
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (!presenter.isBackPressed) {
             presenter.startModelIfFullImageIsPresent()
         }
         return inflater!!.inflate(R.layout.fragment_dashboard, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        presenter.displayListOfModels(context)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view as View, savedInstanceState)
+        presenter.displayListOfModels(context as Context)
     }
 
     override fun displayListOfModels(buyGenerators: MutableList<BuyGenerator>, welcomeScreenAdapter: WelcomeScreenAdapter) {

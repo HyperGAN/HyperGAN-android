@@ -22,12 +22,12 @@ class WelcomeScreenAdapter(val generators: MutableList<BuyGenerator>, val contex
 
     override fun getItemCount(): Int = generators.size
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): CustomViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
         val view = LayoutInflater.from(parent?.context).inflate(R.layout.model_card, parent, false)
         return CustomViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: CustomViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
         hideBuyButtonIfBought(position, holder?.buyButton)
         buyButtonClickListener(holder, position)
 

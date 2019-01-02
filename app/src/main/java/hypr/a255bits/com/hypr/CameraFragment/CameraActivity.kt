@@ -9,7 +9,8 @@ import android.os.Bundle
 import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import com.flurgle.camerakit.CameraView
+import com.camerakit.CameraKitView
+import com.camerakit.CameraKitView.CameraListener
 import com.pawegio.kandroid.start
 import hypr.a255bits.com.hypr.Main.MainActivity
 import hypr.a255bits.com.hypr.R
@@ -28,6 +29,7 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
     val presenter: CameraPresenter by lazy { CameraPresenter(this, applicationContext) }
     private val RESULT_GET_IMAGE: Int = 1
     var indexInJson: Int? = null
+    var cameraKitView = CameraKitView(applicationContext)
     val galleryFileLocation: Uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,11 +54,11 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
     }
 
     override fun takePicture() {
-        cameraView.captureImage()
+        cameraView.captureImage { cameraKitView, bytes -> }
     }
 
     override fun isCameraViewEnabled(): Boolean {
-        return cameraView.isEnabled
+        return cameraKitView.isEnabled
     }
 
     override fun startMultiFaceSelection(jpeg: ByteArray, facesDetected: MutableList<PointF>) {
@@ -71,8 +73,8 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
     override fun showFaceTooCloseErrorTryAgain() {
         toast(getString(R.string.face_too_close_camera_error))
     }
-    private fun takePictureListener(cameraView: CameraView) {
-        cameraView.onPictureTaken { jpeg -> presenter.sendPictureToModel(jpeg) }
+    private fun takePictureListener(cameraKitView: CameraKitView) {
+        cameraKitView.onPictureTaken { jpeg -> presenter.sendPictureToModel(jpeg) }
     }
 
     override fun navigateUpActivity() {
@@ -98,12 +100,12 @@ class CameraActivity : AppCompatActivity(), CameraMVP.view {
 
     override fun onResume() {
         super.onResume()
-        cameraView.start()
+        cameraKitView.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        cameraView.stop()
+        cameraKitView.onPause()
     }
 
     override fun sendImageToModel(image: ByteArray?, croppedFace: Bitmap) {
