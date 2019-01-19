@@ -10,11 +10,12 @@ import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.onPageSelected
 import kotlinx.android.synthetic.main.fragment_multi_models.*
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.collections.forEachWithIndex
-
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 
 class MultiModels : Fragment(), MultiMvp.view {
 
@@ -48,7 +49,7 @@ class MultiModels : Fragment(), MultiMvp.view {
     }
 
     fun disableModelsIfNotBought(listOfGenerators: Array<Generator>?) {
-        launch(UI) {
+        GlobalScope.launch(Dispatchers.Main) {
             listOfGenerators?.forEachWithIndex { index, generator ->
                 val hash = hashMapOf("Generator" to generator.google_play_id, "Index" to index.toString())
                 EventBus.getDefault().post(hash)

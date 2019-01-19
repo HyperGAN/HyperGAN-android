@@ -15,9 +15,10 @@ import hypr.a255bits.com.hypr.Util.ImageSaver
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabResult
 import hypr.a255bits.com.hypr.Util.SettingsHelper
 import hypr.a255bits.com.hypr.WelcomeScreen.WelcomeScreen
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.toast
 import java.io.File
 
@@ -76,12 +77,6 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     override fun createGeneratorLoader(fileName: String, itemId: Int) {
         val file = File(fileName)
-        if (!file.exists()) {
-            val pbFilePointer = interactor.getModelFromFirebase(file, "optimized_weight_conv.pb")
-            pbFilePointer?.addOnSuccessListener { taskSnapshot ->
-                analytics.logEvent(AnalyticsEvent.GENERATOR_DOWNLOAD)
-            }
-        }
 
         displayMultiModels(itemId, null, interactor.listOfGenerators)
     }
@@ -149,7 +144,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
     }
 
     override fun addModelsToNavBar(applicationContext: Context) {
-        addModel = launch(UI) {
+        addModel = GlobalScope.launch(Dispatchers.Main) {
             val generators = interactor.getGeneratorsFromNetwork(applicationContext).await()
             saveGeneratorInfo(generators)
             buyGenerators = mutableListOf()

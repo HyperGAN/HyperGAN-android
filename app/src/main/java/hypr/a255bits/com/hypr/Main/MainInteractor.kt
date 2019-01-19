@@ -2,7 +2,6 @@ package hypr.a255bits.com.hypr.Main
 
 import android.content.Context
 import android.util.Log
-import com.google.firebase.storage.FileDownloadTask
 import hotchemi.android.rate.AppRate
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.Network.ModelDownloader
@@ -11,9 +10,10 @@ import hypr.a255bits.com.hypr.Util.GoogleSignIn
 import hypr.a255bits.com.hypr.Util.InAppBilling.IabHelper
 import hypr.a255bits.com.hypr.Util.InAppBilling.Inventory
 import hypr.a255bits.com.hypr.Util.JsonReader
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async as async
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.coroutines.experimental.bg
 import java.io.File
@@ -68,28 +68,14 @@ class MainInteractor(val context: Context) : MainMvp.interactor {
         billingHelper.disposeWhenFinished()
     }
 
-    override fun getModelFromFirebase(saveLocation: File, filenameInFirebase: String): FileDownloadTask? {
-        val firebaseGeneratorPath = listOfGenerators?.get(0)?.model_url
-        return firebaseGeneratorPath?.let {
-            modelDownloader.getFile(saveLocation, it)
-        }
-
-    }
-
-    override fun showProgressOfFirebaseDownload(firebaseDownloader: FileDownloadTask) {
-        firebaseDownloader.addOnProgressListener { taskSnapshot ->
-            showDownloadProgress(taskSnapshot.bytesTransferred, taskSnapshot.totalByteCount)
-        }
-    }
-
     private fun showDownloadProgress(bytesTransferred: Long, totalByteCount: Long) {
         val percent: Float = (bytesTransferred * 100.0f) / totalByteCount
         EventBus.getDefault().post(percent)
     }
 
     override fun getGeneratorsFromNetwork(applicationContext: Context): Deferred<List<Generator>?> {
-        return async(UI) {
-            val listOfGenerators = bg { JsonReader().getGeneratorsFromJson(applicationContext) }.await()
+        return GlobalScope.async(Dispatchers.Main) {
+            val listOfGenerators = GlobalScope.async { JsonReader().getGeneratorsFromJson(applicationContext) }.await()
             this@MainInteractor.listOfGenerators = listOfGenerators
             return@async listOfGenerators
         }

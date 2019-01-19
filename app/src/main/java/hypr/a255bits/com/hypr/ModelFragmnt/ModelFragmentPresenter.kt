@@ -14,16 +14,12 @@ import hypr.a255bits.com.hypr.GeneratorLoader.FaceLocation
 import hypr.a255bits.com.hypr.GeneratorLoader.Person
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.*
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.*
 import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.toast
 import java.io.File
 import java.io.IOException
 import kotlin.properties.Delegates
-
 
 class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFragmentMVP.presenter {
 
@@ -43,13 +39,13 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     private var imageManipulatedFromzValue: Bitmap? = null
 
     fun loadGenerator(context: Context, pbFile: File?) {
-        generatorLaunch = launch(UI) {
-            val imageBitmap = bg {
+        generatorLaunch = GlobalScope.launch(Dispatchers.Main) {
+            val imageBitmap = GlobalScope.async {
                 loadGenerator(pbFile, context.assets)
                 val bitmap = person.fullImage.toBitmap()
                 val faces = getFaceCroppedOutOfImageIfNoFaceGetFullImage(bitmap, context)
                 val transformedImage: Bitmap? = sampleImage(person, faces, interactor.settings.getFaceLocation())
-                return@bg transformedImage
+                return@async transformedImage
             }
             view.displayFocusedImage(imageBitmap.await())
         }
@@ -169,8 +165,8 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
                 shareImageToOtherApps()
             } else if (requestCode == SAVE_IMAGE_PERMISSION_REQUEST) {
                 val coroutineContext = context
-                launch(UI) {
-                    bg { saveImageDisplayedToPhone(coroutineContext) }.await()
+                GlobalScope.launch (Dispatchers.Main) {
+                    GlobalScope.async { saveImageDisplayedToPhone(coroutineContext) }.await()
                 }
             }
         }
@@ -182,11 +178,11 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
 
 
     override fun onOptionsItemSelected(item: MenuItem, context: Context) {
-        launch(UI) {
+        GlobalScope.launch(Dispatchers.Main) {
             when (item.itemId) {
                 R.id.saveImage -> {
                     rateApp()
-                    bg { saveImageDisplayedToPhone(context) }.await()
+                    GlobalScope.async { saveImageDisplayedToPhone(context) }.await()
                     interactor.analytics.logEvent(AnalyticsEvent.SAVE_IMAGE)
                     context.toast(context.getString(R.string.image_saved_toast))
                 }
@@ -214,10 +210,10 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     }
 
     fun changeGanImageFromSlider(ganValue: Double) {
-        async(UI) {
+        GlobalScope.async(Dispatchers.Main) {
 
             val imageManipluatedFromZValue = manipulateZValueInImage(ganValue)
-            val imagePlacedInsideFullImage = bg {
+            val imagePlacedInsideFullImage = GlobalScope.async {
                 val ganImage = imageManipluatedFromZValue.toBitmap(easyGenerator.width, easyGenerator.height)
                 imageManipulatedFromzValue = ganImage
                 ganImage.let { inlineImage(person, it) }
