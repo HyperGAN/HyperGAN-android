@@ -39,11 +39,10 @@
   }
 },
 { 
-  "name": "Halloween",
-  "features": ["mask", "encoding"],
+  "name": "New",
+  "features": [],
   "file_size_in_bytes": 2048000000,
-  "price_in_cents": 1499,
-  "google_play_id": "com.halloween",
+  "google_play_id": "",
   "image": "halloween",
   "generator" : {
     "viewer":{
@@ -52,7 +51,7 @@
       "controls":  []
     },
     "input" : {
-      "z_dims": [1.0, 8.0, 8.0, 160.0],
+      "z_dims": [1.0, 1.0, 1.0, 100.0],
       "type": "image",
       "width": 256,
       "height": 256,

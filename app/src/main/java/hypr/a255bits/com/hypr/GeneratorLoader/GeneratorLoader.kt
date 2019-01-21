@@ -4,12 +4,18 @@ import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.util.Log
 import hypr.a255bits.com.hypr.Generator.Generator
-import org.tensorflow.contrib.android.TensorFlowInferenceInterface
+import org.tensorflow.lite.Interpreter
+import org.tensorflow.lite.experimental.GpuDelegate;
 import java.io.File
+import java.io.FileInputStream
+import java.io.InputStream
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.nio.MappedByteBuffer
 
 open class GeneratorLoader {
-    lateinit var inference: TensorFlowInferenceInterface
-    val PB_FILE_PATH: String = "file:///android_asset/generators/expression-model.pb" // TODO generator['model_url']
+    lateinit var inference: Interpreter
+    val PB_FILE_PATH: String = "generators/configurable-256x256-2.tflite" // TODO generator['model_url']
 
     var generator: Generator? = null
     var channels: Int = 0
@@ -36,14 +42,22 @@ open class GeneratorLoader {
     }
 
     fun load(assets: AssetManager) {
-        System.loadLibrary("tensorflow_inference")
-        this.inference = TensorFlowInferenceInterface(assets, PB_FILE_PATH)
+        val asset = assets.open(PB_FILE_PATH)
+        val bytes:ByteArray = asset.readBytes()
+        val buffer = ByteBuffer.allocateDirect(bytes.size)
+        buffer.put(bytes)
+        //val delegate = GpuDelegate();
+        //val options = Interpreter.Options().addDelegate(delegate)
 
+        this.inference = Interpreter( buffer )
+        //ByteBuffer.wrap(FileInputStream(PB_FILE_PATH).readBytes()) )
+
+        //System.loadLibrary("tensorflow_inference")
     }
 
     fun load(assets: AssetManager, file: File) {
-        System.loadLibrary("tensorflow_inference")
-        this.inference = TensorFlowInferenceInterface(assets, PB_FILE_PATH)
+        this.inference = Interpreter(file)
+
 //        this.inference = TensorFlowInferenceInterface(assets, file.absolutePath)
 
     }
@@ -52,22 +66,10 @@ open class GeneratorLoader {
         print("Sampling ")
         feedInput(bitmap)
 
+        var inputs:Array<Any> = arrayOf(z,z,slider)
+        var outputs:HashMap<Int, Any> = hashMapOf(0 to this.raw)
+        this.inference.runForMultipleInputsOutputs(inputs, outputs)
 
-        this.inference.feed("concat", z, *z_dimsArray)
-        this.inference.feed("direction", direction, *z_dimsArray)
-        Log.i("slider", "SLIDER VALUE " + slider)
-
-        val maskDims = longArrayOf(1, width.toLong(), height.toLong(), 1)
-        if (mask.isNotEmpty()) {
-            this.inference.feed("Tanh_1", mask, *maskDims)
-        }
-        val dims = longArrayOf(1.toLong(), 1.toLong())
-        this.inference.feed("slider", floatArrayOf(slider), *dims)
-        this.inference.run(arrayOf("add_21"))
-        //inference.readNodeFloat(OUTPUT_NODE, resu)
-
-        //inference.run(..)
-        this.inference.fetch("add_21", this.raw)
 
         return manipulatePixelsInBitmap()
     }
@@ -76,12 +78,12 @@ open class GeneratorLoader {
         feedInput(bitmap)
         val floatValues = FloatArray(width * height)
 
-        if (index == 0) {
+        //if (index == 0) {
 
-            this.inference.run(arrayOf("Tanh_4"))
+        //    this.inference.run(arrayOf("Tanh_4"))
 
-            this.inference.fetch("Tanh_4", floatValues)
-        }
+        //    this.inference.fetch("Tanh_4", floatValues)
+        //}
 
         return floatValues
     }
@@ -92,22 +94,27 @@ open class GeneratorLoader {
             mask[index] = 0.0f
         }
 
-        this.inference.feed("concat", z, *z_dimsArray)
-        this.inference.feed("direction", direction, *z_dimsArray)
+        //this.inference.feed("concat", z, *z_dimsArray)
+        //this.inference.feed("direction", direction, *z_dimsArray)
 
-        val maskDims = longArrayOf(1, width.toLong(), height.toLong(), 1)
+        /*val maskDims = longArrayOf(1, width.toLong(), height.toLong(), 1)
         if (index == 0) {
 
             this.inference.feed("Tanh_1", mask, *maskDims)
-        }
+        }*/
 
-        val dims = longArrayOf(1.toLong(), 1.toLong())
-        this.inference.feed("slider", floatArrayOf(slider), *dims)
-        this.inference.run(arrayOf("add_21"))
+        val dims = longArrayOf(1.toLong(), 1.toLong(), 1.toLong(), 1.toLong())
+        //this.inference.feed("slider", floatArrayOf(slider), *dims)
+
+        //this.inference.run("Tanh"))
         //inference.readNodeFloat(OUTPUT_NODE, resu)
 
         //inference.run(..)
-        this.inference.fetch("add_21", this.raw)
+        //this.inference.fetch("Tanh", this.raw)
+
+        var inputs:Array<Any> = arrayOf(z)
+        var outputs:HashMap<Int, Any> = hashMapOf(0 to this.raw)
+        this.inference.runForMultipleInputsOutputs(inputs, outputs)
 
         return manipulatePixelsInBitmap()
     }
@@ -115,16 +122,16 @@ open class GeneratorLoader {
     fun get_z(z: FloatArray, slider: Float, direction: FloatArray): FloatArray {
         val floatValues = FloatArray(z_dims.toInt())
 
-        this.inference.feed("concat", z, *z_dimsArray)
+        //this.inference.feed("concat", z, *z_dimsArray)
 
         val dims = longArrayOf(1.toLong(), 1.toLong())
-        this.inference.feed("slider", floatArrayOf(slider), *dims)
+        //this.inference.feed("slider", floatArrayOf(slider), *dims)
 
-        this.inference.feed("direction", direction, *z_dimsArray)
+        //this.inference.feed("direction", direction, *z_dimsArray)
 
-        this.inference.run(arrayOf("add"))
+        //this.inference.run(arrayOf("add"))
 
-        this.inference.fetch("add", floatValues)
+        //this.inference.fetch("add", floatValues)
 
         return floatValues
     }
@@ -142,31 +149,31 @@ open class GeneratorLoader {
         val dims = longArrayOf(1.toLong(), width.toLong(), height.toLong(), channels.toLong())
         if (index == 0) {
 
-            this.inference.feed("input", floatValues, *dims)
+            //this.inference.feed("input", floatValues, *dims)
         }
     }
 
     fun encode(bitmap: Bitmap): FloatArray {
         feedInput(bitmap)
 
-        if (index == 0) {
-            this.inference.run(arrayOf("Tanh"))
-        }
+        //if (index == 0) {
+        //    this.inference.run(arrayOf("Tanh"))
+        //}
 
         val z = FloatArray(z_dims.toInt())
 
-        if (index == 0) {
+        //if (index == 0) {
 
-            this.inference.fetch("Tanh", z)
-        }
+        //    this.inference.fetch("Tanh", z)
+        //}
 
         return z
     }
 
     fun random_z(): FloatArray {
-        this.inference.run(arrayOf("random_z"))
+        //this.inference.run(arrayOf("random_z"))
         val z = FloatArray(z_dims.toInt())
-        this.inference.fetch("random_z", z)
+        //this.inference.fetch("random_z", z)
 
         return z
     }
