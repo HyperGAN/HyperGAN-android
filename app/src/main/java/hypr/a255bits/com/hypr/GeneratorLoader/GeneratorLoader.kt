@@ -12,10 +12,11 @@ import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.MappedByteBuffer
+import kotlin.random.Random
 
 open class GeneratorLoader {
     lateinit var inference: Interpreter
-    val PB_FILE_PATH: String = "generators/configurable-256x256-2.tflite" // TODO generator['model_url']
+    val PB_FILE_PATH: String = "generators/configurable-256x256-prod.tflite" // TODO generator['model_url']
 
     var generator: Generator? = null
     var channels: Int = 0
@@ -46,17 +47,17 @@ open class GeneratorLoader {
         val bytes:ByteArray = asset.readBytes()
         val buffer = ByteBuffer.allocateDirect(bytes.size)
         buffer.put(bytes)
-        //val delegate = GpuDelegate();
-        //val options = Interpreter.Options().addDelegate(delegate)
+        val delegate = GpuDelegate();
+        val options = Interpreter.Options().addDelegate(delegate)
 
-        this.inference = Interpreter( buffer )
+        this.inference = Interpreter( buffer, options )
         //ByteBuffer.wrap(FileInputStream(PB_FILE_PATH).readBytes()) )
 
         //System.loadLibrary("tensorflow_inference")
     }
 
     fun load(assets: AssetManager, file: File) {
-        this.inference = Interpreter(file)
+        //this.inference = Interpreter(file)
 
 //        this.inference = TensorFlowInferenceInterface(assets, file.absolutePath)
 
@@ -64,9 +65,8 @@ open class GeneratorLoader {
 
     fun sample(z: FloatArray, slider: Float, mask: FloatArray, direction: FloatArray, bitmap: Bitmap): IntArray {
         print("Sampling ")
-        feedInput(bitmap)
 
-        var inputs:Array<Any> = arrayOf(z,z,slider)
+        var inputs:Array<Any> = arrayOf(direction)
         var outputs:HashMap<Int, Any> = hashMapOf(0 to this.raw)
         this.inference.runForMultipleInputsOutputs(inputs, outputs)
 
@@ -112,7 +112,7 @@ open class GeneratorLoader {
         //inference.run(..)
         //this.inference.fetch("Tanh", this.raw)
 
-        var inputs:Array<Any> = arrayOf(z)
+        var inputs:Array<Any> = arrayOf(direction)
         var outputs:HashMap<Int, Any> = hashMapOf(0 to this.raw)
         this.inference.runForMultipleInputsOutputs(inputs, outputs)
 
@@ -174,7 +174,9 @@ open class GeneratorLoader {
         //this.inference.run(arrayOf("random_z"))
         val z = FloatArray(z_dims.toInt())
         //this.inference.fetch("random_z", z)
-
+        val r = java.util.Random()
+        for (i in 0..z_dims.toInt() - 1)
+            z[i] = r.nextFloat() * 2.0f - 1.0f
         return z
     }
 

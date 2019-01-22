@@ -52,6 +52,7 @@ class EasyGeneratorLoader(var gen: Generator) : GeneratorLoader() {
 
     fun sampleImageWithZValue(slider: Float): IntArray {
         val direction = this.direction ?: this.random_z()
+        this.encoded = this.random_z()
         return this.sample(this.encoded!!, slider, mask, direction, baseImage!!)
     }
 
