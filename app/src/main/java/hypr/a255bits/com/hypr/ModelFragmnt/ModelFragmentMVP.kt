@@ -12,6 +12,7 @@ import hypr.a255bits.com.hypr.GeneratorLoader.Person
 interface ModelFragmentMVP{
     interface view{
         fun displayFocusedImage(imageFromGallery: Bitmap?)
+        fun loading()
         fun  shareImageToOtherApps(shareIntent: Intent)
         fun  requestPermissionFromUser(permissions: Array<String>, REQUEST_CODE: Int)
         fun startCameraActivity()

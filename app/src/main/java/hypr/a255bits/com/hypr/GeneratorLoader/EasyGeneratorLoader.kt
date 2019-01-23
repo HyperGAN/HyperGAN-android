@@ -14,7 +14,8 @@ class EasyGeneratorLoader(var gen: Generator) : GeneratorLoader() {
     var mask: FloatArray by Delegates.vetoable(floatArrayOf()) { property, oldValue, newValue ->
         featureEnabled(Feature.MASK)
     }
-    var direction: FloatArray? = null
+    var z1: FloatArray = this.random_z()
+    var z2: FloatArray = this.random_z()
     val inliner = InlineImage()
 
     fun loadAssets(context: Context) {
@@ -22,38 +23,45 @@ class EasyGeneratorLoader(var gen: Generator) : GeneratorLoader() {
     }
 
     fun sampleImageWithImage(person: Person, image: Bitmap?, croppedPoint: Rect): Bitmap? {
-        direction = this.random_z()
         val scaled = Bitmap.createScaledBitmap(image, generator?.generator?.output?.width!!, generator?.generator?.output?.height!!, false)
         baseImage = scaled
         mask = this.mask(scaled)
         val image = if (featureEnabled(Feature.ENCODING)) {
             encoded = this.encode(scaled)
-            this.sample(encoded!!, 0.0f, mask, direction!!, scaled).toBitmap(this.width, this.height)
+            this.sample(encoded!!, mask, scaled).toBitmap(this.width, this.height)
         } else {
-            this.sample(direction!!, 0.0f, mask, direction!!, scaled).toBitmap(this.width, this.height)
+            z1 = this.random_z()
+            z2 = this.random_z()
+            this.sample(this.get_z(0.0f), mask, scaled).toBitmap(this.width, this.height)
         }
         return inlineImage(person, image, croppedPoint)
+    }
+
+    fun get_z(slider: Float): FloatArray {
+        val z = FloatArray(z_dims.toInt())
+        val s:Float = (slider + 1.0f) / 2.0f
+        for (i in 0..z_dims.toInt() - 1)
+            z[i] = slider * z1!![i] + (1.0f-slider) * z2!![i]
+        return z
     }
 
     fun sampleImageWithoutImage(): IntArray {
         val scaled = Bitmap.createBitmap(generator?.generator?.output?.width!!, generator?.generator?.output?.height!!, Bitmap.Config.ARGB_8888)
         mask = this.mask(scaled)
-        val direction = this.random_z()
         baseImage = scaled
         val sample = if(featureEnabled(Feature.ENCODING)){
             encoded = this.encode(scaled)
-            this.sampleRandom(encoded!!, 0.0f, direction, mask, scaled)
+            this.sampleRandom(encoded!!, mask, scaled)
 
         }else{
-            this.sampleRandom(direction, 0.0f, direction, mask, scaled)
+            this.sampleRandom(z1!!, mask, scaled)
         }
         return sample
     }
 
     fun sampleImageWithZValue(slider: Float): IntArray {
-        val direction = this.direction ?: this.random_z()
         this.encoded = this.random_z()
-        return this.sample(this.encoded!!, slider, mask, direction, baseImage!!)
+        return this.sample(this.get_z(slider), mask, baseImage!!)
     }
 
     fun inlineImage(person: Person, newCroppedImage: Bitmap, croppedPoint: Rect): Bitmap? {

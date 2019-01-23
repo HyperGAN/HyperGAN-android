@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
+import android.widget.SeekBar
 import com.pawegio.kandroid.onProgressChanged
 import hotchemi.android.rate.AppRate
 import hypr.a255bits.com.hypr.CameraFragment.CameraActivity
@@ -16,6 +17,9 @@ import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.negative1To1
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_model.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.cancelButton
@@ -31,6 +35,7 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
     var pbFile: File? = null
     val presenter by lazy { ModelFragmentPresenter(GeneratorModule().getGeneratorLoader()) }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,7 +88,9 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
     }
 
     private fun randomizeModelClickListener() {
+
         randomizeModel.setOnClickListener {
+            this.loading()
             presenter.randomizeModel(imageTransitionSeekBar.progress)
         }
     }
@@ -109,9 +116,28 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
     }
 
     private fun displayImageTransitionSeekbarProgress() {
-        imageTransitionSeekBar.onProgressChanged { progress, _ ->
-            presenter.changeGanImageFromSlider(progress.negative1To1())
-        }
+        imageTransitionSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            var progress: Double = 0.0
+
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                this.progress = progress.negative1To1()
+                presenter.view.loading()
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                presenter.view.loading()
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                val progress = this.progress
+
+                GlobalScope.async(Dispatchers.Main) {
+
+                    presenter.changeGanImageFromSlider(progress)
+                }
+            }
+        })
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -132,6 +158,14 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
     override fun displayFocusedImage(imageFromGallery: Bitmap?) {
         focusedImage.let { imageFromGallery.let { focusedImage.setImageBitmap(it) } }
         loadingIcon.hide()
+        imageTransitionSeekBar.setEnabled(true)
+        randomizeModel.setEnabled(true)
+    }
+    override fun loading() {
+        imageTransitionSeekBar.setEnabled(false)
+        randomizeModel.setEnabled(false)
+        loadingIcon.show()
+
     }
 
     override fun shareImageToOtherApps(shareIntent: Intent) {

@@ -80,7 +80,8 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     }
 
     override fun randomizeModel(progress: Int) {
-        easyGenerator.direction = easyGenerator.random_z()
+        easyGenerator.z1 = easyGenerator.random_z()
+        easyGenerator.z2 = easyGenerator.random_z()
         changeGanImageFromSlider(progress.negative1To1())
     }
 
@@ -212,8 +213,8 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     fun changeGanImageFromSlider(ganValue: Double) {
         GlobalScope.async(Dispatchers.Main) {
 
-            val imageManipluatedFromZValue = manipulateZValueInImage(ganValue)
             val imagePlacedInsideFullImage = GlobalScope.async {
+                val imageManipluatedFromZValue = manipulateZValueInImage(ganValue)
                 val ganImage = imageManipluatedFromZValue.toBitmap(easyGenerator.width, easyGenerator.height)
                 imageManipulatedFromzValue = ganImage
                 ganImage.let { inlineImage(person, it) }

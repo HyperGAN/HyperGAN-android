@@ -1,6 +1,6 @@
 [{ 
   "name": "Cat",
-  "features": ["inline", "mask", "encoding"],
+  "features": [],
   "file_size_in_bytes": 1024000000,
   "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
   "google_play_id": "",
