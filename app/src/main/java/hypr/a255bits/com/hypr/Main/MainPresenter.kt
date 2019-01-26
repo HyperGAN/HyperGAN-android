@@ -26,7 +26,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     val ZERO_PERCENT: Float = 0.0f
     val SIGN_INTO_GOOGLE_RESULT: Int = 12
-    val modelFileNames = listOf("configurable-256x256-2.tflite", "configurable-256x256-2.tflite").map {
+    val modelFileNames = listOf("configurable-256x256-prod.tflite", "test70.tflite").map {
         File(context.filesDir, it).absolutePath
     }
 

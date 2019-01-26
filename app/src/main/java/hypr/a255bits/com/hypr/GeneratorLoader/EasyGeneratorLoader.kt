@@ -18,10 +18,6 @@ class EasyGeneratorLoader(var gen: Generator) : GeneratorLoader() {
     var z2: FloatArray = this.random_z()
     val inliner = InlineImage()
 
-    fun loadAssets(context: Context) {
-        this.load(context.assets)
-    }
-
     fun sampleImageWithImage(person: Person, image: Bitmap?, croppedPoint: Rect): Bitmap? {
         val scaled = Bitmap.createScaledBitmap(image, generator?.generator?.output?.width!!, generator?.generator?.output?.height!!, false)
         baseImage = scaled
@@ -54,6 +50,8 @@ class EasyGeneratorLoader(var gen: Generator) : GeneratorLoader() {
             this.sampleRandom(encoded!!, mask, scaled)
 
         }else{
+            z1 = this.random_z()
+            z2 = this.random_z()
             this.sampleRandom(z1!!, mask, scaled)
         }
         return sample

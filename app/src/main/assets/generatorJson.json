@@ -1,29 +1,18 @@
 [{ 
-  "name": "Cat",
+  "name": "Faces",
   "features": [],
   "file_size_in_bytes": 1024000000,
   "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
+  "model_file": "configurable-256x256-prod.tflite",
   "google_play_id": "",
   "image": "cat",
   "generator" : {
     "viewer":{
       "type": "FaceViewer",
-      "operation": "crop",
-     "controls":  [
-    {
-       "type": "Vector",
-       "direction": [0.3, 0.4, 0.6, 0.7, 0.8],
-       "name": "smile"
-    },
-    {
-       "type": "Vector",
-       "direction": [-0.3, -0.4, -0.6, -0.7, -0.8],
-       "name": "turn left"
-    }
-   ]
+      "operation": "crop"
     },
     "input" : {
-      "z_dims": [1.0, 1.0, 1.0, 100.0],
+      "z_dims": [100.0],
       "type": "image",
       "width": 256,
       "height": 256,
@@ -39,11 +28,12 @@
   }
 },
 { 
-  "name": "New",
+  "name": "Meowoof",
   "features": [],
   "file_size_in_bytes": 2048000000,
   "google_play_id": "",
   "image": "halloween",
+  "model_file": "test70.tflite",
   "generator" : {
     "viewer":{
       "type": "FaceViewer",
@@ -51,16 +41,13 @@
       "controls":  []
     },
     "input" : {
-      "z_dims": [1.0, 1.0, 1.0, 100.0],
-      "type": "image",
-      "width": 256,
-      "height": 256,
-      "channels": 3
+      "z_dims": [100.0],
+      "type": "latent"
     },
     "output": {
       "type": "image",
-      "width": 256,
-      "height": 256,
+      "width": 64,
+      "height": 64,
       "channels" : 3
     }
   }

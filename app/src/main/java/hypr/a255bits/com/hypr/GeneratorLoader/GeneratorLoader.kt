@@ -2,21 +2,13 @@ package hypr.a255bits.com.hypr.GeneratorLoader
 
 import android.content.res.AssetManager
 import android.graphics.Bitmap
-import android.util.Log
 import hypr.a255bits.com.hypr.Generator.Generator
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.experimental.GpuDelegate;
-import java.io.File
-import java.io.FileInputStream
-import java.io.InputStream
 import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.nio.MappedByteBuffer
-import kotlin.random.Random
 
 open class GeneratorLoader {
     lateinit var inference: Interpreter
-    val PB_FILE_PATH: String = "generators/configurable-256x256-prod.tflite" // TODO generator['model_url']
 
     var generator: Generator? = null
     var channels: Int = 0
@@ -26,6 +18,7 @@ open class GeneratorLoader {
     var z_dims: Long = 0
     var raw: FloatArray = floatArrayOf()
     var index: Int? = 0
+    var assets: AssetManager? = null
 
     fun setIndex(index: Int) {
         this.index = index
@@ -33,18 +26,20 @@ open class GeneratorLoader {
 
     fun loadGenerator(generator: Generator) {
         this.generator = generator
-        this.width = generator.generator?.input?.width!!
-        this.height = generator.generator!!.input?.height!!
+        this.width = generator.generator?.output?.width!!
+        this.height = generator.generator!!.output?.height!!
+        channels = generator.generator!!.output!!.channels!!
         z_dimsArray = generator.generator!!.input!!.z_dims!!.map { item -> item.toLong() }.toLongArray()
         z_dims = z_dimsArray.fold(1.toLong(), { mul, next -> mul * next })
-        channels = generator.generator!!.input!!.channels
+
         raw = FloatArray(width * height * channels)
 
     }
 
-    fun load(assets: AssetManager) {
-        val asset = assets.open(PB_FILE_PATH)
-        val bytes:ByteArray = asset.readBytes()
+    fun load() {
+        val file = generator?.model_file
+        val asset = this.assets?.open( "generators/"+file)
+        val bytes:ByteArray = asset!!.readBytes()
         val buffer = ByteBuffer.allocateDirect(bytes.size)
         buffer.put(bytes)
         val delegate = GpuDelegate();
@@ -53,18 +48,15 @@ open class GeneratorLoader {
         this.inference = Interpreter( buffer, options )
     }
 
-    fun load(assets: AssetManager, file: File) {
-        //this.inference = Interpreter(file)
-
-//        this.inference = TensorFlowInferenceInterface(assets, file.absolutePath)
-
-    }
-
     fun sample(z: FloatArray, mask: FloatArray, bitmap: Bitmap): IntArray {
         print("Sampling ")
 
         var inputs:Array<Any> = arrayOf(z)
         var outputs:HashMap<Int, Any> = hashMapOf(0 to this.raw)
+
+        if(!this::inference.isInitialized) {
+            this.load()
+        }
         this.inference.runForMultipleInputsOutputs(inputs, outputs)
 
 
@@ -83,6 +75,9 @@ open class GeneratorLoader {
 
         var inputs:Array<Any> = arrayOf(z)
         var outputs:HashMap<Int, Any> = hashMapOf(0 to this.raw)
+        if(!this::inference.isInitialized) {
+            this.load()
+        }
         this.inference.runForMultipleInputsOutputs(inputs, outputs)
 
         return manipulatePixelsInBitmap()

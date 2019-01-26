@@ -41,7 +41,8 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
         super.onCreate(savedInstanceState)
         presenter.setInteractors(ModelInteractor(context as Context))
         presenter.setViews(this)
-        presenter.easyGenerator.loadAssets(context as Context)
+        presenter.easyGenerator.assets = context?.assets
+        //presenter.easyGenerator.loadAssets(context as Context)
         presenter.getInfoFromFragmentCreation(arguments as Bundle)
 
     }
@@ -121,16 +122,16 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 this.progress = progress.negative1To1()
-                presenter.view.loading()
+                presenter.view.loading(false)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
-                presenter.view.loading()
+                presenter.view.loading(false)
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 val progress = this.progress
-
+                presenter.view.loading()
                 GlobalScope.async(Dispatchers.Main) {
 
                     presenter.changeGanImageFromSlider(progress)
@@ -161,9 +162,11 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
         imageTransitionSeekBar.setEnabled(true)
         randomizeModel.setEnabled(true)
     }
-    override fun loading() {
-        imageTransitionSeekBar.setEnabled(false)
-        randomizeModel.setEnabled(false)
+    override fun loading(disableSlider: Boolean) {
+        if(disableSlider) {
+            imageTransitionSeekBar.setEnabled(false)
+            randomizeModel.setEnabled(false)
+        }
         loadingIcon.show()
 
     }

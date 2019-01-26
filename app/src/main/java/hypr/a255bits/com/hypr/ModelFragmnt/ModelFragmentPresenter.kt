@@ -41,7 +41,6 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     fun loadGenerator(context: Context, pbFile: File?) {
         generatorLaunch = GlobalScope.launch(Dispatchers.Main) {
             val imageBitmap = GlobalScope.async {
-                loadGenerator(pbFile, context.assets)
                 val bitmap = person.fullImage.toBitmap()
                 val faces = getFaceCroppedOutOfImageIfNoFaceGetFullImage(bitmap, context)
                 val transformedImage: Bitmap? = sampleImage(person, faces, interactor.settings.getFaceLocation())
@@ -140,10 +139,6 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
             newCroppedImage
         }
         return image
-    }
-
-    fun loadGenerator(pbFile: File?, assets: AssetManager) {
-        pbFile?.let { easyGenerator.load(assets, it) }
     }
 
     override fun sampleImage(person: Person, image: Bitmap?, croppedPoint: Rect): Bitmap? {
