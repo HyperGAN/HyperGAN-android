@@ -78,6 +78,7 @@ open class GeneratorLoader {
         if(!this::inference.isInitialized) {
             this.load()
         }
+
         this.inference.runForMultipleInputsOutputs(inputs, outputs)
 
         return manipulatePixelsInBitmap()

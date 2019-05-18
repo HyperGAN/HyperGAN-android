@@ -20,6 +20,8 @@ import kotlinx.android.synthetic.main.fragment_model.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.cancelButton
@@ -122,7 +124,10 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 this.progress = progress.negative1To1()
-                presenter.view.loading(false)
+                val progress = this.progress
+                GlobalScope.async(Dispatchers.Main) {
+                    presenter.changeGanImageFromSlider(progress)
+                }
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -131,9 +136,8 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 val progress = this.progress
-                presenter.view.loading()
-                GlobalScope.async(Dispatchers.Main) {
 
+                GlobalScope.async(Dispatchers.Main) {
                     presenter.changeGanImageFromSlider(progress)
                 }
             }

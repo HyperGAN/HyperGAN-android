@@ -15,6 +15,7 @@ import hypr.a255bits.com.hypr.GeneratorLoader.Person
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
 import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.toast
 import java.io.File
@@ -37,6 +38,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     lateinit var interactor: ModelInteractor
     var generatorLaunch: Job? = null
     private var imageManipulatedFromzValue: Bitmap? = null
+    var mutex:Mutex = Mutex()
 
     fun loadGenerator(context: Context, pbFile: File?) {
         generatorLaunch = GlobalScope.launch(Dispatchers.Main) {
@@ -207,14 +209,18 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
 
     fun changeGanImageFromSlider(ganValue: Double) {
         GlobalScope.async(Dispatchers.Main) {
+            if (mutex.tryLock()) {
+                view.loading()
+                val imagePlacedInsideFullImage = GlobalScope.async {
+                    val imageManipluatedFromZValue = manipulateZValueInImage(ganValue)
+                    val ganImage = imageManipluatedFromZValue.toBitmap(easyGenerator.width, easyGenerator.height)
+                    imageManipulatedFromzValue = ganImage
+                    ganImage.let { inlineImage(person, it) }
+                }
+                view.displayFocusedImage(imagePlacedInsideFullImage.await())
+                mutex.unlock()
 
-            val imagePlacedInsideFullImage = GlobalScope.async {
-                val imageManipluatedFromZValue = manipulateZValueInImage(ganValue)
-                val ganImage = imageManipluatedFromZValue.toBitmap(easyGenerator.width, easyGenerator.height)
-                imageManipulatedFromzValue = ganImage
-                ganImage.let { inlineImage(person, it) }
             }
-            view.displayFocusedImage(imagePlacedInsideFullImage.await())
         }
     }
 
