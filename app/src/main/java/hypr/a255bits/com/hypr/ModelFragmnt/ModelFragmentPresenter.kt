@@ -210,7 +210,6 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     fun changeGanImageFromSlider(ganValue: Double) {
         GlobalScope.async(Dispatchers.Main) {
             if (mutex.tryLock()) {
-                view.loading()
                 val imagePlacedInsideFullImage = GlobalScope.async {
                     val imageManipluatedFromZValue = manipulateZValueInImage(ganValue)
                     val ganImage = imageManipluatedFromZValue.toBitmap(easyGenerator.width, easyGenerator.height)
