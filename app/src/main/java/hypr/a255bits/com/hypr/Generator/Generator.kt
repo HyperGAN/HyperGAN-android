@@ -17,6 +17,9 @@ class Generator : Parcelable {
     @Json(name = "model_url")
     var model_url: String? = null
 
+    @Json(name = "model_file")
+    var model_file: String? = null
+
     @Json(name = "generator")
     var generator: Generator_? = Generator_()
 

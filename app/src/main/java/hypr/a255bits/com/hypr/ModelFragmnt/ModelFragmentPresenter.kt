@@ -15,6 +15,7 @@ import hypr.a255bits.com.hypr.GeneratorLoader.Person
 import hypr.a255bits.com.hypr.R
 import hypr.a255bits.com.hypr.Util.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
 import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.toast
 import java.io.File
@@ -37,11 +38,11 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     lateinit var interactor: ModelInteractor
     var generatorLaunch: Job? = null
     private var imageManipulatedFromzValue: Bitmap? = null
+    var mutex:Mutex = Mutex()
 
     fun loadGenerator(context: Context, pbFile: File?) {
         generatorLaunch = GlobalScope.launch(Dispatchers.Main) {
             val imageBitmap = GlobalScope.async {
-                loadGenerator(pbFile, context.assets)
                 val bitmap = person.fullImage.toBitmap()
                 val faces = getFaceCroppedOutOfImageIfNoFaceGetFullImage(bitmap, context)
                 val transformedImage: Bitmap? = sampleImage(person, faces, interactor.settings.getFaceLocation())
@@ -80,7 +81,8 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     }
 
     override fun randomizeModel(progress: Int) {
-        easyGenerator.direction = easyGenerator.random_z()
+        easyGenerator.z1 = easyGenerator.random_z()
+        easyGenerator.z2 = easyGenerator.random_z()
         changeGanImageFromSlider(progress.negative1To1())
     }
 
@@ -139,10 +141,6 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
             newCroppedImage
         }
         return image
-    }
-
-    fun loadGenerator(pbFile: File?, assets: AssetManager) {
-        pbFile?.let { easyGenerator.load(assets, it) }
     }
 
     override fun sampleImage(person: Person, image: Bitmap?, croppedPoint: Rect): Bitmap? {
@@ -211,14 +209,17 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
 
     fun changeGanImageFromSlider(ganValue: Double) {
         GlobalScope.async(Dispatchers.Main) {
+            if (mutex.tryLock()) {
+                val imagePlacedInsideFullImage = GlobalScope.async {
+                    val imageManipluatedFromZValue = manipulateZValueInImage(ganValue)
+                    val ganImage = imageManipluatedFromZValue.toBitmap(easyGenerator.width, easyGenerator.height)
+                    imageManipulatedFromzValue = ganImage
+                    ganImage.let { inlineImage(person, it) }
+                }
+                view.displayFocusedImage(imagePlacedInsideFullImage.await())
+                mutex.unlock()
 
-            val imageManipluatedFromZValue = manipulateZValueInImage(ganValue)
-            val imagePlacedInsideFullImage = GlobalScope.async {
-                val ganImage = imageManipluatedFromZValue.toBitmap(easyGenerator.width, easyGenerator.height)
-                imageManipulatedFromzValue = ganImage
-                ganImage.let { inlineImage(person, it) }
             }
-            view.displayFocusedImage(imagePlacedInsideFullImage.await())
         }
     }
 
