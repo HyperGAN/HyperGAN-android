@@ -19,6 +19,8 @@ open class GeneratorLoader {
     var raw: FloatArray = floatArrayOf()
     var index: Int? = 0
     var assets: AssetManager? = null
+    var bytes:ByteArray? = null
+    var buffer:ByteBuffer? = null
 
     fun setIndex(index: Int) {
         this.index = index
@@ -39,13 +41,16 @@ open class GeneratorLoader {
     fun load() {
         val file = generator?.model_file
         val asset = this.assets?.open( "generators/"+file)
-        val bytes:ByteArray = asset!!.readBytes()
-        val buffer = ByteBuffer.allocateDirect(bytes.size)
-        buffer.put(bytes)
+
+        this.bytes = asset!!.readBytes()
+        this.buffer = ByteBuffer.allocateDirect(this.bytes?.size!!)
+        this.buffer?.put(bytes)
         val delegate = GpuDelegate();
         val options = Interpreter.Options().addDelegate(delegate)
 
-        this.inference = Interpreter( buffer, options )
+        this.inference = Interpreter( this.buffer!!, options )
+        this.buffer?.clear()
+        asset.close()
     }
 
     fun sample(z: FloatArray, mask: FloatArray, bitmap: Bitmap): IntArray {
