@@ -24,8 +24,6 @@ import kotlin.properties.Delegates
 
 class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFragmentMVP.presenter {
 
-
-    var imageDisplayedOnScreen: Bitmap? = null
     val SHARE_IMAGE_PERMISSION_REQUEST = 10
     val SAVE_IMAGE_PERMISSION_REQUEST: Int = 11
     var generator: Generator by Delegates.observable(Generator()) { property, oldValue, newValue ->
@@ -72,7 +70,7 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
 
     fun shareImageToOtherApps() {
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            val watermarkBitmap = interactor.placeWatermarkOnImage(imageDisplayedOnScreen)
+            val watermarkBitmap = interactor.placeWatermarkOnImage(view.displayedImageAsBitmap())
             val shareIntent = interactor.getIntentForSharingImagesWithOtherApps(watermarkBitmap)
             view.shareImageToOtherApps(shareIntent)
         } else {
@@ -119,14 +117,10 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
         var isSaved = false
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             val faceImage = person.faceImage?.toBitmap()
-            if (imageDisplayedOnScreen != null) {
-                val waterMarkImage = interactor.placeWatermarkOnImage(imageDisplayedOnScreen)
-                isSaved = ImageSaver().saveImageToInternalStorage(waterMarkImage, context)
 
-            } else {
-                val imageCopy = faceImage?.copy(faceImage.config, true)
-                isSaved = ImageSaver().saveImageToInternalStorage(imageCopy, context)
-            }
+            val waterMarkImage = interactor.placeWatermarkOnImage(view.displayedImageAsBitmap())
+            isSaved = ImageSaver().saveImageToInternalStorage(waterMarkImage, context)
+
         } else {
             view.requestPermissionFromUser(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), SAVE_IMAGE_PERMISSION_REQUEST)
         }
@@ -149,7 +143,6 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
         } else {
             easyGenerator.sampleImageWithoutImage().toBitmap(easyGenerator.width, easyGenerator.height)
         }
-        imageDisplayedOnScreen = transformedImage
         return transformedImage
     }
 
