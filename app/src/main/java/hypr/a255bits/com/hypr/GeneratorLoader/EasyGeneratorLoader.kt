@@ -3,12 +3,13 @@ package hypr.a255bits.com.hypr.GeneratorLoader
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Rect
+import android.util.Log
 import hypr.a255bits.com.hypr.Generator.Generator
 import hypr.a255bits.com.hypr.ModelFragmnt.InlineImage
 import hypr.a255bits.com.hypr.Util.toBitmap
 import kotlin.properties.Delegates
 
-class EasyGeneratorLoader(var gen: Generator) : GeneratorLoader() {
+class EasyGeneratorLoader() : GeneratorLoader() {
     var baseImage: Bitmap? = null
     var encoded: FloatArray? = null
     var mask: FloatArray by Delegates.vetoable(floatArrayOf()) { property, oldValue, newValue ->

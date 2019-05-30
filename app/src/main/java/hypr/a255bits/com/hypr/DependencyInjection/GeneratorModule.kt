@@ -16,7 +16,7 @@ class GeneratorModule : AndroidModule() {
         }
     }
     fun getGeneratorLoader(): EasyGeneratorLoader {
-        return EasyGeneratorLoader(Generator())
+        return EasyGeneratorLoader()
     }
 
 }
