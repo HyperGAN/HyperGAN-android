@@ -79,8 +79,8 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     }
 
     override fun randomizeModel(progress: Int) {
-        easyGenerator.z1 = easyGenerator.random_z()
-        easyGenerator.z2 = easyGenerator.random_z()
+        easyGenerator.randomize()
+
         changeGanImageFromSlider(progress.negative1To1())
     }
 

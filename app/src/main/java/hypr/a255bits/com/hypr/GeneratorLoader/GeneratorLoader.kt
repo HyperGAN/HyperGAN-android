@@ -124,6 +124,19 @@ open class GeneratorLoader {
         return z
     }
 
+    fun style_z(like:FloatArray):FloatArray {
+        val z = FloatArray(z_dims.toInt())
+        val r = java.util.Random()
+        for (i in 0..z_dims.toInt() - 1) {
+            //z[i] = 0.0f
+            if (i < z_dims.toInt() / 2) {
+                z[i] = like[i]
+            } else {
+                z[i] = r.nextFloat() * 2.0f - 1.0f
+            }
+        }
+        return z
+    }
 
     private fun manipulatePixelsInBitmap(): IntArray {
         val pixelsInBitmap = IntArray(width * height)
