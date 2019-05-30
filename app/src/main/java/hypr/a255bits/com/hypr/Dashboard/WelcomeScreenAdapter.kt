@@ -28,7 +28,7 @@ class WelcomeScreenAdapter(val generators: MutableList<BuyGenerator>, val contex
     }
 
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
-        hideBuyButtonIfBought(position, holder?.buyButton)
+        hideBuyButtonIfBought(position, holder)
         buyButtonClickListener(holder, position)
 
         populateListItem(holder, position)
@@ -49,14 +49,16 @@ class WelcomeScreenAdapter(val generators: MutableList<BuyGenerator>, val contex
         }
     }
 
-    private fun hideBuyButtonIfBought(position: Int, buyButton: Button?) {
+    private fun hideBuyButtonIfBought(position: Int, holder: CustomViewHolder) {
         if(generators[position].itemBought){
-            buyButton?.visibility = View.INVISIBLE
+            holder.buyButton.visibility = View.INVISIBLE
+            holder.boughtTag.visibility = View.VISIBLE
         }
     }
 
     class CustomViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val title: TextView = view.nameOfCard
+        val boughtTag: TextView = view.boughtTag
         val buyButton: Button = view.buyButton
         val card: CardView = view.card
         val background: RelativeLayout = view.backgroundLayout

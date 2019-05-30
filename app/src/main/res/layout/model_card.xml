@@ -20,8 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/cardImage"
-            android:scaleType="fitXY"
-            android:src="@drawable/men"/>
+            android:scaleType="centerCrop"
+            android:src="@drawable/model128x128"/>
 
         <RelativeLayout
             android:id="@+id/backgroundLayout"
@@ -54,6 +54,15 @@
                 android:text="Buy"
                 android:textColor="@color/colorAccent" />
 
+            <TextView
+                android:id="@+id/boughtTag"
+                android:layout_width="75dp"
+                android:layout_alignParentRight="true"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textSize="14sp"
+                android:text="Run"
+                android:visibility="invisible" />
             </RelativeLayout>
 
 

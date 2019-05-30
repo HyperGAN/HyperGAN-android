@@ -19,9 +19,9 @@
         app:layout_constraintRight_toRightOf="parent" />
 
     <com.alexvasilkov.gestures.views.GestureFrameLayout
+        android:id="@+id/gestureImage"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:id="@+id/gestureImage"
         app:layout_constraintBottom_toTopOf="@+id/randomizeModel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -51,7 +51,7 @@
     <SeekBar
         android:id="@+id/imageTransitionSeekBar"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_marginRight="24dp"
         android:max="200"
         android:progress="100"
