@@ -1,12 +1,12 @@
 [
   {
-    "name": "reface6",
+    "name": "Faces 128px",
     "features": [],
     "file_size_in_bytes": 1024000000,
     "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
-    "model_file": "reface6walk.tflite",
+    "model_file": "rebig21.tflite",
     "google_play_id": "",
-    "image": "cat",
+    "image": "model128x128",
     "generator" : {
       "viewer":{
         "type": "FaceViewer",
@@ -26,13 +26,13 @@
     }
   },
   {
-    "name": "reface10",
-    "features": [],
+    "name": "Face-Style 128px",
+    "features": ["style"],
     "file_size_in_bytes": 1024000000,
     "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
-    "model_file": "reface10walk.tflite",
+    "model_file": "cand38.tflite",
     "google_play_id": "",
-    "image": "cat",
+    "image": "model128x128",
     "generator" : {
       "viewer":{
         "type": "FaceViewer",
@@ -52,91 +52,13 @@
     }
   },
   {
-    "name": "reface11",
+    "name": "Faces 256px",
     "features": [],
     "file_size_in_bytes": 1024000000,
     "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
-    "model_file": "reface11.tflite",
+    "model_file": "reface21.tflite",
     "google_play_id": "",
-    "image": "cat",
-    "generator" : {
-      "viewer":{
-        "type": "FaceViewer",
-        "operation": "crop"
-      },
-      "input" : {
-        "z_dims": [128.0],
-        "type": "latent"
-      },
-      "output": {
-        "type": "image",
-        "width": 128,
-        "height": 128,
-        "channels" : 3
-
-      }
-    }
-  },
-  {
-    "name": "reface18",
-    "features": [],
-    "file_size_in_bytes": 1024000000,
-    "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
-    "model_file": "reface18.tflite",
-    "google_play_id": "",
-    "image": "cat",
-    "generator" : {
-      "viewer":{
-        "type": "FaceViewer",
-        "operation": "crop"
-      },
-      "input" : {
-        "z_dims": [128.0],
-        "type": "latent"
-      },
-      "output": {
-        "type": "image",
-        "width": 128,
-        "height": 128,
-        "channels" : 3
-
-      }
-    }
-  },
-  {
-    "name": "reface2",
-    "features": [],
-    "file_size_in_bytes": 1024000000,
-    "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
-    "model_file": "reface2.tflite",
-    "google_play_id": "",
-    "image": "cat",
-    "generator" : {
-      "viewer":{
-        "type": "FaceViewer",
-        "operation": "crop"
-      },
-      "input" : {
-        "z_dims": [128.0],
-        "type": "latent"
-      },
-      "output": {
-        "type": "image",
-        "width": 256,
-        "height": 256,
-        "channels" : 3
-
-      }
-    }
-  },
-  {
-    "name": "reface20",
-    "features": [],
-    "file_size_in_bytes": 1024000000,
-    "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
-    "model_file": "reface20.tflite",
-    "google_play_id": "",
-    "image": "cat",
+    "image": "model256x256",
     "generator" : {
       "viewer":{
         "type": "FaceViewer",
