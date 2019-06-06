@@ -20,6 +20,7 @@ interface ModelFragmentMVP{
         fun unLockModel()
         fun rateApp()
         fun openRateAppInPlayStore(uri: Uri?, playStoreLink: Uri)
+        fun displayedImageAsBitmap(): Bitmap
     }
     interface presenter{
         fun getFaceCroppedOutOfImageIfNoFaceGetFullImage(imageWithFaces: Bitmap?, context: Context): Bitmap?

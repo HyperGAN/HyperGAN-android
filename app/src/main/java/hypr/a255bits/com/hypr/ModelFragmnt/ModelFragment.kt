@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -42,7 +43,9 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
     var pbFile: File? = null
     val presenter by lazy { ModelFragmentPresenter(GeneratorModule().getGeneratorLoader()) }
 
-
+    override fun displayedImageAsBitmap():Bitmap {
+        return (focusedImage.getDrawable() as BitmapDrawable).getBitmap()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         presenter.setInteractors(ModelInteractor(context as Context))

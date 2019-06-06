@@ -25,7 +25,7 @@ open class GeneratorTest {
     @get:Rule open val mActivityTestRule = ActivityTestRule(MainActivity::class.java)
     private val IMAGES_TO_TRANSFER_FOLDERNAME = "beforeImages"
     val gen = JsonReader().getGeneratorsFromJson(mActivityTestRule.activity)
-    val generator = EasyGeneratorLoader(gen?.get(0)!!, mActivityTestRule.activity)
+    val generator = EasyGeneratorLoader(mActivityTestRule.activity)
 
     @Test
     fun generatorTest() {
