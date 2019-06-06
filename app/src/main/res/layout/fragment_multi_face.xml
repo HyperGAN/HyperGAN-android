@@ -22,7 +22,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <hypr.a255bits.com.hypr.DrawableImageView
+    <hypr.hypergan.com.hypr.DrawableImageView
         android:id="@+id/drawableImageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

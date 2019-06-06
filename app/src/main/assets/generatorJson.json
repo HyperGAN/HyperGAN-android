@@ -4,7 +4,7 @@
     "features": [],
     "file_size_in_bytes": 1024000000,
     "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
-    "model_file": "rebig21.tflite",
+    "model_file": "cand54walk2.tflite",
     "google_play_id": "",
     "image": "model128x128",
     "generator" : {
@@ -26,11 +26,11 @@
     }
   },
   {
-    "name": "Face-Style 128px",
-    "features": ["style"],
+    "name": "Faces 61 128px",
+    "features": [],
     "file_size_in_bytes": 1024000000,
     "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
-    "model_file": "cand38.tflite",
+    "model_file": "cand61.tflite",
     "google_play_id": "",
     "image": "model128x128",
     "generator" : {
@@ -51,12 +51,66 @@
       }
     }
   },
+  {
+    "name": "Faces 65 128px",
+    "features": [],
+    "file_size_in_bytes": 1024000000,
+    "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
+    "model_file": "cand65walk.tflite",
+    "google_play_id": "",
+    "image": "model128x128",
+    "generator" : {
+      "viewer":{
+        "type": "FaceViewer",
+        "operation": "crop"
+      },
+      "input" : {
+        "z_dims": [128.0],
+        "type": "latent"
+      },
+      "output": {
+        "type": "image",
+        "width": 128,
+        "height": 128,
+        "channels" : 3
+
+      }
+    }
+  },
+
   {
     "name": "Faces 256px",
     "features": [],
     "file_size_in_bytes": 1024000000,
     "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
     "model_file": "reface21.tflite",
+    "google_play_id": "",
+    "image": "model256x256",
+    "generator" : {
+      "viewer":{
+        "type": "FaceViewer",
+        "operation": "crop"
+      },
+      "input" : {
+        "z_dims": [128.0],
+        "type": "latent"
+      },
+      "output": {
+        "type": "image",
+        "width": 256,
+        "height": 256,
+        "channels" : 3
+
+      }
+    }
+  },
+
+  {
+    "name": "Faces20 256px",
+    "features": [],
+    "file_size_in_bytes": 1024000000,
+    "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
+    "model_file": "reface20.tflite",
     "google_play_id": "",
     "image": "model256x256",
     "generator" : {

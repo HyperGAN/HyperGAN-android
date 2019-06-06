@@ -1,4 +1,4 @@
-package hypr.a255bits.com.hypr.Main
+package hypr.hypergan.com.hypr.Main
 
 
 import android.support.test.espresso.Espresso.onView
@@ -11,7 +11,7 @@ import android.support.test.runner.AndroidJUnit4
 import android.test.suitebuilder.annotation.LargeTest
 import android.view.View
 import android.view.ViewGroup
-import hypr.a255bits.com.hypr.R
+import hypr.hypergan.com.hypr.R
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.*

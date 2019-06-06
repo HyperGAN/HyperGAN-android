@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
-    tools:context="hypr.a255bits.com.hypr.CameraFragment.CameraActivity">
+    tools:context="hypr.hypergan.com.hypr.CameraFragment.CameraActivity">
 
 
     <com.camerakit.CameraKitView

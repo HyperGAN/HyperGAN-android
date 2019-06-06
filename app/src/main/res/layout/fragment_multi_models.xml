@@ -3,14 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="hypr.a255bits.com.hypr.MultiModels.MultiModels">
+    tools:context="hypr.hypergan.com.hypr.MultiModels.MultiModels">
 
     <android.support.design.widget.TabLayout
         android:id="@+id/sliding_tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <hypr.a255bits.com.hypr.Util.CustomViewPager
+    <hypr.hypergan.com.hypr.Util.CustomViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_below="@id/sliding_tabs"

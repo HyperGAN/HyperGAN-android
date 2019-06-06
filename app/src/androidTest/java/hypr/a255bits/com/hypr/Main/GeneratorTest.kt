@@ -1,4 +1,4 @@
-package hypr.a255bits.com.hypr.Main
+package hypr.hypergan.com.hypr.Main
 
 
 import android.content.Context
@@ -7,10 +7,10 @@ import android.graphics.BitmapFactory
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import android.test.suitebuilder.annotation.LargeTest
-import hypr.a255bits.com.hypr.GeneratorLoader.EasyGeneratorLoader
-import hypr.a255bits.com.hypr.Util.ImageSaver
-import hypr.a255bits.com.hypr.Util.JsonReader
-import hypr.a255bits.com.hypr.Util.toBitmap
+import hypr.hypergan.com.hypr.GeneratorLoader.EasyGeneratorLoader
+import hypr.hypergan.com.hypr.Util.ImageSaver
+import hypr.hypergan.com.hypr.Util.JsonReader
+import hypr.hypergan.com.hypr.Util.toBitmap
 
 import org.junit.Rule
 import org.junit.Test

@@ -1,10 +1,10 @@
-package hypr.a255bits.com.hypr
+package hypr.hypergan.com.hypr
 
 import android.content.Context
 import com.nhaarman.mockito_kotlin.mock
-import hypr.a255bits.com.hypr.Main.MainInteractor
-import hypr.a255bits.com.hypr.Main.MainMvp
-import hypr.a255bits.com.hypr.Main.MainPresenter
+import hypr.hypergan.com.hypr.Main.MainInteractor
+import hypr.hypergan.com.hypr.Main.MainMvp
+import hypr.hypergan.com.hypr.Main.MainPresenter
 import org.junit.Test
 import java.io.File
 

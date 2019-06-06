@@ -1,8 +1,8 @@
-package hypr.a255bits.com.hypr
+package hypr.hypergan.com.hypr
 
 import android.content.Context
 import com.nhaarman.mockito_kotlin.mock
-import hypr.a255bits.com.hypr.Network.ModelApi
+import hypr.hypergan.com.hypr.Network.ModelApi
 import org.junit.Assert
 import org.junit.Test
 

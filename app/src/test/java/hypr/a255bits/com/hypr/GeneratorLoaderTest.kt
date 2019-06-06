@@ -1,4 +1,4 @@
-package hypr.a255bits.com.hypr
+package hypr.hypergan.com.hypr
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory

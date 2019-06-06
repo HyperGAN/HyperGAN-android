@@ -9,7 +9,7 @@ android {
     compileSdkVersion 27
     buildToolsVersion '28.0.3'
     defaultConfig {
-        applicationId "hypr.a255bits.com.hypr"
+        applicationId "hypr.hypergan.com.hypr"
         minSdkVersion 17
         targetSdkVersion 27
         multiDexEnabled true
@@ -34,6 +34,10 @@ android {
             assets.srcDirs = ['src/main/assets']
             manifest.srcFile 'src/main/AndroidManifest.xml'
         }
+    }
+
+    aaptOptions {
+        noCompress "tflite"
     }
 }
 
