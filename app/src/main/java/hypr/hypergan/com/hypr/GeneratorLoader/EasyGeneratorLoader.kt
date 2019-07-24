@@ -23,7 +23,7 @@ class EasyGeneratorLoader() : GeneratorLoader() {
         z1 = this.random_z()
         z2 = this.random_z()
         if(generator!!.features.contains("style")) {
-            z2 = this.style_z(z1)
+            z1 = this.style_z(z2)
         }
     }
 

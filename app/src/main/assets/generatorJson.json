@@ -1,10 +1,11 @@
 [
+
   {
-    "name": "Faces 128px",
+    "name": "Faces lower res",
     "features": [],
     "file_size_in_bytes": 1024000000,
     "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
-    "model_file": "cand54walk2.tflite",
+    "model_file": "match_support.tflite",
     "google_play_id": "",
     "image": "model128x128",
     "generator" : {
@@ -26,13 +27,13 @@
     }
   },
   {
-    "name": "Faces 61 128px",
+    "name": "Faces higher res",
     "features": [],
     "file_size_in_bytes": 1024000000,
     "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
-    "model_file": "cand61.tflite",
-    "google_play_id": "",
-    "image": "model128x128",
+    "model_file": "face13.tflite",
+    "google_play_id": "com.expression",
+    "image": "model256x256_2",
     "generator" : {
       "viewer":{
         "type": "FaceViewer",
@@ -44,47 +45,20 @@
       },
       "output": {
         "type": "image",
-        "width": 128,
-        "height": 128,
+        "width": 256,
+        "height": 256,
         "channels" : 3
 
       }
     }
   },
   {
-    "name": "Faces 65 128px",
+    "name": "higher res faces??",
     "features": [],
     "file_size_in_bytes": 1024000000,
     "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
-    "model_file": "cand65walk.tflite",
-    "google_play_id": "",
-    "image": "model128x128",
-    "generator" : {
-      "viewer":{
-        "type": "FaceViewer",
-        "operation": "crop"
-      },
-      "input" : {
-        "z_dims": [128.0],
-        "type": "latent"
-      },
-      "output": {
-        "type": "image",
-        "width": 128,
-        "height": 128,
-        "channels" : 3
-
-      }
-    }
-  },
-
-  {
-    "name": "Faces 256px",
-    "features": [],
-    "file_size_in_bytes": 1024000000,
-    "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
-    "model_file": "reface21.tflite",
-    "google_play_id": "",
+    "model_file": "face12.tflite",
+    "google_play_id": "com.expression",
     "image": "model256x256",
     "generator" : {
       "viewer":{
@@ -104,15 +78,14 @@
       }
     }
   },
-
   {
-    "name": "Faces20 256px",
+    "name": "People?? ",
     "features": [],
     "file_size_in_bytes": 1024000000,
     "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
-    "model_file": "reface20.tflite",
+    "model_file": "people8.tflite",
     "google_play_id": "",
-    "image": "model256x256",
+    "image": "people256x256",
     "generator" : {
       "viewer":{
         "type": "FaceViewer",

@@ -90,7 +90,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun goBackToMainActivity() {
-        intentFor<MainActivity>("onbackpressed" to true).clearTop().start(applicationContext)
+        val i = Intent(this, MainActivity::class.java)
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(i)
     }
 
     fun signinToGoogle(googleSignInClient: GoogleApiClient) {
@@ -196,7 +198,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             if (hasBought) {
                 val modelFragment = presenter.getModelFragment(position.toInt())
                 val transaction = supportFragmentManager.beginTransaction()
-                val fragmentTransaction = transaction.replace(R.id.container, modelFragment).addToBackStack("model")
+                val fragmentTransaction = transaction.replace(R.id.container, modelFragment!!).addToBackStack("model")
                 presenter.startFragmentWhenDoneLoading(fragmentTransaction)
                 transaction.addToBackStack(null)
                 supportActionBar?.setDisplayHomeAsUpEnabled(true)

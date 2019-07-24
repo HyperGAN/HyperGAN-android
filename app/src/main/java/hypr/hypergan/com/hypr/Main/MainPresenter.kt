@@ -21,12 +21,15 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.toast
 import java.io.File
+import android.content.Intent
+
+
 
 class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val context: Context) : MainMvp.presenter {
 
     val ZERO_PERCENT: Float = 0.0f
     val SIGN_INTO_GOOGLE_RESULT: Int = 12
-    val modelFileNames = listOf("cand61.tflite", "cand65walk.tflite", "cand54walk2.tflite", "reface20.tflite", "reface21.tflite").map {
+    val modelFileNames = listOf("cand101.tflite").map {
         File(context.filesDir, it).absolutePath
     }
 
@@ -71,7 +74,7 @@ class MainPresenter(val view: MainMvp.view, val interactor: MainInteractor, val 
 
     override fun getModelFragment(position: Int): ModelFragment? {
         val generator = interactor.listOfGenerators?.get(position)
-        val modelPbFile = File(modelFileNames[position])
+        val modelPbFile = File(modelFileNames[0])
         return generator?.let { ModelFragment.newInstance(it, image, modelPbFile, position, fullImage) }
     }
 
