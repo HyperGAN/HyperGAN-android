@@ -1,13 +1,38 @@
 [
-
   {
-    "name": "Faces lower res",
+    "name": "Faces 128 fast",
+    "features": [],
+    "file_size_in_bytes": 1024000000,
+    "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
+    "model_file": "d28s2.tflite",
+    "google_play_id": "",
+    "image": "model128x128",
+    "generator" : {
+      "viewer":{
+        "type": "FaceViewer",
+        "operation": "crop"
+      },
+      "input" : {
+        "z_dims": [100.0],
+        "type": "latent"
+      },
+      "output": {
+        "type": "image",
+        "width": 128,
+        "height": 128,
+        "channels" : 3
+
+      }
+    }
+  },
+  {
+    "name": "Faces 128 fast 2",
     "features": [],
     "file_size_in_bytes": 1024000000,
     "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
     "model_file": "match_support.tflite",
     "google_play_id": "",
-    "image": "model128x128",
+    "image": "faces128fast2",
     "generator" : {
       "viewer":{
         "type": "FaceViewer",
@@ -27,33 +52,33 @@
     }
   },
   {
-    "name": "Faces higher res",
+    "name": "Faces 128 hq",
     "features": [],
     "file_size_in_bytes": 1024000000,
     "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
-    "model_file": "face13.tflite",
-    "google_play_id": "com.expression",
-    "image": "model256x256_2",
+    "model_file": "d130tpu.tflite",
+    "google_play_id": "",
+    "image": "faces128hq",
     "generator" : {
       "viewer":{
         "type": "FaceViewer",
         "operation": "crop"
       },
       "input" : {
-        "z_dims": [128.0],
+        "z_dims": [100.0],
         "type": "latent"
       },
       "output": {
         "type": "image",
-        "width": 256,
-        "height": 256,
+        "width": 128,
+        "height": 128,
         "channels" : 3
 
       }
     }
   },
   {
-    "name": "higher res faces??",
+    "name": "Faces 256 fast",
     "features": [],
     "file_size_in_bytes": 1024000000,
     "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
@@ -79,7 +104,59 @@
     }
   },
   {
-    "name": "People?? ",
+    "name": "Faces 256 hq",
+    "features": [],
+    "file_size_in_bytes": 1024000000,
+    "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
+    "model_file": "face13.tflite",
+    "google_play_id": "com.expression",
+    "image": "model256x256_2",
+    "generator" : {
+      "viewer":{
+        "type": "FaceViewer",
+        "operation": "crop"
+      },
+      "input" : {
+        "z_dims": [128.0],
+        "type": "latent"
+      },
+      "output": {
+        "type": "image",
+        "width": 256,
+        "height": 256,
+        "channels" : 3
+
+      }
+    }
+  },
+  {
+    "name": "Faces 512 wacky",
+    "features": [],
+    "file_size_in_bytes": 1024000000,
+    "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",
+    "model_file": "face14.tflite",
+    "google_play_id": "com.expression",
+    "image": "faces512wacky",
+    "generator" : {
+      "viewer":{
+        "type": "FaceViewer",
+        "operation": "crop"
+      },
+      "input" : {
+        "z_dims": [100.0],
+        "type": "latent"
+      },
+      "output": {
+        "type": "image",
+        "width": 512,
+        "height": 512,
+        "channels" : 3
+
+      }
+    }
+  },
+  {
+    "name": "People 256 scary",
     "features": [],
     "file_size_in_bytes": 1024000000,
     "model_url": "gs://hypr-572dc.appspot.com/optimized_weight_conv.pb",

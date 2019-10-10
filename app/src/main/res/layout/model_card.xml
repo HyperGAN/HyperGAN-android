@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:textSize="14sp"
-                android:text="Run"
+                android:text=""
                 android:visibility="invisible" />
             </RelativeLayout>
 

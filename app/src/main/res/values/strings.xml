@@ -1,16 +1,16 @@
 <resources>
-    <string name="rate_dialog_title">Rate Hypr</string>
+    <string name="rate_dialog_title">Rate HyperGAN</string>
 
-    <string name="rate_dialog_message">If you enjoy Hypr , would you mind taking a moment to rate it? It won\'t take more than a minute. Thanks for your support!</string>
+    <string name="rate_dialog_message">If you enjoy HyperGAN , would you mind taking a moment to rate it? It won\'t take more than a minute. Thanks for your support!</string>
 
-    <string name="app_name">hypr</string>
+    <string name="app_name">HyperGAN</string>
     <string name="choose_image">Choose Image</string>
     <string name="failed_face_detection">Face detection not working</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
-    <string name="title_activity_main">Hypr</string>
+    <string name="title_activity_main">HyperGAN</string>
     <string name="share_image">Share Image</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -22,7 +22,7 @@
     <string name="buy_model_popup_message">Would you like to buy this model?</string>
     <string name="google_signin_message">Would you like to sign into Google?</string>
     <string name="google_signin_title">Sign into Google</string>
-    <string name="downloading_model_message">Downloadnig Model</string>
+    <string name="downloading_model_message">Downloading Model</string>
     <string name="already_bought">You already bought this item.</string>
     <string name="network_error">Network Error</string>
 </resources>
