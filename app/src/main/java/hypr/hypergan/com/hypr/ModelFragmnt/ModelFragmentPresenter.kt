@@ -2,7 +2,6 @@ package hypr.hypergan.com.hypr.ModelFragmnt
 
 import android.content.Context
 import android.content.pm.PackageManager
-import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.Rect
 import android.os.Bundle
@@ -16,7 +15,6 @@ import hypr.hypergan.com.hypr.R
 import hypr.hypergan.com.hypr.Util.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
-import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.toast
 import java.io.File
 import java.io.IOException
@@ -71,8 +69,8 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
 
     fun shareImageToOtherApps() {
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            val watermarkBitmap = interactor.placeWatermarkOnImage(view.displayedImageAsBitmap())
-            val shareIntent = interactor.getIntentForSharingImagesWithOtherApps(watermarkBitmap)
+            //val watermarkBitmap = interactor.placeWatermarkOnImage(view.displayedImageAsBitmap())
+            val shareIntent = interactor.getIntentForSharingImagesWithOtherApps(view.displayedImageAsBitmap())
             view.shareImageToOtherApps(shareIntent)
         } else {
             view.requestPermissionFromUser(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), SHARE_IMAGE_PERMISSION_REQUEST)
@@ -118,9 +116,10 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
         var isSaved = false
         if (interactor.checkIfPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             val faceImage = person.faceImage?.toBitmap()
+            isSaved = ImageSaver().saveImageToInternalStorage(faceImage, context)
 
-            val waterMarkImage = interactor.placeWatermarkOnImage(view.displayedImageAsBitmap())
-            isSaved = ImageSaver().saveImageToInternalStorage(waterMarkImage, context)
+            //val waterMarkImage = interactor.placeWatermarkOnImage(view.displayedImageAsBitmap())
+            //isSaved = ImageSaver().saveImageToInternalStorage(waterMarkImage, context)
 
         } else {
             view.requestPermissionFromUser(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), SAVE_IMAGE_PERMISSION_REQUEST)
@@ -192,28 +191,19 @@ class ModelFragmentPresenter(val easyGenerator: EasyGeneratorLoader) : ModelFrag
     }
 
     fun getGeneratorImage(ganValue: Double): IntArray {
-        val ganImage = easyGenerator.sampleImageWithZValue(ganValue.toFloat())
-        return ganImage
-    }
-
-    fun manipulateZValueInImage(ganValue: Double): IntArray {
-        val ganImage = getGeneratorImage(ganValue)
-        return ganImage
+        return easyGenerator.sampleWithSlider(ganValue.toFloat())
     }
 
     fun changeGanImageFromSlider(ganValue: Double) {
-        GlobalScope.async(Dispatchers.Main) {
-            if (mutex.tryLock()) {
-                val imagePlacedInsideFullImage = GlobalScope.async {
-                    val imageManipluatedFromZValue = manipulateZValueInImage(ganValue)
-                    val ganImage = imageManipluatedFromZValue.toBitmap(easyGenerator.width, easyGenerator.height)
-                    imageManipulatedFromzValue = ganImage
-                    ganImage.let { inlineImage(person, it) }
-                }
-                view.displayFocusedImage(imagePlacedInsideFullImage.await())
-                mutex.unlock()
+        if (mutex.tryLock()) {
+            val imageManipluatedFromZValue = getGeneratorImage(ganValue)
+            val ganImage = imageManipluatedFromZValue.toBitmap(easyGenerator.width, easyGenerator.height)
+            imageManipulatedFromzValue = ganImage
+            ganImage.let { inlineImage(person, it) }
 
-            }
+            view.displayFocusedImage(ganImage)
+            mutex.unlock()
+
         }
     }
 

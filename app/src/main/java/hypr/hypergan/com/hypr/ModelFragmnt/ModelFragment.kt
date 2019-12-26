@@ -107,10 +107,10 @@ class ModelFragment : ContextAwareFragment(), ModelFragmentMVP.view {
     }
 
     private fun chooseImageFromGalleryButtonClickListener() {
-        chooseImageFromGalleryButton.visibility = View.INVISIBLE
-        //chooseImageFromGalleryButton.setOnClickListener {
-        //    presenter.startCameraActivity()
-        //}
+        //chooseImageFromGalleryButton.visibility = View.INVISIBLE
+        chooseImageFromGalleryButton.setOnClickListener {
+            presenter.startCameraActivity()
+        }
     }
 
     private fun lockLayoutClickListener() {

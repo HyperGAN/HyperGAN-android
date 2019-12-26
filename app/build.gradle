@@ -10,11 +10,11 @@ android {
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "hypr.hypergan.com.hypr"
-        minSdkVersion 17
+        minSdkVersion 24
         targetSdkVersion 28
         multiDexEnabled true
-        versionCode 5
-        versionName "1.0.0"
+        versionCode 7
+        versionName "1.0.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -66,7 +66,12 @@ dependencies {
     implementation 'org.jetbrains.anko:anko-common:0.10.1'
     implementation 'org.jetbrains.anko:anko-coroutines:0.10.1'
     implementation 'com.beardedhen:androidbootstrap:2.3.1'
-    implementation 'org.tensorflow:tensorflow-lite:0.0.1-gpu-experimental'
+    //    implementation 'org.tensorflow:tensorflow-lite:0.0.1-gpu-experimental'
+
+    implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
+    implementation 'org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly'
+    implementation 'org.tensorflow:tensorflow-lite-support:0.0.0-nightly'
+
     implementation 'com.google.android.gms:play-services-vision:9.4.0'
     implementation 'com.google.android.gms:play-services-auth:9.4.0'
     implementation 'com.squareup.retrofit2:converter-scalars:2.1.0'

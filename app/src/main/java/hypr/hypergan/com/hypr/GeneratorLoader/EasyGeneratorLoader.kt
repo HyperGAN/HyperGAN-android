@@ -20,24 +20,27 @@ class EasyGeneratorLoader() : GeneratorLoader() {
     val inliner = InlineImage()
 
     fun randomize() {
-        z1 = this.random_z()
-        z2 = this.random_z()
+        if(generator!!.features.contains("halloween")) {
+            z1 = this.random_z(5.0f, 10.0f)
+            z2 = this.random_z(5.0f, 10.0f)
+        } else {
+            z1 = this.random_z()
+            z2 = this.random_z()
+        }
         if(generator!!.features.contains("style")) {
             z1 = this.style_z(z2)
         }
+
     }
 
     fun sampleImageWithImage(person: Person, image: Bitmap?, croppedPoint: Rect): Bitmap? {
         val scaled = Bitmap.createScaledBitmap(image, generator?.generator?.output?.width!!, generator?.generator?.output?.height!!, false)
         baseImage = scaled
         mask = this.mask(scaled)
-        val image = if (featureEnabled(Feature.ENCODING)) {
-            encoded = this.encode(scaled)
-            this.sample(encoded!!, mask, scaled).toBitmap(this.width, this.height)
-        } else {
-            this.randomize()
-            this.sample(this.get_z(1.0f), mask, scaled).toBitmap(this.width, this.height)
-        }
+        this.randomize()
+
+        val image = this.sample(this.get_z(1.0f), mask, scaled).toBitmap(this.width, this.height)
+
         return inlineImage(person, image, croppedPoint)
     }
 
@@ -53,19 +56,11 @@ class EasyGeneratorLoader() : GeneratorLoader() {
         val scaled = Bitmap.createBitmap(generator?.generator?.output?.width!!, generator?.generator?.output?.height!!, Bitmap.Config.ARGB_8888)
         mask = this.mask(scaled)
         baseImage = scaled
-        val sample = if(featureEnabled(Feature.ENCODING)){
-            encoded = this.encode(scaled)
-            this.sampleRandom(encoded!!, mask, scaled)
-
-        }else{
-            this.randomize()
-            this.sampleRandom(this.get_z(0.5f), mask, scaled)
-        }
-        return sample
+        this.randomize()
+        return this.sample(this.get_z(0.5f), mask, scaled)
     }
 
-    fun sampleImageWithZValue(slider: Float): IntArray {
-        this.encoded = this.random_z()
+    fun sampleWithSlider(slider: Float): IntArray {
         return this.sample(this.get_z(slider), mask, baseImage!!)
     }
 

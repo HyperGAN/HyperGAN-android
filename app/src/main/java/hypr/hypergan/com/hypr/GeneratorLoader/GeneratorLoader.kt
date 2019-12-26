@@ -4,13 +4,19 @@ import android.content.res.AssetManager
 import android.graphics.Bitmap
 import hypr.hypergan.com.hypr.Generator.Generator
 import org.tensorflow.lite.Interpreter
-import org.tensorflow.lite.experimental.GpuDelegate;
+import org.tensorflow.Session
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel.MapMode.READ_ONLY
 import android.content.res.AssetFileDescriptor
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import org.tensorflow.lite.gpu.GpuDelegate
+import org.tensorflow.lite.nnapi.NnApiDelegate
 import java.io.FileInputStream
 import java.io.IOException
 import java.nio.channels.FileChannel
+
 
 
 open class GeneratorLoader {
@@ -28,12 +34,15 @@ open class GeneratorLoader {
     var assets: AssetManager? = null
     var bytes:ByteArray? = null
     var buffer:ByteBuffer? = null
-    var delegate:GpuDelegate? = null
-    var options: Interpreter.Options?
+    var options: Interpreter.Options? = null
+    var _getInputFromBitmap:FloatArray? = null
+    var inputs:Array<Any>? = null
+    var outputs:HashMap<Int, Any>? = null
 
     init {
-        this.delegate = GpuDelegate();
-        this.options = Interpreter.Options().addDelegate(this.delegate)
+        //this.delegate = GpuDelegate();
+
+        //this.options = Interpreter.Options().addDelegate(this.delegate)
     }
     fun setIndex(index: Int) {
         this.index = index
@@ -50,6 +59,7 @@ open class GeneratorLoader {
         System.gc()
 
         raw = FloatArray(width * height * channels)
+        outputs = hashMapOf(0 to this.raw)
 
     }
     @Throws(IOException::class)
@@ -65,12 +75,12 @@ open class GeneratorLoader {
         val file = generator?.model_file
         this.buffer = loadModelFile(this.assets!!, "generators/"+file)//this.assets?.open( "generators/"+file)
 
-        //this.bytes = asset!!.readBytes()
+        //TODO FIXME
+        //this.delegate = GpuDelegate();
+        //this.options = Interpreter.Options().addDelegate(this.delegate)
 
-        //this.buffer = ByteBuffer.allocateDirect(this.bytes?.size!!)
-        //this.buffer?.put(bytes)
-
-        //this.buffer = asset!!.buffered(asset.available())
+        val nnApiDelegate = NnApiDelegate()
+        this.options = Interpreter.Options().addDelegate(nnApiDelegate)
 
         this.inference = Interpreter( this.buffer!!, options )
         this.buffer?.clear()
@@ -79,16 +89,25 @@ open class GeneratorLoader {
     fun sample(z: FloatArray, mask: FloatArray, bitmap: Bitmap): IntArray {
         print("Sampling ")
 
-        var inputs:Array<Any> = arrayOf(z)
-        var outputs:HashMap<Int, Any> = hashMapOf(0 to this.raw)
+        //var inputs:Array<Any> = getInputs(bitmap, z)
+        inputs = getInputs(bitmap, z)
 
         if(!this::inference.isInitialized) {
             this.load()
         }
-        this.inference.runForMultipleInputsOutputs(inputs, outputs)
+
+        this.inference.runForMultipleInputsOutputs(inputs, outputs!!)
 
 
         return manipulatePixelsInBitmap()
+    }
+
+    private fun getInputs(bitmap: Bitmap, z: FloatArray):Array<Any> {
+        if (generator!!.features.contains(Feature.ENCODING)) {
+            return arrayOf(arrayOf(getInputFromBitmap(bitmap)), arrayOf(z))
+        } else {
+            return arrayOf(z)
+        }
     }
 
     fun mask(bitmap: Bitmap): FloatArray {
@@ -97,22 +116,10 @@ open class GeneratorLoader {
         return floatValues
     }
 
-    fun sampleRandom(z: FloatArray, mask: FloatArray, scaled: Bitmap): IntArray {
-
-        val dims = longArrayOf(1.toLong(), 1.toLong(), 1.toLong(), 1.toLong())
-
-        var inputs:Array<Any> = arrayOf(z)
-        var outputs:HashMap<Int, Any> = hashMapOf(0 to this.raw)
-        if(!this::inference.isInitialized) {
-            this.load()
+    fun getInputFromBitmap(bitmap: Bitmap):FloatArray {
+        if(_getInputFromBitmap != null) {
+            return _getInputFromBitmap!!
         }
-
-        this.inference.runForMultipleInputsOutputs(inputs, outputs)
-
-        return manipulatePixelsInBitmap()
-    }
-
-    fun feedInput(bitmap: Bitmap) {
         val intValues = IntArray(width * height)
         val floatValues = FloatArray(width * height * channels)
         bitmap.getPixels(intValues, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
@@ -122,28 +129,15 @@ open class GeneratorLoader {
             floatValues[i * 3 + 1] = ((ival shr 8 and 0xFF) / 255.0f - 0.5f) * 2
             floatValues[i * 3 + 2] = ((ival and 0xFF) / 255.0f - 0.5f) * 2
         }
-        val dims = longArrayOf(1.toLong(), width.toLong(), height.toLong(), channels.toLong())
-        if (index == 0) {
-
-            //this.inference.feed("input", floatValues, *dims)
-        }
+        _getInputFromBitmap = floatValues
+        return floatValues
     }
 
-    fun encode(bitmap: Bitmap): FloatArray {
-        //feedInput(bitmap)
-
-
-        val z = FloatArray(z_dims.toInt())
-
-
-        return z
-    }
-
-    fun random_z(): FloatArray {
+    fun random_z(min:Float=1.0f, range:Float=2.0f): FloatArray {
         val z = FloatArray(z_dims.toInt())
         val r = java.util.Random()
         for (i in 0..z_dims.toInt() - 1)
-            z[i] = r.nextFloat() * 2.0f - 1.0f
+            z[i] = r.nextFloat() * range - min
         return z
     }
 
